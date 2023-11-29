@@ -4,14 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "prepare": "pnpm run build",
+    "build": "cp ./src/style.css ./dist/style.css && pnpm build:esm && pnpm build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --check \"**/*.{html,ts,tsx,json,css,md,cjs}\"",
-    "format:fix": "prettier --write \"**/*.{html,ts,tsx,json,css,md,cjs}\""
+    "format:fix": "prettier --write \"**/*.{html,ts,tsx,json,css,md,cjs}\"",
+    "style": "stylelint **/*.{html,css}",
+    "style:fix": "stylelint **/*.{html,css} --fix"
   },
-  "keywords": [],
-  "author": "scallop",
+  "keywords": [
+    "react",
+    "typescript"
+  ],
+  "author": "team@scallop.io",
   "license": "ISC",
   "devDependencies": {
     "@types/react": "^18.2.39",
@@ -29,9 +37,19 @@
     "prettier": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "stylelint": "^15.11.0",
+    "stylelint-config-standard": "^34.0.0",
     "typescript": "^5.3.2"
   },
   "dependencies": {
     "prettier-plugin-tailwindcss": "^0.5.7"
-  }
+  },
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ]
 }
