@@ -110,7 +110,7 @@
     "no-restricted-syntax": [
       "error",
       "FunctionExpression[generator=false]:not(:has(ThisExpression))",
-      "FunctionDeclaration[generator=false]:not(:has(ThisExpression))"
+      // "FunctionDeclaration[generator=false]:not(:has(ThisExpression))"
     ],
     "import/no-unresolved": [
       "error",

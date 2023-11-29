@@ -2,8 +2,10 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "target": "esnext",
+    "noEmit": true,
+    "target": "ES2020",
     "lib": ["dom", "ESNext"],
+    "allowJs": true,
     "module": "ESNext",
     "importHelpers": true,
     "declaration": true,
@@ -16,9 +18,20 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "_src/*": ["./src/*"],
+			"_shared/*": ["./src/shared/*"],
+      "_const/*": ["./src/const/*"],
+      "_messages": ["./src/shared/messaging/messages/"],
+      "_messages/*": ["./src/shared/messaging/messages/*"],
+      "_payloads": ["./src/shared/messaging/messages/payloads/"],
+			"_payloads/*": ["./src/shared/messaging/messages/payloads/*"],
+    }
   }
 }
