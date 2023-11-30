@@ -40,12 +40,12 @@ export abstract class Account<
 		}
 	}
 
-	abstract lock(allowRead: boolean): Promise<void>;
-	/**
-	 * Indicates if the account is unlocked and allows write actions (eg. signing)
-	 */
-	abstract isLocked(): Promise<boolean>;
-	abstract toUISerialized(): Promise<SerializedUIAccount>;
+	// abstract lock(allowRead: boolean): Promise<void>;
+	// /**
+	//  * Indicates if the account is unlocked and allows write actions (eg. signing)
+	//  */
+	// abstract isLocked(): Promise<boolean>;
+	// abstract toUISerialized(): Promise<SerializedUIAccount>;
 
 	get address() {
 		return this.getCachedData().then(({ address }) => address);
@@ -144,14 +144,14 @@ export interface SerializedUIAccount {
 	/**
 	 * This means the account is not able to sign when isLocked is true (write locked)
 	 */
-	readonly isLocked: boolean;
+	// readonly isLocked: boolean;
 	readonly publicKey: string | null;
 	/**
 	 * Timestamp of the last time the account was unlocked. It is cleared when the account is locked
 	 * because of a user action (manual lock) or lock timer.
 	 * This is used to determine if the account is locked for read or not. (eg. lastUnlockedOn more than 4 hours ago -> read locked)
 	 */
-	readonly lastUnlockedOn: number | null;
+	// readonly lastUnlockedOn: number | null;
 	/**
 	 * indicates if it's the selected account in the UI (active account)
 	 */

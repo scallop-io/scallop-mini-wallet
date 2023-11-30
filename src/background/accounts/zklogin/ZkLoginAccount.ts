@@ -1,7 +1,6 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import networkEnv from '_src/background/NetworkEnv';
 import { type NetworkEnvType } from '_src/shared/api-env';
 import { deobfuscate, obfuscate } from '_src/shared/cryptography/keystore';
 import { fromExportedKeypair } from '_src/shared/utils/from-exported-keypair';
@@ -30,6 +29,7 @@ import {
 	zkLoginAuthenticate,
 	type PartialZkLoginSignature,
 } from './utils';
+import networkEnv from "_src/shared/NetworkEnv";
 
 type SerializedNetwork = `${NetworkEnvType['env']}_${NetworkEnvType['customRpcUrl']}`;
 
@@ -162,18 +162,18 @@ export class ZkLoginAccount
 		super({ type: 'zkLogin', id, cachedData });
 	}
 
-	async lock(allowRead = false): Promise<void> {
-		await this.clearEphemeralValue();
-		await this.onLocked(allowRead);
-	}
+	// async lock(allowRead = false): Promise<void> {
+	// 	await this.clearEphemeralValue();
+	// 	await this.onLocked(allowRead);
+	// }
 
-	async isLocked(): Promise<boolean> {
-		return !(await this.getEphemeralValue());
-	}
+	// async isLocked(): Promise<boolean> {
+	// 	return !(await this.getEphemeralValue());
+	// }
 
-	async unlock() {
-		await this.#doLogin();
-	}
+	// async unlock() {
+	// 	await this.doLogin();
+	// }
 
 	async toUISerialized(): Promise<ZkLoginAccountSerializedUI> {
 		const { address, publicKey, type, claims, selected, provider, nickname, warningAcknowledged } =
@@ -184,8 +184,8 @@ export class ZkLoginAccount
 			type,
 			address,
 			publicKey,
-			isLocked: await this.isLocked(),
-			lastUnlockedOn: await this.lastUnlockedOn,
+			// isLocked: await this.isLocked(),
+			// lastUnlockedOn: await this.lastUnlockedOn,
 			email,
 			picture,
 			selected,
@@ -199,9 +199,9 @@ export class ZkLoginAccount
 
 	async signData(data: Uint8Array): Promise<SerializedSignature> {
 		const digest = blake2b(data, { dkLen: 32 });
-		if (await this.isLocked()) {
-			throw new Error('Account is locked');
-		}
+		// if (await this.isLocked()) {
+		// 	throw new Error('Account is locked');
+		// }
 		const credentials = await this.getEphemeralValue();
 		if (!credentials) {
 			// checking the isLocked above should catch this but keep it just in case
@@ -211,14 +211,14 @@ export class ZkLoginAccount
 		let credentialsData = credentials[serializeNetwork(activeNetwork)];
 		const currentEpoch = await getCurrentEpoch();
 		// handle cases of different network, current epoch higher than max epoch etc.
-		if (!this.#areCredentialsValid(currentEpoch, activeNetwork, credentialsData)) {
-			credentialsData = await this.#doLogin();
+		if (!this.areCredentialsValid(currentEpoch, activeNetwork, credentialsData)) {
+			credentialsData = await this.doLogin();
 		}
 		const { ephemeralKeyPair, proofs: storedProofs, maxEpoch, jwt, randomness } = credentialsData;
 		const keyPair = fromExportedKeypair(ephemeralKeyPair);
 		let proofs = storedProofs;
 		if (!proofs) {
-			proofs = await this.#generateProofs(
+			proofs = await this.generateProofs(
 				jwt,
 				BigInt(randomness),
 				maxEpoch,
@@ -249,7 +249,7 @@ export class ZkLoginAccount
 		});
 	}
 
-	#areCredentialsValid(
+	areCredentialsValid(
 		currentEpoch: number,
 		activeNetwork: NetworkEnvType,
 		credentials?: CredentialData,
@@ -265,7 +265,7 @@ export class ZkLoginAccount
 		);
 	}
 
-	async #doLogin() {
+	async doLogin() {
 		const { provider, claims } = await this.getStoredData();
 		const { sub, aud, iss } = await deobfuscate<JwtSerializedClaims>(claims);
 		const epoch = await getCurrentEpoch();
@@ -291,7 +291,7 @@ export class ZkLoginAccount
 		return credentialsData;
 	}
 
-	async #generateProofs(
+	async generateProofs(
 		jwt: string,
 		randomness: bigint,
 		maxEpoch: number,

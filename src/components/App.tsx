@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { createNewZkLoginAccount } from "../background/accounts";
+import { useEffect, useState } from 'react';
 
 type Props = {
   value?: number;
@@ -13,6 +14,10 @@ const MyCounter = ({ value = 0 }: Props) => {
   const onPlus = () => {
     setCounter((prev) => prev + 1);
   };
+
+  useEffect(() => {
+    createNewZkLoginAccount().then().catch();
+  }, [])
 
   return (
     <div>

@@ -1,15 +1,10 @@
-import { backupDB, getDB } from "../db";
 import { type WalletStatusChange } from '_src/shared/messaging/messages/payloads/wallet-status-change';
-import { accountsEvents } from "./events";
-import { makeUniqueKey } from "../storage-utils";
-import { SerializedAccount, isSigningAccount } from "./Account";
-import { ZkLoginAccount, ZkLoginAccountSerialized } from "./zklogin/ZkLoginAccount";
-import { fromB64 } from '@mysten/sui.js/utils';
 import Dexie from "dexie";
-import { MethodPayload, isMethodPayload } from "_src/shared/messaging/messages/payloads/MethodPayload";
-import { Message, createMessage } from "_src/shared/messaging/messages";
-import { UiConnection } from "../connections/UiConnection";
-import { accountSourcesEvents } from "../account-sources/events";
+import { backupDB, getDB } from "../db";
+import { makeUniqueKey } from "../storage-utils";
+import { SerializedAccount } from "./Account";
+import { accountsEvents } from "./events";
+import { ZkLoginAccount } from "./zklogin/ZkLoginAccount";
 
 function toAccount(account: SerializedAccount) {
 	// if (MnemonicAccount.isOfType(account)) {
@@ -108,201 +103,17 @@ export async function addNewAccounts<T extends SerializedAccount>(accounts: Omit
 	return accountsCreated;
 }
 
-export async function accountsHandleUIMessage(msg: Message, uiConnection: UiConnection) {
-	const { payload } = msg;
-	// if (isMethodPayload(payload, 'lockAccountSourceOrAccount')) {
-	// 	const account = await getAccountByID(payload.args.id);
-	// 	if (account) {
-	// 		await account.lock();
-	// 		await uiConnection.send(createMessage({ type: 'done' }, msg.id));
-	// 		return true;
-	// 	}
-	// }
-	if (isMethodPayload(payload, 'setAccountNickname')) {
-		const { id, nickname } = payload.args;
-		const account = await getAccountByID(id);
-		if (account) {
-			await account.setNickname(nickname);
-			await uiConnection.send(createMessage({ type: 'done' }, msg.id));
-			return true;
-		}
+export async function createNewZkLoginAccount() {
+	let newSerializedAccounts: Omit<SerializedAccount, 'id'>[] = [];
+	const type = 'zkLogin';
+	const provider: { provider: "google" } = { 
+		provider: 'google'
+	};
+
+	if (type === 'zkLogin') {
+		newSerializedAccounts.push(await ZkLoginAccount.createNew(provider));
+	} else {
+		throw new Error(`Unknown accounts type to create ${type}`);
 	}
-	// if (isMethodPayload(payload, 'unlockAccountSourceOrAccount')) {
-	// 	const { id, password } = payload.args;
-	// 	const account = await getAccountByID(id);
-	// 	if (account) {
-	// 		if (isPasswordUnLockable(account)) {
-	// 			await account.passwordUnlock(password);
-	// 		} else {
-	// 			await account.unlock();
-	// 		}
-	// 		await uiConnection.send(createMessage({ type: 'done' }, msg.id));
-	// 		return true;
-	// 	}
-	// }
-	if (isMethodPayload(payload, 'signData')) {
-		const { id, data } = payload.args;
-		const account = await getAccountByID(id);
-		if (!account) {
-			throw new Error(`Account with address ${id} not found`);
-		}
-		if (!isSigningAccount(account)) {
-			throw new Error(`Account with address ${id} is not a signing account`);
-		}
-		await uiConnection.send(
-			createMessage<MethodPayload<'signDataResponse'>>(
-				{
-					type: 'method-payload',
-					method: 'signDataResponse',
-					args: { signature: await account.signData(fromB64(data)) },
-				},
-				msg.id,
-			),
-		);
-		return true;
-	}
-	if (isMethodPayload(payload, 'createAccounts')) {
-		let newSerializedAccounts: Omit<SerializedAccount, 'id'>[] = [];
-		const { type } = payload.args;
-		// if (type === 'mnemonic-derived') {
-		// 	const { sourceID } = payload.args;
-		// 	const accountSource = await getAccountSourceByID(payload.args.sourceID);
-		// 	if (!accountSource) {
-		// 		throw new Error(`Account source ${sourceID} not found`);
-		// 	}
-		// 	if (!(accountSource instanceof MnemonicAccountSource)) {
-		// 		throw new Error(`Invalid account source type`);
-		// 	}
-		// 	newSerializedAccounts.push(await accountSource.deriveAccount());
-		// } else if (type === 'imported') {
-		// 	newSerializedAccounts.push(await ImportedAccount.createNew(payload.args));
-		// } else if (type === 'ledger') {
-		// 	const { password, accounts } = payload.args;
-		// 	for (const aLedgerAccount of accounts) {
-		// 		newSerializedAccounts.push(await LedgerAccount.createNew({ ...aLedgerAccount, password }));
-		// 	}
-		// }
-		 if (type === 'zkLogin') {
-			newSerializedAccounts.push(await ZkLoginAccount.createNew(payload.args));
-		} else {
-			throw new Error(`Unknown accounts type to create ${type}`);
-		}
-		const newAccounts = await addNewAccounts(newSerializedAccounts);
-		await uiConnection.send(
-			createMessage<MethodPayload<'accountsCreatedResponse'>>(
-				{
-					method: 'accountsCreatedResponse',
-					type: 'method-payload',
-					args: {
-						accounts: await Promise.all(
-							newAccounts.map(async (aNewAccount) => await aNewAccount.toUISerialized()),
-						),
-					},
-				},
-				msg.id,
-			),
-		);
-		return true;
-	}
-	if (isMethodPayload(payload, 'switchAccount')) {
-		await changeActiveAccount(payload.args.accountID);
-		await uiConnection.send(createMessage({ type: 'done' }, msg.id));
-		return true;
-	}
-	// if (isMethodPayload(payload, 'verifyPassword')) {
-	// 	if (payload.args.legacyAccounts) {
-	// 		if (!(await LegacyVault.verifyPassword(payload.args.password))) {
-	// 			throw new Error('Wrong password');
-	// 		}
-	// 		await uiConnection.send(createMessage({ type: 'done' }, msg.id));
-	// 		return true;
-	// 	}
-	// 	const allAccounts = await getAllAccounts();
-	// 	for (const anAccount of allAccounts) {
-	// 		if (isPasswordUnLockable(anAccount)) {
-	// 			await anAccount.verifyPassword(payload.args.password);
-	// 			await uiConnection.send(createMessage({ type: 'done' }, msg.id));
-	// 			return true;
-	// 		}
-	// 	}
-	// 	throw new Error('No password protected account found');
-	// }
-	// if (isMethodPayload(payload, 'storeLedgerAccountsPublicKeys')) {
-	// 	const { publicKeysToStore } = payload.args;
-	// 	const db = await getDB();
-	// 	// TODO: seems bulkUpdate is supported from v4.0.1-alpha.6 change to it when available
-	// 	await db.transaction('rw', db.accounts, async () => {
-	// 		for (const { accountID, publicKey } of publicKeysToStore) {
-	// 			await db.accounts.update(accountID, { publicKey });
-	// 		}
-	// 	});
-	// 	return true;
-	// }
-	// if (isMethodPayload(payload, 'getAccountKeyPair')) {
-	// 	const { password, accountID } = payload.args;
-	// 	const account = await getAccountByID(accountID);
-	// 	if (!account) {
-	// 		throw new Error(`Account with id ${accountID} not found.`);
-	// 	}
-	// 	if (!isKeyPairExportableAccount(account)) {
-	// 		throw new Error(`Cannot export account with id ${accountID}.`);
-	// 	}
-	// 	await uiConnection.send(
-	// 		createMessage<MethodPayload<'getAccountKeyPairResponse'>>(
-	// 			{
-	// 				type: 'method-payload',
-	// 				method: 'getAccountKeyPairResponse',
-	// 				args: {
-	// 					accountID: account.id,
-	// 					keyPair: await account.exportKeyPair(password),
-	// 				},
-	// 			},
-	// 			msg.id,
-	// 		),
-	// 	);
-	// 	return true;
-	// }
-	if (isMethodPayload(payload, 'removeAccount')) {
-		const { accountID } = payload.args;
-		const db = await getDB();
-		await db.transaction('rw', db.accounts, db.accountSources, async () => {
-			const account = await db.accounts.get(accountID);
-			if (!account) {
-				throw new Error(`Account with id ${accountID} not found.`);
-			}
-			const accountSourceID =
-				'sourceID' in account && typeof account.sourceID === 'string' && account.sourceID;
-			await db.accounts.delete(account.id);
-			if (accountSourceID) {
-				const totalSameSourceAccounts = await db.accounts
-					.where('sourceID')
-					.equals(accountSourceID)
-					.count();
-				if (totalSameSourceAccounts === 0) {
-					await db.accountSources.delete(accountSourceID);
-				}
-			}
-		});
-		await backupDB();
-		accountsEvents.emit('accountsChanged');
-		accountSourcesEvents.emit('accountSourcesChanged');
-		await uiConnection.send(createMessage({ type: 'done' }, msg.id));
-		return true;
-	}
-	if (isMethodPayload(payload, 'acknowledgeZkLoginWarning')) {
-		const { accountID } = payload.args;
-		const account = await getAccountByID(accountID);
-		if (!account) {
-			throw new Error(`Account with id ${accountID} not found.`);
-		}
-		if (!(account instanceof ZkLoginAccount)) {
-			throw new Error(`Account with id ${accountID} is not a zkLogin account.`);
-		}
-		const updates: Partial<ZkLoginAccountSerialized> = { warningAcknowledged: true };
-		await (await getDB()).accounts.update(accountID, updates);
-		accountsEvents.emit('accountStatusChanged', { accountID });
-		await uiConnection.send(createMessage({ type: 'done' }, msg.id));
-		return true;
-	}
-	return false;
+	return true;
 }

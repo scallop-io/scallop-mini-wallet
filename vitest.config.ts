@@ -5,6 +5,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
+	//@ts-ignores
 	plugins: [tsconfigPaths()],
 	test: {
 		exclude: [...configDefaults.exclude, 'tests/**'],

@@ -1,8 +1,6 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import Browser from 'webextension-polyfill';
-
 // export type ZkLoginProvider = 'google' | 'twitch' | 'facebook' | 'kakao';
 export type ZkLoginProvider = 'google';
 
@@ -22,11 +20,12 @@ export interface ZkLoginProviderData {
 	order: number;
 }
 
-const isDev = process.env.NODE_ENV === 'development';
+// const isDev = process.env.NODE_ENV === 'development';
 
 export const zkLoginProviderDataMap: Record<ZkLoginProvider, ZkLoginProviderData> = {
 	google: {
-		clientID: '946731352276-pk5glcg8cqo38ndb39h7j093fpsphusu.apps.googleusercontent.com',
+		// clientID: '946731352276-pk5glcg8cqo38ndb39h7j093fpsphusu.apps.googleusercontent.com',
+		clientID: '993131426104-ah7qqbp8p73ina6uepib31jj8djf523n.apps.googleusercontent.com',
 		url: 'https://accounts.google.com/o/oauth2/v2/auth',
 		extraParams: {
 			response_type: 'id_token',

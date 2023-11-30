@@ -1,7 +1,6 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { fetchWithSentry } from '_src/shared/utils';
 import { type PublicKey } from '@mysten/sui.js/cryptography';
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import {
@@ -30,7 +29,7 @@ export function prepareZkLogin(currentEpoch: number) {
 	};
 }
 
-const forceSilentGetProviders: ZkLoginProvider[] = ['twitch'];
+// const forceSilentGetProviders: ZkLoginProvider[] = ['twitch'];
 
 /**
  * This method does a get request to the authorize url and is used as a workarround
@@ -40,10 +39,10 @@ const forceSilentGetProviders: ZkLoginProvider[] = ['twitch'];
  *
  * @param authUrl
  */
-async function tryGetRedirectURLSilently(provider: ZkLoginProvider, authUrl: string) {
-	if (!forceSilentGetProviders.includes(provider)) {
-		return null;
-	}
+async function tryGetRedirectURLSilently(authUrl: string) {
+	// if (!forceSilentGetProviders.includes(provider)) {
+	// 	return null;
+	// }
 	try {
 		const responseText = await (await fetch(authUrl)).text();
 		const redirectURLMatch =
@@ -94,7 +93,7 @@ export async function zkLoginAuthenticate({
 	const authUrl = `${url}?${params.toString()}`;
 	let responseURL;
 	if (!prompt) {
-		responseURL = await tryGetRedirectURLSilently(provider, authUrl);
+		responseURL = await tryGetRedirectURLSilently(authUrl);
 	}
 	if (!responseURL) {
 		responseURL = new URL(
@@ -117,18 +116,20 @@ export async function zkLoginAuthenticate({
 	return jwt;
 }
 
-const saltRegistryUrl = 'https://salt.api.mystenlabs.com';
+// const saltRegistryUrl = 'https://salt.api.mystenlabs.com';
 
 export async function fetchSalt(jwt: string): Promise<string> {
-	const response = await fetchWithSentry('fetchUserSalt', `${saltRegistryUrl}/get_salt`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Request-Id': uuidV4(),
-		},
-		body: JSON.stringify({ token: jwt }),
-	});
-	return (await response.json()).salt;
+	// const response = await fetchWithSentry('fetchUserSalt', `${saltRegistryUrl}/get_salt`, {
+	// 	method: 'POST',
+	// 	headers: {
+	// 		'Content-Type': 'application/json',
+	// 		'Request-Id': uuidV4(),
+	// 	},
+	// 	body: JSON.stringify({ token: jwt }),
+	// });
+	// return (await response.json()).salt;
+	console.log(jwt);
+	return '1234567890'
 }
 
 type WalletInputs = {
@@ -155,7 +156,7 @@ export async function createPartialZkLoginSignature({
 	userSalt,
 	keyClaimName = 'sub',
 }: WalletInputs): Promise<PartialZkLoginSignature> {
-	const response = await fetchWithSentry('createZkLoginProofs', zkLoginProofsServerUrl, {
+	const response = await fetch(zkLoginProofsServerUrl, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
