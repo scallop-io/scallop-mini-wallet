@@ -2,7 +2,6 @@
   "name": "scallop-mini-wallet",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "prepare": "pnpm run build",
     "build": "pnpm build:esm && pnpm build:cjs && cp ./src/style.css ./dist/style.css",
@@ -13,7 +12,8 @@
     "format": "prettier --check \"**/*.{html,ts,tsx,json,css,md,cjs}\"",
     "format:fix": "prettier --write \"**/*.{html,ts,tsx,json,css,md,cjs}\"",
     "style": "stylelint **/*.{html,css}",
-    "style:fix": "stylelint **/*.{html,css} --fix"
+    "style:fix": "stylelint **/*.{html,css} --fix",
+    "rollup": "rollup -c"
   },
   "keywords": [
     "react",
@@ -22,6 +22,9 @@
   "author": "team@scallop.io",
   "license": "ISC",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
     "@types/react": "^18.2.39",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
@@ -37,6 +40,8 @@
     "prettier": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rollup": "^4.6.1",
+    "rollup-plugin-dts": "^6.1.0",
     "stylelint": "^15.11.0",
     "stylelint-config-standard": "^34.0.0",
     "tslib": "^2.6.2",
@@ -48,9 +53,10 @@
   "peerDependencies": {
     "react": ">=16"
   },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "files": [
-    "dist",
-    "LICENSE",
-    "README.md"
-  ]
+    "dist"
+  ],
+  "types": "dist/index.d.ts"
 }

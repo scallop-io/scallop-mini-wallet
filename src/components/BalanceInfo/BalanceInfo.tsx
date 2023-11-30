@@ -1,5 +1,5 @@
-import { shortenAddress } from '../utils/address';
-import ClipboardDocument from '../assets/ClipboardDocument';
+import { shortenAddress } from '../../utils/address';
+import ClipboardDocument from '../../assets/ClipboardDocument';
 import type { FC } from 'react';
 
 type BalanceInfoProps = {
