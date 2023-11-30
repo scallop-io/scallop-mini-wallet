@@ -12,7 +12,6 @@ import {
 import { randomBytes } from '@noble/hashes/utils';
 import { base64url } from 'jose';
 import { v4 as uuidV4 } from 'uuid';
-import Browser from 'webextension-polyfill';
 
 import { zkLoginProviderDataMap, type ZkLoginProvider } from './providers';
 

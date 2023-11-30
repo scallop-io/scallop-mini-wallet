@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { type Serializable } from '_shared/cryptography/keystore';
+import { type Serializable } from '../../shared/cryptography/keystore';
 import {
 	toSerializedSignature,
 	type ExportedKeypair,
@@ -17,7 +17,7 @@ import {
 	getEphemeralValue,
 	setEphemeralValue,
 } from '../session-ephemeral-values';
-import { accountsEvents } from './events';
+// import { accountsEvents } from './events';
 import { getDB } from "../db";
 
 // export type AccountType = 'mnemonic-derived' | 'imported' | 'ledger' | 'qredo' | 'zkLogin';
@@ -114,12 +114,10 @@ export abstract class Account<
 			return;
 		}
 		await (await getDB()).accounts.update(this.id, { lastUnlockedOn: null });
-		accountsEvents.emit('accountStatusChanged', { accountID: this.id });
 	}
 
 	public async setNickname(nickname: string | null) {
 		await (await getDB()).accounts.update(this.id, { nickname });
-		accountsEvents.emit('accountStatusChanged', { accountID: this.id });
 	}
 }
 

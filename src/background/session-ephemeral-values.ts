@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { type Serializable } from '_shared/cryptography/keystore';
+import { type Serializable } from '../shared/cryptography/keystore';
 import {
 	getEncryptedFromSessionStorage,
 	removeFromSessionStorage,

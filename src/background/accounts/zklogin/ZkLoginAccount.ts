@@ -1,9 +1,9 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { type NetworkEnvType } from '_src/shared/api-env';
-import { deobfuscate, obfuscate } from '_src/shared/cryptography/keystore';
-import { fromExportedKeypair } from '_src/shared/utils/from-exported-keypair';
+import { type NetworkEnvType } from '../../../shared/api-env';
+import { deobfuscate, obfuscate } from '../../../shared/cryptography/keystore';
+import { fromExportedKeypair } from '../../../shared/utils/from-exported-keypair';
 import {
 	toSerializedSignature,
 	type ExportedKeypair,
@@ -29,7 +29,7 @@ import {
 	zkLoginAuthenticate,
 	type PartialZkLoginSignature,
 } from './utils';
-import networkEnv from "_src/shared/NetworkEnv";
+import networkEnv from "../../../shared/NetworkEnv";
 
 type SerializedNetwork = `${NetworkEnvType['env']}_${NetworkEnvType['customRpcUrl']}`;
 

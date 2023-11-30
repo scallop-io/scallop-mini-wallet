@@ -1,8 +1,8 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import networkEnv from '_src/shared/NetworkEnv';
-import { ENV_TO_API, type NetworkEnvType } from '_src/shared/api-env';
+import networkEnv from '../shared/NetworkEnv';
+import { ENV_TO_API, type NetworkEnvType } from '../shared/api-env';
 // import { SentryHttpTransport } from '@mysten/core';
 import { SuiClient, SuiHTTPTransport } from '@mysten/sui.js/client';
 

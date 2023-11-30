@@ -1,9 +1,7 @@
-import { type WalletStatusChange } from '_src/shared/messaging/messages/payloads/wallet-status-change';
 import Dexie from "dexie";
 import { backupDB, getDB } from "../db";
 import { makeUniqueKey } from "../storage-utils";
 import { SerializedAccount } from "./Account";
-import { accountsEvents } from "./events";
 import { ZkLoginAccount } from "./zklogin/ZkLoginAccount";
 
 function toAccount(account: SerializedAccount) {
@@ -31,11 +29,10 @@ export async function isAccountsInitialized() {
 
 export async function getAccountsStatusData(
 	accountsFilter?: string[],
-): Promise<Required<WalletStatusChange>['accounts']> {
+): Promise<SerializedAccount[]> {
 	const allAccounts = await (await getDB()).accounts.toArray();
 	return allAccounts
-		.filter(({ address }) => !accountsFilter || accountsFilter.includes(address))
-		.map(({ address, publicKey, nickname }) => ({ address, publicKey, nickname }));
+		.filter(({ address }) => !accountsFilter || accountsFilter.includes(address));
 }
 
 export async function changeActiveAccount(accountID: string) {
@@ -47,7 +44,6 @@ export async function changeActiveAccount(accountID: string) {
 		}
 		await db.accounts.where('id').notEqual(accountID).modify({ selected: false });
 		await db.accounts.update(accountID, { selected: true });
-		accountsEvents.emit('activeAccountChanged', { accountID });
 	});
 }
 
@@ -99,7 +95,6 @@ export async function addNewAccounts<T extends SerializedAccount>(accounts: Omit
 		return accountInstances;
 	});
 	await backupDB();
-	accountsEvents.emit('accountsChanged');
 	return accountsCreated;
 }
 

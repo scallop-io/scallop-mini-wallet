@@ -25,14 +25,5 @@
     // "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "paths": {
-      "_src/*": ["./src/*"],
-			"_shared/*": ["./src/shared/*"],
-      "_const/*": ["./src/const/*"],
-      "_messages": ["./src/shared/messaging/messages/"],
-      "_messages/*": ["./src/shared/messaging/messages/*"],
-      "_payloads": ["./src/shared/messaging/messages/payloads/"],
-			"_payloads/*": ["./src/shared/messaging/messages/payloads/*"],
-    }
   }
 }
