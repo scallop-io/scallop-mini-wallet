@@ -67,6 +67,7 @@
     "jose": "4.14.4",
     "mitt": "3.0.1",
     "prettier-plugin-tailwindcss": "^0.5.7",
+    "tslib": "^2.6.2",
     "uuid": "9.0.0",
     "webextension-polyfill": "0.10.0"
   },

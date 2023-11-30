@@ -44,6 +44,9 @@ dependencies:
   prettier-plugin-tailwindcss:
     specifier: ^0.5.7
     version: 0.5.7(prettier@3.1.0)
+  tslib:
+    specifier: ^2.6.2
+    version: 2.6.2
   uuid:
     specifier: 9.0.0
     version: 9.0.0
