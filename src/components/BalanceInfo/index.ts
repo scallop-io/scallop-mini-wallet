@@ -1,1 +1,1 @@
-export { default as BalanceInfo } from './BalanceInfo';
+export { BalanceInfo } from './BalanceInfo';

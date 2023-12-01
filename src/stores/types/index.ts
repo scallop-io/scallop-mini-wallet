@@ -1,12 +1,10 @@
 import type { StateCreator, Mutate, StoreApi } from 'zustand';
 import type { AppLocalStorageSlice } from '@/stores/types/app';
 import type { ConnectionLocalStorageSlice } from '@/stores/types/connection';
-import type { DataLocalStorageSlice } from '@/stores/types/data';
 import type { DialogLocalStorageSlice } from './dialog';
 
 export type * from '@/stores/types/app';
 export type * from '@/stores/types/connection';
-export type * from '@/stores/types/data';
 export type * from '@/stores/types/dialog';
 
 export type CreateAppLocalStorageSlice = StateCreator<
@@ -21,13 +19,6 @@ export type CreateConnectionLocalStorageSlice = StateCreator<
   [],
   ConnectionLocalStorageSlice
 >;
-export type CreateDataLocalStorageSlice = StateCreator<
-  LocalStorageState,
-  Mis,
-  [],
-  DataLocalStorageSlice
->;
-
 export type CreateDialogLocalStorageSlice = StateCreator<
   LocalStorageState,
   Mis,
@@ -37,7 +28,6 @@ export type CreateDialogLocalStorageSlice = StateCreator<
 
 export type LocalStorageState = AppLocalStorageSlice &
   ConnectionLocalStorageSlice &
-  DataLocalStorageSlice &
   DialogLocalStorageSlice;
 
 export type LocalStorageStateCreatorArgs = {
