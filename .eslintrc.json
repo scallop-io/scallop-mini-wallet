@@ -94,12 +94,12 @@
         "newlines-between": "never"
       }
     ],
-    // "no-restricted-imports": [
-    //   "error",
-    //   {
-    //     "patterns": ["../"]
-    //   }
-    // ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": ["../"]
+      }
+    ],
     "react/self-closing-comp": [
       "error",
       {

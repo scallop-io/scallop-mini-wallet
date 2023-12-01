@@ -1,14 +1,19 @@
-import { shortenAddress } from '../utils/address';
-import ClipboardDocument from '../assets/ClipboardDocument';
+import React from 'react';
+import { shortenAddress } from '@/utils/address';
+import { ClipboardDocument } from '@/assets/ClipboardDocument';
 import type { FC } from 'react';
 
-type BalanceInfoProps = {
+export type BalanceInfoProps = {
   accountAddress: string;
   balance: number;
   usdValue: number;
 };
 
-const BalanceInfo: FC<BalanceInfoProps> = ({ accountAddress, balance, usdValue }) => {
+export const BalanceInfo: FC<BalanceInfoProps> = ({
+  accountAddress,
+  balance,
+  usdValue,
+}: BalanceInfoProps) => {
   return (
     <div>
       <div className="address">
@@ -22,5 +27,3 @@ const BalanceInfo: FC<BalanceInfoProps> = ({ accountAddress, balance, usdValue }
     </div>
   );
 };
-
-export default BalanceInfo;
