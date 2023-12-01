@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-webpack5';
+import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 
 const config: StorybookConfig = {
   "stories": [
@@ -22,6 +23,24 @@ const config: StorybookConfig = {
   },
   "docs": {
     "autodocs": "tag"
+  },
+  babel: async (options) => ({
+    ...options,
+    presets: [
+      ...options.presets ?? [],
+      [
+        '@babel/preset-react', {
+          runtime: 'automatic',
+        },
+        'preset-react-jsx-transform' // Can name this anything, just an arbitrary alias to avoid duplicate presets'
+      ],
+    ],
+  }),
+  webpackFinal: async (config, { configType }) => {
+    if (config.resolve)
+      config.resolve.plugins = [new TsconfigPathsPlugin()];
+  
+    return config;
   }
 };
 export default config;

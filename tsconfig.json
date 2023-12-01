@@ -22,6 +22,9 @@
     "forceConsistentCasingInFileNames": true,
     "declarationDir": "types",
     "allowSyntheticDefaultImports": true,
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }
