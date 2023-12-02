@@ -5,7 +5,7 @@ const meta = {
   title: 'CoinItem',
   component: CoinItem,
   parameters: {
-    layout: 'centered',
+    layout: 'padded',
   },
   tags: ['autodocs'],
   argTypes: {
@@ -13,8 +13,7 @@ const meta = {
     coinName: { control: 'text' },
     totalBalance: { control: 'number' },
     coinPrice: { control: 'number' },
-    usdValue: { control: 'number' },
-    lightBackground: { control: 'boolean' },
+    coinAddress: { control: 'text' },
   },
 } satisfies Meta<typeof CoinItem>;
 
@@ -27,8 +26,6 @@ export const Normal: Story = {
     coinName: 'Bitcoin',
     totalBalance: 25,
     coinPrice: 50000,
-    usdValue: 5000,
-    lightBackground: true,
+    coinAddress: '0xa6e5e59eef4645c3ee8b48bcc2feaef543790e18bdabb15e3f765482d211305e',
   },
-}
-
+};

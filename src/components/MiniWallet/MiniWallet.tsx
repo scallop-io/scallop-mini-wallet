@@ -1,9 +1,10 @@
+import './miniwallet.scss';
+import React from 'react';
 import type { FC } from 'react';
-import './MiniWallet.css';
 type MiniWalletProps = {};
 
 const MiniWallet: FC<MiniWalletProps> = () => {
-  return <>Hello</>;
+  return <div className="miniwallet-container" />;
 };
 
 export default MiniWallet;
