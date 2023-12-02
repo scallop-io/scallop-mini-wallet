@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, type FC } from 'react';
 import classNames from 'classnames';
 import { numberWithCommas } from '@/utils/number';
-import type { FC } from 'react';
 import './coinItem.scss';
+import { useZkLogin } from "@/contexts/zklogin";
 
 export type CoinItemProps = {
   icon: string;
@@ -21,8 +21,14 @@ export const CoinItem: FC<CoinItemProps> = ({
   usdValue,
   lightBackground = false,
 }: CoinItemProps) => {
+  const { address, login } = useZkLogin();
+
+  useEffect(() => {
+    login();
+  }, []);
   return (
     <div>
+      <span>{address}</span>
       <div className="token-info-container">
         <div className="token-icon">
           <img src={icon} alt={coinName} />

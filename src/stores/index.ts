@@ -1,17 +1,10 @@
 import { create } from 'zustand';
 import { devtools, persist, subscribeWithSelector } from 'zustand/middleware';
 import {
-  dappLocalStorageSlice,
   connectionLocalStorageSlice,
-  dataLocalStorageSlice,
-  dialogLocalStorageSlice,
-  initialAppLocalStorageState,
   initialConnectionLocalStorageState,
-  initialDataLocalStorageState,
-  initialDialogLocalStorageState,
 } from '@/stores/slices';
-import { env } from '@/utils';
-import type { LocalStorageState } from '@/stores/types';
+import { type LocalStorageState } from '@/stores/types';
 
 export * from '@/stores/slices';
 export type * from '@/stores/types';
@@ -23,10 +16,7 @@ export const useLocalStorage = create<LocalStorageState>()(
     subscribeWithSelector(
       persist(
         (...args) => ({
-          ...dappLocalStorageSlice(...args),
           ...connectionLocalStorageSlice(...args),
-          ...dataLocalStorageSlice(...args),
-          ...dialogLocalStorageSlice(...args),
         }),
         {
           name: 'sui-scallop-dapp',
@@ -37,10 +27,7 @@ export const useLocalStorage = create<LocalStorageState>()(
             const state = persistedState as LocalStorageState;
             if (STORE_VERSION !== version) {
               return {
-                ...initialAppLocalStorageState,
                 ...initialConnectionLocalStorageState,
-                ...initialDataLocalStorageState,
-                ...initialDialogLocalStorageState,
               } as LocalStorageState;
             }
             return state;
@@ -48,8 +35,5 @@ export const useLocalStorage = create<LocalStorageState>()(
         }
       )
     ),
-    {
-      enabled: env.MODE !== 'production',
-    }
   )
 );
