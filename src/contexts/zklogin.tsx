@@ -58,11 +58,16 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({
     if (address !== account.address) setAddress(account.address);
   }, []);
 
-  const logout = useCallback(() => {
+  const resetAccount = useCallback(() => {
     clearEphemeralValue();
     setAddress(undefined);
+  }, []);
+
+  const logout = useCallback(() => {
+    resetAccount();
 
     channel.postMessage({
+      id,
       event: BroadcastEvents.LOGOUT
     });
   }, []);
@@ -93,7 +98,7 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({
           break;
 
         case BroadcastEvents.LOGOUT: {
-          clearEphemeralValue();
+          resetAccount();
         }
       };
 

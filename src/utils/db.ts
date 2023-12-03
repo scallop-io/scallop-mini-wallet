@@ -75,6 +75,7 @@ export const getDB = () => {
   return initPromise;
 };
 
+// TODO: call BackupDB()
 export async function backupDB() {
   try {
     const backup = await (await exportDB(await getDB())).text();
@@ -83,3 +84,5 @@ export async function backupDB() {
     console.error(e);
   }
 }
+
+// TODO: allow app to send master key to user in case user or change device but still using scallop-mini-wallet and same account
