@@ -1,7 +1,7 @@
 import './portfolio.scss';
 import React, { useEffect, type FC } from 'react';
 import logo from '@/assets/basic/logo.png';
-import { CoinItem } from '@/components/CoinItem/CoinItem';
+import { CoinItem } from '@/components/CoinItem';
 import useGetAllBalances from '@/hooks/useGetAllBalances';
 import { useZkLogin } from '@/contexts';
 import { shortenAddress } from '@/utils';
