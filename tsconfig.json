@@ -16,7 +16,7 @@
     "module": "ESNext",
     "importHelpers": true,
     "declaration": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
