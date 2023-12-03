@@ -17,7 +17,7 @@ const queryClient = new QueryClient({
   },
 });
 
-export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
+const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ConnectionProvider>
@@ -32,8 +32,7 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
 };
 
 type MiniWalletProps = {};
-
-export const MiniWallet: FC<MiniWalletProps> = () => {
+const MiniWallet: FC<MiniWalletProps> = () => {
   const { isLoggedIn, login } = useZkLogin();
   const [loading, setLoading] = useState(false);
 
@@ -71,3 +70,5 @@ export const MiniWallet: FC<MiniWalletProps> = () => {
     </div>
   );
 };
+
+export { MiniWalletContainer as ScallopMiniWallet };
