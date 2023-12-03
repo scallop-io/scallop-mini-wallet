@@ -11,7 +11,7 @@ import {
 import { ZkLoginProvider, zkLoginProviderDataMap } from "./provider";
 import { base64url, jwtVerify } from 'jose';
 import { randomBytes } from "@noble/hashes/utils";
-import crypto from 'crypto-browserify';
+import crypto from 'crypto';
 import { getDB } from "@/utils/db";
 import type { PublicKey } from "@mysten/sui.js/cryptography";
 import { v4 as uuidV4 } from 'uuid';
