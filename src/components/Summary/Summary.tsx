@@ -4,14 +4,15 @@ import { ClipboardDocument } from '@/assets/ClipboardDocument';
 import { useCopyToClipboard } from '@/hooks';
 import type { FC } from 'react';
 import './summary.scss';
+import { useZkLogin } from '@/contexts';
 
 export type SummaryProps = {
-  accountAddress: string;
   balance: number;
 };
 
-export const Summary: FC<SummaryProps> = ({ accountAddress, balance }: SummaryProps) => {
+export const Summary: FC<SummaryProps> = ({ balance }: SummaryProps) => {
   const [isCopied, setIsCopied] = React.useState(false);
+  const { address: accountAddress } = useZkLogin();
   const copyAddress = useCopyToClipboard(accountAddress, setIsCopied);
 
   useEffect(() => {
@@ -34,7 +35,6 @@ export const Summary: FC<SummaryProps> = ({ accountAddress, balance }: SummaryPr
           </div>
         )}
       </div>
-      <div className="balance">{balance} USD</div>
     </div>
   );
 };

@@ -120,9 +120,9 @@ export const useConnection = () => {
 };
 
 export const useNetwork = () => {
-  const { currentNetwork } = useContext(ConnectionContext);
+  const { currentNetwork, setCurrentNetwork } = useContext(ConnectionContext);
 
-  return useMemo(() => currentNetwork, [currentNetwork]);
+  return useMemo(() => ({currentNetwork, setCurrentNetwork}), [currentNetwork, setCurrentNetwork]);
 }
 
 export const useExplorer = () => {

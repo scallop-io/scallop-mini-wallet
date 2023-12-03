@@ -1,7 +1,7 @@
 {
   "include": [
     "src/**/*",
-    "typing.d.ts"
+    "images.d.ts"
   ],
   "exclude": [
     "node_modules",
