@@ -2,6 +2,7 @@
   width: 100%;
   display: flex;
   flex-direction: row;
+  padding: 0.5rem;
 
   &:hover {
     cursor: pointer;
@@ -20,7 +21,7 @@
           width: 100%;
           justify-content: space-between;
           align-items: center;
-          color: white;
+          color: #7ca6b2;
           font-size: 12px;
           font-weight: 500;
         }
@@ -59,7 +60,7 @@
       & div:first-child {
         text-transform: uppercase;
         font-weight: 600;
-        font-size: 16px;
+        font-size: 14px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -71,6 +72,7 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        color: #7ca6b2;
       }
       & div:last-child {
         display: none;

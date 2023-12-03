@@ -1,4 +1,4 @@
-import {MiniWalletContainer} from './MiniWallet';
+import { MiniWalletContainer } from './MiniWallet';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
@@ -13,6 +13,4 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Normal: Story = {
-}
-
+export const Normal: Story = {};

@@ -3,7 +3,7 @@ import type { FC } from 'react';
 
 export type Props = React.SVGProps<SVGSVGElement>;
 
-export const ClipboardDocument: FC<Props> = (props: Props) => {
+const ClipboardDocument: FC<Props> = (props: Props) => {
   return (
     <svg
       {...props}
@@ -21,3 +21,5 @@ export const ClipboardDocument: FC<Props> = (props: Props) => {
     </svg>
   );
 };
+
+export default ClipboardDocument;

@@ -1,7 +1,13 @@
-import React from 'react';
-import { createContext, useCallback, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useMemo } from 'react';
 import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
-import { defaultNode, useLocalStorage, Node, Explorer, defaultExplorer, defaultNetwork } from '@/stores';
+import {
+  defaultNode,
+  useLocalStorage,
+  Node,
+  Explorer,
+  defaultExplorer,
+  defaultNetwork,
+} from '@/stores';
 import type { FC, PropsWithChildren } from 'react';
 import type { NodeType, ExplorerType, NetworkType } from '@/stores';
 export type { NodeType };
@@ -122,8 +128,11 @@ export const useConnection = () => {
 export const useNetwork = () => {
   const { currentNetwork, setCurrentNetwork } = useContext(ConnectionContext);
 
-  return useMemo(() => ({currentNetwork, setCurrentNetwork}), [currentNetwork, setCurrentNetwork]);
-}
+  return useMemo(
+    () => ({ currentNetwork, setCurrentNetwork }),
+    [currentNetwork, setCurrentNetwork]
+  );
+};
 
 export const useExplorer = () => {
   const { currentExplorer, currentExplorerUrl, setExplorer } = useContext(ConnectionContext);

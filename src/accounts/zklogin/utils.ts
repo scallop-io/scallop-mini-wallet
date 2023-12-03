@@ -1,21 +1,18 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getDB, settingsKeys } from "@/utils/db";
-import type { PublicKey } from "@mysten/sui.js/cryptography";
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
-import {
-  generateNonce,
-  generateRandomness,
-  getExtendedEphemeralPublicKey,
-  getZkLoginSignature
-} from '@mysten/zklogin';
-import { randomBytes } from "@noble/hashes/utils";
+import { generateNonce, generateRandomness, getExtendedEphemeralPublicKey } from '@mysten/zklogin';
+import { randomBytes } from '@noble/hashes/utils';
 // @ts-ignore
-import { createHmac } from "crypto-browserify";
+import { createHmac } from 'crypto-browserify';
 import { base64url, decodeJwt } from 'jose';
 import { v4 as uuidV4 } from 'uuid';
-import { ZkLoginProvider, zkLoginProviderDataMap } from "./provider";
+import { getDB, settingsKeys } from '@/utils/db';
+import { zkLoginProviderDataMap } from './provider';
+import type { ZkLoginProvider } from './provider';
+import type { getZkLoginSignature } from '@mysten/zklogin';
+import type { PublicKey } from '@mysten/sui.js/cryptography';
 
 export function prepareZkLogin(currentEpoch: number) {
   const maxEpoch = currentEpoch + 2;
@@ -48,7 +45,7 @@ async function tryGetRedirectURLSilently(authUrl: string) {
     const responseText = await (await fetch(authUrl, { mode: 'no-cors' })).text();
     const redirectURLMatch =
       /<meta\s*http-equiv="refresh"\s*(CONTENT|content)=["']0;\s?URL='(.*)'["']\s*\/?>/.exec(
-        responseText,
+        responseText
       );
     if (redirectURLMatch) {
       const redirectURL = redirectURLMatch[2];
@@ -82,8 +79,7 @@ export async function zkLoginAuthenticate({
   if (!nonce) {
     nonce = base64url.encode(randomBytes(20));
   }
-  const { clientID, url, extraParams, buildExtraParams } =
-    zkLoginProviderDataMap[provider];
+  const { clientID, url, extraParams, buildExtraParams } = zkLoginProviderDataMap[provider];
   const params = new URLSearchParams(extraParams);
   params.append('client_id', clientID);
   params.append('redirect_uri', window.location.origin); // replace with your redirect URL
@@ -99,8 +95,6 @@ export async function zkLoginAuthenticate({
       const jwt = await fetchJwt(responseURL);
       return jwt;
     }
-  } else {
-
   }
   if (!responseURL) {
     // Open a new popup window for the authentication flow
@@ -137,9 +131,8 @@ export async function zkLoginAuthenticate({
 
 export async function fetchJwt(url?: string) {
   const responseURL = new URL(url ?? window.location.href);
-  let jwt;
   const responseParams = new URLSearchParams(responseURL.hash.replace('#', ''));
-  jwt = responseParams.get('id_token');
+  const jwt = responseParams.get('id_token');
   if (!jwt) {
     throw new Error('JWT is missing');
   }
@@ -152,9 +145,7 @@ export async function fetchSalt(jwtToken: string): Promise<string> {
   // Get the master seed from the database
   const masterSeed = (await db.settings.get(settingsKeys.masterSeed))?.value as string;
   const hasSeed = !!masterSeed;
-  if (!hasSeed)
-    throw new Error('Master seed is missing');
-  
+  if (!hasSeed) throw new Error('Master seed is missing');
 
   // TODO: Validate JWT
   const decoded = decodeJwt(jwtToken);

@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo } from 'react';
-import { useCopyToClipboard, useGetCoinMetadata } from '@/hooks';
-import { numberWithCommas } from '@/utils/number';
 import './coinItem.scss';
-import { shortenAddress } from '@/utils';
 import BigNumber from 'bignumber.js';
 import { normalizeStructTag } from '@mysten/sui.js/utils';
-import {CoinIcon} from '@/components/CoinIcon';
+import { shortenAddress } from '@/utils';
+import { useCopyToClipboard, useGetCoinMetadata } from '@/hooks';
+import { numberWithCommas } from '@/utils/number';
+import { CoinIcon } from '@/components/CoinIcon';
 import { getCoinAddressFromType, getCoinNameFromType } from '@/utils/coin';
 
 export type CoinItemProps = {
@@ -13,23 +13,20 @@ export type CoinItemProps = {
   totalBalance: string;
 };
 
-export const CoinItem: React.FC<CoinItemProps> = ({
-  coinType,
-  totalBalance,
-}: CoinItemProps) => {
+export const CoinItem: React.FC<CoinItemProps> = ({ coinType, totalBalance }: CoinItemProps) => {
   const [isCopied, setIsCopied] = React.useState(false);
   const coinAddress = useMemo(() => {
-   return getCoinAddressFromType(coinType);
+    return getCoinAddressFromType(coinType);
   }, [coinType]);
   const copyAddress = useCopyToClipboard(coinAddress, setIsCopied);
   const coinMetadata = useGetCoinMetadata(normalizeStructTag(coinType), 10000);
 
   const coinBalance = useMemo(() => {
-    return new BigNumber(totalBalance).shiftedBy(-1 * (coinMetadata.data?.decimals ?? 0))
-  }, [coinMetadata.data?.decimals, totalBalance])
+    return new BigNumber(totalBalance).shiftedBy(-1 * (coinMetadata.data?.decimals ?? 0));
+  }, [coinMetadata.data?.decimals, totalBalance]);
 
   const coinName = useMemo(() => {
-    return getCoinNameFromType(coinType)
+    return getCoinNameFromType(coinType);
   }, [coinType]);
 
   useEffect(() => {
@@ -52,7 +49,7 @@ export const CoinItem: React.FC<CoinItemProps> = ({
           </div>
           <div>
             <span>≈ ${}</span>
-            <span>${numberWithCommas((coinBalance.times(1)).toString())}</span>
+            <span>${numberWithCommas(coinBalance.times(1).toString())}</span>
           </div>
           <div>
             <span>{isCopied ? 'Address copied' : 'Click to copy address'}</span>

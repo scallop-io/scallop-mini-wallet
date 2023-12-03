@@ -1,26 +1,25 @@
-import { type ExportedKeypair } from "@mysten/sui.js/cryptography";
-import { NetworkType } from "./connection";
-
+import { type ExportedKeypair } from '@mysten/sui.js/cryptography';
+import type { NetworkType } from './connection';
 
 export type CredentialData = {
-	ephemeralKeyPair: ExportedKeypair;
-	// proofs?: PartialZkLoginSignature;
-	minEpoch: number;
-	maxEpoch: number;
-	network: NetworkType;
-	randomness: string;
-	jwt: string;
+  ephemeralKeyPair: ExportedKeypair;
+  // proofs?: PartialZkLoginSignature;
+  minEpoch: number;
+  maxEpoch: number;
+  network: NetworkType;
+  randomness: string;
+  jwt: string;
 };
 
 export interface ConnectionSessionStorageState {
-    credentials: string | null;
+  credentials: string | null;
 }
 
 interface ConnectionSessionStorageActions {
-    setCredentials: (credentials: string) => void;
+  setCredentials: (credentials: string) => void;
 }
 
 export interface ConnectionSessionStorageSlice {
-    connectionState: ConnectionSessionStorageState;
-    connectActions: ConnectionSessionStorageActions;
+  connectionState: ConnectionSessionStorageState;
+  connectActions: ConnectionSessionStorageActions;
 }

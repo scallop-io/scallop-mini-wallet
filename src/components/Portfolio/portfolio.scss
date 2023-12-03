@@ -4,4 +4,86 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  & .header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+
+    & div:first-child {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      & div {
+        width: auto;
+        font-size: 12px;
+  
+        & svg {
+          width: 14px;
+          height: 14px;
+          color: red;
+  
+          &:hover {
+            cursor: pointer;
+            opacity: 0.9;
+          }
+        }
+      }
+
+      & .scallop-icon {
+        width: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+  
+        & img {
+          width: 20px;
+          height: 20px;
+        }
+  
+        & span {
+          font-size: 12px;
+          font-weight: 600;
+          color: white;
+        }
+      }
+    }
+
+    & .address {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      height: 50px;
+      font-size: 14px;
+
+      & svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      &:hover {
+        cursor: pointer;
+        color: white;
+        opacity: 0.8;
+      }
+    }
+  }
+
+  & .body {
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 4px;
+  }
 }
