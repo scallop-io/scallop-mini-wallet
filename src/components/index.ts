@@ -1,1 +1,1 @@
-export { default as MiniWallet } from './MiniWallet';
+export * from './MiniWallet';

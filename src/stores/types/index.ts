@@ -1,34 +1,17 @@
 import type { StateCreator, Mutate, StoreApi } from 'zustand';
-import type { AppLocalStorageSlice } from '@/stores/types/app';
 import type { ConnectionLocalStorageSlice } from '@/stores/types/connection';
-import type { DialogLocalStorageSlice } from './dialog';
 
-export type * from '@/stores/types/app';
 export type * from '@/stores/types/connection';
-export type * from '@/stores/types/dialog';
+export type * from '@/stores/types/session';
 
-export type CreateAppLocalStorageSlice = StateCreator<
-  LocalStorageState,
-  Mis,
-  [],
-  AppLocalStorageSlice
->;
 export type CreateConnectionLocalStorageSlice = StateCreator<
   LocalStorageState,
   Mis,
   [],
   ConnectionLocalStorageSlice
 >;
-export type CreateDialogLocalStorageSlice = StateCreator<
-  LocalStorageState,
-  Mis,
-  [],
-  DialogLocalStorageSlice
->;
 
-export type LocalStorageState = AppLocalStorageSlice &
-  ConnectionLocalStorageSlice &
-  DialogLocalStorageSlice;
+export type LocalStorageState = ConnectionLocalStorageSlice;
 
 export type LocalStorageStateCreatorArgs = {
   setState: Get<Mutate<StoreApi<LocalStorageState>, Mis>, 'setState', undefined>;

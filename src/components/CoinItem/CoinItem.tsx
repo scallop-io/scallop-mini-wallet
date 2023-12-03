@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useCopyToClipboard } from '@/hooks';
 import { numberWithCommas } from '@/utils/number';
-import type { FC } from 'react';
 import './coinItem.scss';
+import { useZkLogin } from "@/contexts/zklogin";
 
 export type CoinItemProps = {
   icon: string;
