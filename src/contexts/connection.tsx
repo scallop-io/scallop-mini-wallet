@@ -1,5 +1,4 @@
-import React from 'react';
-import { createContext, useCallback, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useMemo } from 'react';
 import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
 import {
   defaultNode,
@@ -127,20 +126,17 @@ export const useConnection = () => {
 };
 
 export const useNetwork = () => {
-  const { currentNetwork } = useContext(ConnectionContext);
+  const { currentNetwork, setCurrentNetwork } = useContext(ConnectionContext);
 
-  return useMemo(() => currentNetwork, [currentNetwork]);
+  return { currentNetwork, setCurrentNetwork };
 };
 
 export const useExplorer = () => {
   const { currentExplorer, currentExplorerUrl, setExplorer } = useContext(ConnectionContext);
 
-  return useMemo(
-    () => ({
-      currentExplorer,
-      currentExplorerUrl,
-      setExplorer,
-    }),
-    [currentExplorer, currentExplorerUrl, setExplorer]
-  );
+  return {
+    currentExplorer,
+    currentExplorerUrl,
+    setExplorer,
+  };
 };

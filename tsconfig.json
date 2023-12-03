@@ -1,6 +1,12 @@
 {
-  "include": ["src/**/*", "typing.d.ts"],
-  "exclude": ["node_modules", "dist"],
+  "include": [
+    "src/**/*",
+    "images.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
   "compilerOptions": {
     "target": "esnext",
     "lib": ["dom", "ESNext"],

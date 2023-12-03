@@ -1,25 +1,36 @@
-import React, { useEffect, type FC } from 'react';
-import { useCopyToClipboard } from '@/hooks';
+import React, { useEffect, useMemo } from 'react';
+import { useCopyToClipboard, useGetCoinMetadata } from '@/hooks';
 import { numberWithCommas } from '@/utils/number';
 import './coinItem.scss';
+import { shortenAddress } from '@/utils';
+import BigNumber from 'bignumber.js';
+import { normalizeStructTag } from '@mysten/sui.js/utils';
+import {CoinIcon} from '@/components/CoinIcon';
+import { getCoinAddressFromType, getCoinNameFromType } from '@/utils/coin';
 
 export type CoinItemProps = {
-  icon: string;
-  coinName: string;
-  totalBalance: number;
-  coinPrice: number;
-  coinAddress: string;
+  coinType: string;
+  totalBalance: string;
 };
 
-export const CoinItem: FC<CoinItemProps> = ({
-  icon,
-  coinName,
+export const CoinItem: React.FC<CoinItemProps> = ({
+  coinType,
   totalBalance,
-  coinPrice,
-  coinAddress,
 }: CoinItemProps) => {
   const [isCopied, setIsCopied] = React.useState(false);
+  const coinAddress = useMemo(() => {
+   return getCoinAddressFromType(coinType);
+  }, [coinType]);
   const copyAddress = useCopyToClipboard(coinAddress, setIsCopied);
+  const coinMetadata = useGetCoinMetadata(normalizeStructTag(coinType), 10000);
+
+  const coinBalance = useMemo(() => {
+    return new BigNumber(totalBalance).shiftedBy(-1 * (coinMetadata.data?.decimals ?? 0))
+  }, [coinMetadata.data?.decimals, totalBalance])
+
+  const coinName = useMemo(() => {
+    return getCoinNameFromType(coinType)
+  }, [coinType]);
 
   useEffect(() => {
     if (isCopied) {
@@ -32,20 +43,20 @@ export const CoinItem: FC<CoinItemProps> = ({
     <div className="coinitem-container" onClick={copyAddress}>
       <div className="token">
         <div className="icon">
-          <img src={icon} alt={coinName} />
+          <CoinIcon coinName={coinName} iconUrl={coinMetadata.data?.iconUrl ?? ''} />
         </div>
         <div className="info">
           <div>
             <span>{coinName}</span>
-            <span>{numberWithCommas(totalBalance.toString())}</span>
+            <span>{numberWithCommas(coinBalance.toString())}</span>
           </div>
           <div>
-            <span>≈ ${numberWithCommas(coinPrice.toString())}</span>
-            <span>${numberWithCommas((totalBalance * coinPrice).toString())}</span>
+            <span>≈ ${}</span>
+            <span>${numberWithCommas((coinBalance.times(1)).toString())}</span>
           </div>
           <div>
             <span>{isCopied ? 'Address copied' : 'Click to copy address'}</span>
-            <span>{coinAddress}</span>
+            <span>{shortenAddress(coinAddress, 5, 4)}</span>
           </div>
         </div>
       </div>

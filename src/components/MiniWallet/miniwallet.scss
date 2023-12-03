@@ -1,0 +1,11 @@
+* {
+  box-sizing: border-box;
+}
+
+.miniwallet-container {
+  max-width: 320px;
+  min-height: 540px;
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+  padding: 0.5rem;
+}

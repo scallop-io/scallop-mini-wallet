@@ -1,4 +1,4 @@
-import { normalizeSuiAddress } from '@mysten/sui.js/utils';
+import { normalizeStructTag, normalizeSuiAddress } from '@mysten/sui.js/utils';
 const ELLIPSIS = '\u{2026}';
 
 /**

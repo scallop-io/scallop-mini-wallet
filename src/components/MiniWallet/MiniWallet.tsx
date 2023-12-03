@@ -1,7 +1,11 @@
 import './miniwallet.scss';
-import React, { type FC, useCallback } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ConnectionProvider, ZkLoginProvider, useZkLogin } from '@/contexts';
+import React, { useEffect } from 'react';
+import { Portfolio } from '@/components/Portfolio';
+import { Zklogin } from '@/components/Zklogin';
+import type { FC } from 'react';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConnectionProvider, ZkLoginProvider, useConnection, useNetwork, useZkLogin } from "@/contexts";
+type MiniWalletContainerProps = {};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -11,7 +15,6 @@ const queryClient = new QueryClient({
   },
 });
 
-export type MiniWalletContainerProps = {};
 export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -25,28 +28,22 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
 };
 
 type MiniWalletProps = {};
-const MiniWallet: FC<MiniWalletProps> = () => {
-  const { address, login, logout, isLoggedIn } = useZkLogin();
 
-  const handleLogin = useCallback(async () => {
-    await login();
-  }, []);
+export const MiniWallet: FC<MiniWalletProps> = () => {
+  const { address } = useZkLogin();
+  // const { address, login, logout, isLoggedIn } = useZkLogin();
 
-  const handleLogout = useCallback(() => {
-    logout();
-  }, []);
+  // const handleLogin = useCallback(async () => {
+  //   await login();
+  // }, []);
 
-  const handleButtonClick = useCallback(
-    () => (isLoggedIn ? handleLogout() : handleLogin()),
-    [isLoggedIn]
-  );
+  // const handleLogout = useCallback(() => {
+  //   logout();
+  // }, []);
 
-  return (
-    <div>
-      <div>{address}</div>
-      <div>
-        <button onClick={handleButtonClick}>{isLoggedIn ? 'Logout' : 'Login'}</button>
-      </div>
-    </div>
-  );
+  // const handleButtonClick = useCallback(
+  //   () => (isLoggedIn ? handleLogout() : handleLogin()),
+  //   [isLoggedIn]
+  // );
+  return <div className="miniwallet-container">{address ? <Portfolio /> : <Zklogin />}</div>;
 };
