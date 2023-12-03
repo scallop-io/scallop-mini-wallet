@@ -71,4 +71,4 @@ const MiniWallet: FC<MiniWalletProps> = () => {
   );
 };
 
-export { MiniWalletContainer as ScallopMiniWallet };
+export { MiniWalletContainer as MiniWalletConainer };
