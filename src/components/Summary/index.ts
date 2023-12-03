@@ -1,1 +1,1 @@
-export { BalanceInfo } from './Summary';
+export { Summary } from './Summary';
