@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/fum-is-chum"
   },
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "",
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
@@ -15,7 +15,8 @@
     "rollup": "rollup -c",
     "test": "jest",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "publish": "rollup -c && npm publish --access public --publish-branch=\"test-publish\""
   },
   "keywords": [
     "react",
