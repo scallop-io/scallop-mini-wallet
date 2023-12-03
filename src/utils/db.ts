@@ -23,15 +23,6 @@ class DB extends Dexie {
       accounts: 'id, type, address',
       settings: 'setting',
     });
-    // this.version(2).upgrade((transaction) => {
-    //   const zkLoginType: AccountType = 'zkLogin';
-    //   transaction
-    //     .table('accounts')
-    //     .where({ type: 'zk' })
-    //     .modify((anAccount) => {
-    //       anAccount.type = zkLoginType;
-    //     });
-    // });
   }
 }
 

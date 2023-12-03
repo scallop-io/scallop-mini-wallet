@@ -4,6 +4,7 @@ import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json'
 import dts from 'rollup-plugin-dts';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
+import polyfill from 'rollup-plugin-polyfill';
 import packageJson from './package.json' assert { type: 'json' };
 import postcss from 'rollup-plugin-postcss';
 import terser from '@rollup/plugin-terser';
@@ -33,6 +34,7 @@ export default [
       terser(),
       json(),
       nodePolyfills(),
+      polyfill(['crypto-browserify', 'stream-browserify'])
     ],
   },
   {
