@@ -27,10 +27,12 @@ export default [
     plugins: [
       json(),
       commonjs(),
-      nodePolyfills(),
+      nodePolyfills({
+        exclude: ['crypto']
+      }),
       peerDepsExternal(),
       typescript({ tsconfig: "./tsconfig.json" }),
-      nodeResolve({ preferBuiltins: false, mainFields: ['browser'] }),
+      nodeResolve({ browser: true, preferBuiltins: false, mainFields: ['browser'] }),
       postcss(),
       terser(),
     ],

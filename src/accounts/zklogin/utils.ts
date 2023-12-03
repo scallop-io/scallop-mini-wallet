@@ -1,6 +1,8 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { getDB, settingsKeys } from "@/utils/db";
+import type { PublicKey } from "@mysten/sui.js/cryptography";
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import {
   generateNonce,
@@ -8,12 +10,12 @@ import {
   getExtendedEphemeralPublicKey,
   getZkLoginSignature
 } from '@mysten/zklogin';
-import { ZkLoginProvider, zkLoginProviderDataMap } from "./provider";
-import { base64url, decodeJwt } from 'jose';
 import { randomBytes } from "@noble/hashes/utils";
-import { getDB, settingsKeys } from "@/utils/db";
-import type { PublicKey } from "@mysten/sui.js/cryptography";
+// @ts-ignore
+import { createHmac } from "crypto-browserify";
+import { base64url, decodeJwt } from 'jose';
 import { v4 as uuidV4 } from 'uuid';
+import { ZkLoginProvider, zkLoginProviderDataMap } from "./provider";
 
 export function prepareZkLogin(currentEpoch: number) {
   const maxEpoch = currentEpoch + 2;
@@ -167,7 +169,7 @@ export async function fetchSalt(jwtToken: string): Promise<string> {
   const info = sub || '';
 
   // Derive the user salt using HKDF
-  const userSalt = (await import('crypto')).createHmac('sha256', salt)
+  const userSalt = createHmac('sha256', salt)
     .update(masterSeed + info)
     .digest('hex');
 
