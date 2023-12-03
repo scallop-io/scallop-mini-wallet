@@ -92,7 +92,7 @@ export const ConnectionProvider: FC<PropsWithChildren<ConnectionProviderProps>> 
 
   const currentRpc = useMemo(() => {
     return RPC[connectionState.network][connectionState.node];
-  }, [connectionState.node]);
+  }, [connectionState.network, connectionState.node]);
 
   const client = useMemo(() => new SuiClient({ url: currentRpc }), [currentRpc]);
 
@@ -102,7 +102,7 @@ export const ConnectionProvider: FC<PropsWithChildren<ConnectionProviderProps>> 
 
   const explorerUrl: string = useMemo(
     () => EXPLORERS[connectionState.network][connectionState.explorer],
-    [connectionState.explorer]
+    [connectionState.network, connectionState.explorer]
   );
 
   return (

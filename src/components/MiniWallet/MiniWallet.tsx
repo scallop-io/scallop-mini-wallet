@@ -1,8 +1,8 @@
 import './miniwallet.scss';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Portfolio } from '@/components/Portfolio';
-import { ConnectionProvider, ZkLoginProvider, useNetwork, useZkLogin } from '@/contexts';
+import { ConnectionProvider, ZkLoginProvider, useZkLogin } from '@/contexts';
 import { ModalProvider } from '@/contexts/modal';
 import { Modal } from '@/components/Modal';
 import { LoginButton } from '@/components/LoginButton';
@@ -34,18 +34,40 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
 type MiniWalletProps = {};
 
 export const MiniWallet: FC<MiniWalletProps> = () => {
-  const { isLoggedIn } = useZkLogin();
-  const { setCurrentNetwork } = useNetwork();
-  const showBtn = useMemo(() => !isLoggedIn || true, [isLoggedIn]);
+  const { isLoggedIn, login } = useZkLogin();
+  const [loading, setLoading] = useState(false);
+
+  // const { setCurrentNetwork } = useNetwork();
+  //TODO: Allow user to select network
+
+  const onClick = useCallback(async () => {
+    try {
+      setLoading(true);
+      await login();
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    setCurrentNetwork('testnet');
+    // setCurrentNetwork('testnet');
+    console.log(isLoggedIn);
   }, []);
+
   return (
-    <div className="miniwallet-container">
-      <Portfolio />
-      {showBtn && <LoginButton />}
-      <Modal />
+    <div>
+      <div className="miniwallet-container">
+        <Portfolio />
+        {!isLoggedIn && (
+          <LoginButton
+            label="Sign In with Google"
+            provider="google"
+            onClick={onClick}
+            isLoading={loading}
+          />
+        )}
+        <Modal />
+      </div>
     </div>
   );
 };
