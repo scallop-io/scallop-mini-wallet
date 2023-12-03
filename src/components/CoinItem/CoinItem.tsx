@@ -1,5 +1,5 @@
-import React, { useEffect, type FC } from 'react';
-import classNames from 'classnames';
+import React, { useEffect } from 'react';
+import { useCopyToClipboard } from '@/hooks';
 import { numberWithCommas } from '@/utils/number';
 import './coinItem.scss';
 import { useZkLogin } from "@/contexts/zklogin";
@@ -9,8 +9,7 @@ export type CoinItemProps = {
   coinName: string;
   totalBalance: number;
   coinPrice: number;
-  usdValue: number;
-  lightBackground: boolean;
+  coinAddress: string;
 };
 
 export const CoinItem: FC<CoinItemProps> = ({
@@ -18,33 +17,38 @@ export const CoinItem: FC<CoinItemProps> = ({
   coinName,
   totalBalance,
   coinPrice,
-  usdValue,
-  lightBackground = false,
+  coinAddress,
 }: CoinItemProps) => {
-  const { address, login } = useZkLogin();
+  const [isCopied, setIsCopied] = React.useState(false);
+  const copyAddress = useCopyToClipboard(coinAddress, setIsCopied);
 
   useEffect(() => {
-    login();
-  }, []);
+    if (isCopied) {
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 500);
+    }
+  }, [isCopied]);
   return (
-    <div>
-      <span>{address}</span>
-      <div className="token-info-container">
-        <div className="token-icon">
+    <div className="coinitem-container" onClick={copyAddress}>
+      <div className="token">
+        <div className="icon">
           <img src={icon} alt={coinName} />
         </div>
-        <div
-          className={classNames('token-info', {
-            'token-info-light': lightBackground,
-          })}
-        >
-          <span className="token-title">{coinName}</span>
-          <span className="token-price">≈ ${numberWithCommas(coinPrice.toString())}</span>
+        <div className="info">
+          <div>
+            <span>{coinName}</span>
+            <span>{numberWithCommas(totalBalance.toString())}</span>
+          </div>
+          <div>
+            <span>≈ ${numberWithCommas(coinPrice.toString())}</span>
+            <span>${numberWithCommas((totalBalance * coinPrice).toString())}</span>
+          </div>
+          <div>
+            <span>{isCopied ? 'Address copied' : 'Click to copy address'}</span>
+            <span>{coinAddress}</span>
+          </div>
         </div>
-      </div>
-      <div className="token-info-balance">
-        <span className="token-balance">{totalBalance}</span>
-        <span className="usd-balance">{numberWithCommas(usdValue.toString())}</span>
       </div>
     </div>
   );

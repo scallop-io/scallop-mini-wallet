@@ -1,10 +1,11 @@
-import { ConnectionProvider } from "@/contexts/connection";
-import { ZkLoginProvider } from "@/contexts/zklogin";
-import React, { FC } from 'react';
-import './MiniWallet.css';
-import { CoinItem } from "../CoinItem";
+import './miniwallet.scss';
+import React from 'react';
+import { Portfolio } from '@/components/Portfolio';
+import { Zklogin } from '@/components/Zklogin';
+import type { FC } from 'react';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-export type MiniWalletProps = {};
+import { ConnectionProvider, ZkLoginProvider } from "@/contexts";
+type MiniWalletProps = {};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,18 +16,13 @@ const queryClient = new QueryClient({
 });
 
 export const MiniWallet: FC<MiniWalletProps> = () => {
+  const [isConnected, setIsConnected] = React.useState(false);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ConnectionProvider>
         <ZkLoginProvider>
-          <CoinItem
-            icon="https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
-            coinName="Bitcoin"
-            coinPrice={50000}
-            totalBalance={1}
-            usdValue={50000}
-            lightBackground={true}
-          />
+          <div className="miniwallet-container">{isConnected ? <Portfolio /> : <Zklogin />}</div>;
         </ZkLoginProvider>
       </ConnectionProvider>
     </QueryClientProvider>

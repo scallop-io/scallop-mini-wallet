@@ -1,1 +1,1 @@
-export * from './useGetAllBalances';
+export { default as useCopyToClipboard } from '@/hooks/useCopyToClipboard';
