@@ -17,7 +17,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
+export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ConnectionProvider>
@@ -70,5 +70,3 @@ const MiniWallet: FC<MiniWalletProps> = () => {
     </div>
   );
 };
-
-export { MiniWalletContainer as MiniWalletConainer };
