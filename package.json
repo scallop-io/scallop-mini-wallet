@@ -1,5 +1,5 @@
 {
-  "name": "@fum-is-chum/test-scallop-mini-wallet",
+  "name": "@fum-is-chum/dev-scallop-mini-wallet",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/fum-is-chum"
   },
@@ -13,6 +13,7 @@
     "style": "stylelint **/*.{html,css}",
     "style:fix": "stylelint **/*.{html,css} --fix",
     "rollup": "rollup -c",
+
     "test": "jest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
