@@ -1,5 +1,5 @@
 import { randomBytes } from "@noble/hashes/utils";
-import { Serializable } from "./cryptography";
+// import { Serializable } from "./cryptography";
 
 const PASSWORD =
 	process.env.WALLET_KEYRING_PASSWORD ||

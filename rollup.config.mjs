@@ -1,10 +1,9 @@
-import resolve from '@rollup/plugin-node-resolve';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json'
 import dts from 'rollup-plugin-dts';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
-import polyfill from 'rollup-plugin-polyfill';
 import packageJson from './package.json' assert { type: 'json' };
 import postcss from 'rollup-plugin-postcss';
 import terser from '@rollup/plugin-terser';
@@ -26,15 +25,14 @@ export default [
       },
     ],
     plugins: [
-      peerDepsExternal(),
-      resolve({ preferBuiltins: false, mainFields: ['browser'] }),
+      json(),
       commonjs(),
+      nodePolyfills(),
+      peerDepsExternal(),
       typescript({ tsconfig: "./tsconfig.json" }),
+      nodeResolve({ preferBuiltins: false, mainFields: ['browser'] }),
       postcss(),
       terser(),
-      json(),
-      nodePolyfills(),
-      polyfill(['crypto-browserify', 'stream-browserify'])
     ],
   },
   {
@@ -46,6 +44,6 @@ export default [
         paths: tsConfig.compilerOptions.paths,
       },
     })],
-    external: [/\.css$/],
+    external: [/\.css$/, /\.scss$/],
   },
 ];

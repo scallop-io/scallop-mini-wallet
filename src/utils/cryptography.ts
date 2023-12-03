@@ -8,7 +8,7 @@ export type Serializable =
 	| Serializable[]
 	| (Iterable<Serializable> & { length: number });
     
-const obfuscationPassword = 'Qe2wZcFYG5eFdSefWb27shstk2eUnNI39';
+// const obfuscationPassword = 'Qe2wZcFYG5eFdSefWb27shstk2eUnNI39';
 
 // export async function encrypt(password: string, secrets: Serializable): Promise<string> {
 // 	return metamaskEncrypt(password, secrets);

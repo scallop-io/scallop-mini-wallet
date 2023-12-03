@@ -5,7 +5,6 @@ import Dexie, { type Table } from 'dexie';
 import { exportDB, importDB } from 'dexie-export-import';
 import { getFromLocalStorage, setToLocalStorage } from '@/utils/storage';
 import type { SerializedAccount } from '@/types/account';
-import * as crypto from 'crypto';
 const dbName = 'ScallopMiniWallet DB';
 const dbLocalStorageBackupKey = 'indexed-db-backup';
 
@@ -48,7 +47,7 @@ async function init() {
 
   const hasMasterSeed = !!(await db.settings.get(settingsKeys.masterSeed))?.value;
   if(!hasMasterSeed) {
-    const masterSeed = crypto.randomBytes(32).toString('hex');
+    const masterSeed = (await import('crypto')).randomBytes(32).toString('hex');
     await db.settings.put({ setting: settingsKeys.masterSeed, value: masterSeed });
   }
 

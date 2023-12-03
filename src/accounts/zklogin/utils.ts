@@ -11,7 +11,6 @@ import {
 import { ZkLoginProvider, zkLoginProviderDataMap } from "./provider";
 import { base64url, decodeJwt } from 'jose';
 import { randomBytes } from "@noble/hashes/utils";
-import * as crypto from 'crypto';
 import { getDB, settingsKeys } from "@/utils/db";
 import type { PublicKey } from "@mysten/sui.js/cryptography";
 import { v4 as uuidV4 } from 'uuid';
@@ -168,8 +167,7 @@ export async function fetchSalt(jwtToken: string): Promise<string> {
   const info = sub || '';
 
   // Derive the user salt using HKDF
-  const userSalt = crypto
-    .createHmac('sha256', salt)
+  const userSalt = (await import('crypto')).createHmac('sha256', salt)
     .update(masterSeed + info)
     .digest('hex');
 
