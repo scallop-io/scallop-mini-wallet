@@ -1,1 +1,1 @@
-export { MiniWalletContainer } from './MiniWallet';
+export { MiniWalletContainer as MiniWallet } from './MiniWallet';
