@@ -1,18 +1,16 @@
-import MiniWallet from './MiniWallet';
+import { MiniWalletContainer } from './MiniWallet';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   title: 'MiniWallet',
-  component: MiniWallet,
+  component: MiniWalletContainer,
   parameters: {
     layout: 'padded',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof MiniWallet>;
+} satisfies Meta<typeof MiniWalletContainer>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Normal: Story = {
-}
-
+export const Normal: Story = {};

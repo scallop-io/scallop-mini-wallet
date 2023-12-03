@@ -108,7 +108,7 @@
       }
     ],
     "no-restricted-syntax": [
-      "error",
+      "error"
       // "FunctionExpression[generator=false]:not(:has(ThisExpression))",
       // "FunctionDeclaration[generator=false]:not(:has(ThisExpression))"
     ],

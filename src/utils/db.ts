@@ -4,7 +4,7 @@
 import type { SerializedAccount } from '@/types/account';
 import { getFromLocalStorage, setToLocalStorage } from '@/utils/storage';
 // @ts-ignore
-import { randomBytes } from "crypto-browserify";
+import { randomBytes } from 'crypto-browserify';
 import Dexie, { type Table } from 'dexie';
 import { exportDB, importDB } from 'dexie-export-import';
 
@@ -17,7 +17,7 @@ export const settingsKeys = {
 };
 class DB extends Dexie {
   accounts!: Table<SerializedAccount, string>;
-  settings!: Table<{ value: string | boolean | number | null; setting: string; }, string>;
+  settings!: Table<{ value: string | boolean | number | null; setting: string }, string>;
 
   constructor() {
     super(dbName);
@@ -49,7 +49,7 @@ async function init() {
   }
 
   const hasMasterSeed = !!(await db.settings.get(settingsKeys.masterSeed))?.value;
-  if(!hasMasterSeed) {
+  if (!hasMasterSeed) {
     const masterSeed = randomBytes(32).toString('hex');
     await db.settings.put({ setting: settingsKeys.masterSeed, value: masterSeed });
   }
