@@ -2,15 +2,15 @@ import React, { useEffect } from 'react';
 import { shortenAddress } from '@/utils/address';
 import { ClipboardDocument } from '@/assets/ClipboardDocument';
 import { useCopyToClipboard } from '@/hooks';
+import { useZkLogin } from '@/contexts';
 import type { FC } from 'react';
 import './summary.scss';
-import { useZkLogin } from '@/contexts';
 
 export type SummaryProps = {
   balance: number;
 };
 
-export const Summary: FC<SummaryProps> = ({ balance }: SummaryProps) => {
+export const Summary: FC<SummaryProps> = () => {
   const [isCopied, setIsCopied] = React.useState(false);
   const { address: accountAddress } = useZkLogin();
   const copyAddress = useCopyToClipboard(accountAddress, setIsCopied);

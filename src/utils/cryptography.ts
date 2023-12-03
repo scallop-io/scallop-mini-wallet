@@ -1,13 +1,12 @@
-
 export type Serializable =
-	| string
-	| number
-	| boolean
-	| null
-	| { [index: string]: Serializable | undefined }
-	| Serializable[]
-	| (Iterable<Serializable> & { length: number });
-    
+  | string
+  | number
+  | boolean
+  | null
+  | { [index: string]: Serializable | undefined }
+  | Serializable[]
+  | (Iterable<Serializable> & { length: number });
+
 // const obfuscationPassword = 'Qe2wZcFYG5eFdSefWb27shstk2eUnNI39';
 
 // export async function encrypt(password: string, secrets: Serializable): Promise<string> {

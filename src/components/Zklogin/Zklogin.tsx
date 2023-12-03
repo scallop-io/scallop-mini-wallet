@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useZkLogin } from '@/contexts';
 import type { FC } from 'react';
 import './zklogin.scss';
-import { useZkLogin } from '@/contexts';
 
 type ZkloginProps = {};
 

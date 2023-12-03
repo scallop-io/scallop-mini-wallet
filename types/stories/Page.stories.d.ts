@@ -1,11 +1,11 @@
 /// <reference types="react" />
 import type { StoryObj } from '@storybook/react';
 declare const meta: {
-    title: string;
-    component: import("react").FC<{}>;
-    parameters: {
-        layout: string;
-    };
+  title: string;
+  component: import('react').FC<{}>;
+  parameters: {
+    layout: string;
+  };
 };
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -5,6 +5,6 @@ export type Serializable =
   | number
   | boolean
   | null
-  | { [index: string]: Serializable | undefined; }
+  | { [index: string]: Serializable | undefined }
   | Serializable[]
-  | (Iterable<Serializable> & { length: number; });
+  | (Iterable<Serializable> & { length: number });

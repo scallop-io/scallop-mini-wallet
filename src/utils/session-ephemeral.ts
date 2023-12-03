@@ -1,8 +1,8 @@
-import { CredentialData } from "@/stores/types/session";
+import { CredentialData } from '@/stores/types/session';
 import { getFromSessionStorage, removeFromSessionStorage, setToSessionStorage } from './storage';
-import { NetworkType } from "@/stores/types";
+import { NetworkType } from '@/stores/types';
 
-const SESSION_KEY = 'credentials_session'
+const SESSION_KEY = 'credentials_session';
 
 export const getEphemeralValue = (): Record<NetworkType, CredentialData> | null => {
   const data = getFromSessionStorage<Record<NetworkType, CredentialData>>(SESSION_KEY);

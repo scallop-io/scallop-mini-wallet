@@ -75,7 +75,7 @@ export const connectionLocalStorageSlice: CreateConnectionLocalStorageSlice = (s
           store.connectionState.network = network;
           return store;
         });
-      }
+      },
     },
   };
 };

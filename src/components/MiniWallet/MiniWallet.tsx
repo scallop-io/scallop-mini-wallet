@@ -1,10 +1,10 @@
 import './miniwallet.scss';
-import React, { useEffect } from 'react';
+import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Portfolio } from '@/components/Portfolio';
 import { Zklogin } from '@/components/Zklogin';
+import { ConnectionProvider, ZkLoginProvider, useZkLogin } from '@/contexts';
 import type { FC } from 'react';
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ConnectionProvider, ZkLoginProvider, useConnection, useNetwork, useZkLogin } from "@/contexts";
 type MiniWalletContainerProps = {};
 
 const queryClient = new QueryClient({
@@ -31,9 +31,19 @@ type MiniWalletProps = {};
 
 export const MiniWallet: FC<MiniWalletProps> = () => {
   const { address } = useZkLogin();
-  return (
-    <div className="miniwallet-container">  
-      {address ? <Portfolio /> : <Zklogin />}
-    </div>
-  )
-}
+  // const { address, login, logout, isLoggedIn } = useZkLogin();
+
+  // const handleLogin = useCallback(async () => {
+  //   await login();
+  // }, []);
+
+  // const handleLogout = useCallback(() => {
+  //   logout();
+  // }, []);
+
+  // const handleButtonClick = useCallback(
+  //   () => (isLoggedIn ? handleLogout() : handleLogin()),
+  //   [isLoggedIn]
+  // );
+  return <div className="miniwallet-container">{address ? <Portfolio /> : <Zklogin />}</div>;
+};

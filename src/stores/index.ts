@@ -1,9 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist, subscribeWithSelector } from 'zustand/middleware';
-import {
-  connectionLocalStorageSlice,
-  initialConnectionLocalStorageState,
-} from '@/stores/slices';
+import { connectionLocalStorageSlice, initialConnectionLocalStorageState } from '@/stores/slices';
 import { type LocalStorageState } from '@/stores/types';
 
 export * from '@/stores/slices';
@@ -34,6 +31,6 @@ export const useLocalStorage = create<LocalStorageState>()(
           },
         }
       )
-    ),
+    )
   )
 );
