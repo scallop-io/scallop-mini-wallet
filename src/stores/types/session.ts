@@ -1,5 +1,5 @@
 import { type ExportedKeypair } from '@mysten/sui.js/cryptography';
-import { NetworkType } from './connection';
+import type { NetworkType } from './connection';
 
 export type CredentialData = {
   ephemeralKeyPair: ExportedKeypair;

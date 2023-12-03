@@ -10,8 +10,8 @@ import { base64url, decodeJwt } from 'jose';
 import { v4 as uuidV4 } from 'uuid';
 import { getDB, settingsKeys } from '@/utils/db';
 import { zkLoginProviderDataMap } from './provider';
-import type { getZkLoginSignature } from '@mysten/zklogin';
 import type { ZkLoginProvider } from './provider';
+import type { getZkLoginSignature } from '@mysten/zklogin';
 import type { PublicKey } from '@mysten/sui.js/cryptography';
 
 export function prepareZkLogin(currentEpoch: number) {

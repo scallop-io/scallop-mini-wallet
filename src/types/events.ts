@@ -1,5 +1,5 @@
-import { NetworkType } from '@/stores/types';
-import { CredentialData } from '@/stores/types/session';
+import type { NetworkType } from '@/stores/types';
+import type { CredentialData } from '@/stores/types/session';
 
 export enum BroadcastEvents {
   LOGOUT = 'logout',

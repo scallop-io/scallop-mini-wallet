@@ -1,9 +1,11 @@
 import './miniwallet.scss';
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Zklogin } from '@/components/Zklogin';
 import { Portfolio } from '@/components/Portfolio';
-import { LoginButton } from '@/components/LoginButton';
-import { ConnectionProvider, ZkLoginProvider, useNetwork, useZkLogin } from '@/contexts';
+import { ConnectionProvider, ZkLoginProvider, useZkLogin } from '@/contexts';
+import { ModalProvider } from '@/contexts/modal';
+import { Modal } from '@/components/Modal';
 import type { FC } from 'react';
 type MiniWalletContainerProps = {};
 
@@ -20,7 +22,9 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
     <QueryClientProvider client={queryClient}>
       <ConnectionProvider>
         <ZkLoginProvider>
-          <MiniWallet />
+          <ModalProvider>
+            <MiniWallet />
+          </ModalProvider>
         </ZkLoginProvider>
       </ConnectionProvider>
     </QueryClientProvider>
@@ -38,11 +42,17 @@ export const MiniWallet: FC<MiniWalletProps> = () => {
     setCurrentNetwork('testnet');
   }, [])
   return (
+<<<<<<< HEAD
     <div>
       <div className="miniwallet-container">
         <Portfolio />
         {showBtn && <LoginButton />}
       </div>
+=======
+    <div className="miniwallet-container">
+      {address ? <Portfolio /> : <Zklogin />}
+      <Modal />
+>>>>>>> feat-update-wallet-ui
     </div>
   );
 };

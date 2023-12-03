@@ -1,6 +1,6 @@
-import { AccountType } from '@/accounts/Account';
+import type { JwtSerializedClaims } from '@/accounts/zklogin/zklogin';
+import type { AccountType } from '@/accounts/Account';
 import type { ZkLoginProvider } from '@/accounts/zklogin/provider';
-import { JwtSerializedClaims } from '@/accounts/zklogin/zklogin';
 
 export interface SerializedAccount {
   readonly id: string;

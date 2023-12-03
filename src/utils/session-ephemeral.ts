@@ -1,6 +1,6 @@
-import { CredentialData } from '@/stores/types/session';
 import { getFromSessionStorage, removeFromSessionStorage, setToSessionStorage } from './storage';
-import { NetworkType } from '@/stores/types';
+import type { NetworkType } from '@/stores/types';
+import type { CredentialData } from '@/stores/types/session';
 
 const SESSION_KEY = 'credentials_session';
 

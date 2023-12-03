@@ -1,24 +1,23 @@
-import { Summary } from './Summary';
+import Modal from './Modal';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Summary',
-  component: Summary,
+  title: 'Modal',
+  component: Modal,
   parameters: {
-    layout: 'centered',
+    layout: 'padded',
   },
   tags: ['autodocs'],
-  argTypes: {
-
-    balance: { control: 'number' },
-  },
-} satisfies Meta<typeof Summary>;
+} satisfies Meta<typeof Modal>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Normal: Story = {
   args: {
-    balance: 2500,
+    isOpen: true,
+    onCancel: () => {},
+    onConfirm: () => {},
+    message: 'Modal content',
   },
 };

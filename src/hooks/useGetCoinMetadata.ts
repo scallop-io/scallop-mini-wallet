@@ -1,5 +1,6 @@
-import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useConnectionClient } from '@/contexts';
+import type { UseQueryResult } from '@tanstack/react-query';
 import type { CoinMetadata } from '@mysten/sui.js/client';
 
 const useGetCoinMetadata = (

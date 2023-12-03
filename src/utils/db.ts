@@ -1,12 +1,12 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import type { SerializedAccount } from '@/types/account';
-import { getFromLocalStorage, setToLocalStorage } from '@/utils/storage';
 // @ts-ignore
 import { randomBytes } from 'crypto-browserify';
 import Dexie, { type Table } from 'dexie';
 import { exportDB, importDB } from 'dexie-export-import';
+import { getFromLocalStorage, setToLocalStorage } from '@/utils/storage';
+import type { SerializedAccount } from '@/types/account';
 
 const dbName = 'ScallopMiniWallet DB';
 const dbLocalStorageBackupKey = 'indexed-db-backup';

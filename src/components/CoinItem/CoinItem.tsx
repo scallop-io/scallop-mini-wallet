@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
+import './coinItem.scss';
 import BigNumber from 'bignumber.js';
 import { normalizeStructTag } from '@mysten/sui.js/utils';
+import { shortenAddress } from '@/utils';
 import { useCopyToClipboard, useGetCoinMetadata } from '@/hooks';
 import { numberWithCommas } from '@/utils/number';
-import './coinItem.scss';
-import { shortenAddress } from '@/utils';
 import { CoinIcon } from '@/components/CoinIcon';
 import { getCoinAddressFromType, getCoinNameFromType } from '@/utils/coin';
 

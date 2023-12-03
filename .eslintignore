@@ -1,2 +1,5 @@
 node_modules
 distnode --eval "fs.writeFileSync('.prettierrc','{}\n')"
+dist
+.storybook
+stories

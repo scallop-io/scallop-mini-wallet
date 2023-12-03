@@ -1,7 +1,7 @@
-import { NetworkType } from '@/stores';
 import { getFromSessionStorage, setToSessionStorage } from '@/utils/storage';
-import { NetworkEnvType } from './zklogin';
-import { SuiClient } from '@mysten/sui.js/dist/cjs/client';
+import type { SuiClient } from '@mysten/sui.js/dist/cjs/client';
+import type { NetworkType } from '@/stores';
+import type { NetworkEnvType } from './zklogin';
 
 type EpochCacheInfo = {
   epoch: number;
