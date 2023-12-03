@@ -2,6 +2,7 @@ import type { StateCreator, Mutate, StoreApi } from 'zustand';
 import type { ConnectionLocalStorageSlice } from '@/stores/types/connection';
 
 export type * from '@/stores/types/connection';
+export type * from '@/stores/types/session';
 
 export type CreateConnectionLocalStorageSlice = StateCreator<
   LocalStorageState,
