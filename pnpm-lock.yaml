@@ -196,6 +196,9 @@ devDependencies:
   rollup-plugin-peer-deps-external:
     specifier: ^2.2.4
     version: 2.2.4(rollup@4.6.1)
+  rollup-plugin-polyfill:
+    specifier: ^4.2.0
+    version: 4.2.0(rollup@4.6.1)
   rollup-plugin-postcss:
     specifier: ^4.0.2
     version: 4.0.2(postcss@8.4.31)
@@ -11609,6 +11612,15 @@ packages:
     resolution: {integrity: sha512-AWdukIM1+k5JDdAqV/Cxd+nejvno2FVLVeZ74NKggm3Q5s9cbbcOgUPGdbxPi4BXu7xGaZ8HG12F+thImYu/0g==}
     peerDependencies:
       rollup: '*'
+    dependencies:
+      rollup: 4.6.1
+    dev: true
+
+  /rollup-plugin-polyfill@4.2.0(rollup@4.6.1):
+    resolution: {integrity: sha512-6eeOyn7nr2/xUOtB+MhydvqLrNKcSybGneOuWA+t8Q4rR9NQyeapzwuu5n6nX8OFfY1WI1sHconAofaC44IpuA==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      rollup: ^2.67.0 || ^3.0.0 || ^4.0.0
     dependencies:
       rollup: 4.6.1
     dev: true

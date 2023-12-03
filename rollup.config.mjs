@@ -1,13 +1,14 @@
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import typescript from "@rollup/plugin-typescript";
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json'
-import dts from "rollup-plugin-dts";
-import packageJson from "./package.json" assert { type: "json" };
-import postcss from "rollup-plugin-postcss";
-import terser from "@rollup/plugin-terser";
+import dts from 'rollup-plugin-dts';
+import polyfill from 'rollup-plugin-polyfill';
+import packageJson from './package.json' assert { type: 'json' };
+import postcss from 'rollup-plugin-postcss';
+import terser from '@rollup/plugin-terser';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import tsConfig from './tsconfig.json' assert { type: "json" };
+import tsConfig from './tsconfig.json' assert { type: 'json' };
 export default [
   {
     input: "src/index.ts",
@@ -31,6 +32,7 @@ export default [
       postcss(),
       terser(),
       json(),
+      polyfill(['node-polyfill-webpack-plugin'])
     ],
   },
   {
