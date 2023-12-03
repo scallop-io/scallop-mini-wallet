@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/fum-is-chum"
   },
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "",
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
