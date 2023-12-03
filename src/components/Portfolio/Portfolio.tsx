@@ -8,23 +8,17 @@ import { useZkLogin } from '@/contexts';
 type PortfolioProps = {};
 
 const Portfolio: FC<PortfolioProps> = () => {
-  const {address} = useZkLogin();
-  const getAccountBalance = useGetAllBalances(address, 10 * 1000)
+  const { address } = useZkLogin();
+  const getAccountBalance = useGetAllBalances(address, 10 * 1000);
   useEffect(() => {
-    console.log(getAccountBalance)
-  })
+    console.log(getAccountBalance);
+  });
   return (
     <div className="portfolio-container">
       <Summary balance={25000} />
-      {
-        getAccountBalance.data?.map((item, index) => {
-          return <CoinItem
-          key={index}
-          coinType={item.coinType}
-          totalBalance={item.totalBalance}
-        />
-        })
-      }
+      {getAccountBalance.data?.map((item, index) => {
+        return <CoinItem key={index} coinType={item.coinType} totalBalance={item.totalBalance} />;
+      })}
     </div>
   );
 };

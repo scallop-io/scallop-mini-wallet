@@ -1,4 +1,4 @@
-import {MiniWalletContainer} from './MiniWallet';
+import { MiniWalletContainer } from './MiniWallet';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {

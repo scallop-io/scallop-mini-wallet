@@ -175,9 +175,8 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
       const account = (await (
         await getDB()
       ).accounts.get(ZK_ACCOUNT_ID)) as ZkLoginAccountSerialized;
-      console.log("HEST");
+      console.log('HEST');
       if (account) {
-
         setAddress(account.address);
         setIsLoggedIn(true);
       } else {
