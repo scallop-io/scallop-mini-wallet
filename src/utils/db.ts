@@ -4,37 +4,34 @@
 import Dexie, { type Table } from 'dexie';
 import { exportDB, importDB } from 'dexie-export-import';
 import { getFromLocalStorage, setToLocalStorage } from '@/utils/storage';
-import type { AccountType } from '@/accounts/Account';
 import type { SerializedAccount } from '@/types/account';
-
+import * as crypto from 'crypto';
 const dbName = 'ScallopMiniWallet DB';
 const dbLocalStorageBackupKey = 'indexed-db-backup';
 
 export const settingsKeys = {
   isPopulated: 'isPopulated',
+  masterSeed: 'masterSeed',
 };
-
 class DB extends Dexie {
   accounts!: Table<SerializedAccount, string>;
-  secrets!: Table<string, string>;
-  settings!: Table<{ value: boolean | number | null; setting: string; }, string>;
+  settings!: Table<{ value: string | boolean | number | null; setting: string; }, string>;
 
   constructor() {
     super(dbName);
     this.version(1).stores({
-      accounts: 'id, type, address, sourceID',
+      accounts: 'id, type, address',
       settings: 'setting',
-      secrets: 'name,value',
     });
-    this.version(2).upgrade((transaction) => {
-      const zkLoginType: AccountType = 'zkLogin';
-      transaction
-        .table('accounts')
-        .where({ type: 'zk' })
-        .modify((anAccount) => {
-          anAccount.type = zkLoginType;
-        });
-    });
+    // this.version(2).upgrade((transaction) => {
+    //   const zkLoginType: AccountType = 'zkLogin';
+    //   transaction
+    //     .table('accounts')
+    //     .where({ type: 'zk' })
+    //     .modify((anAccount) => {
+    //       anAccount.type = zkLoginType;
+    //     });
+    // });
   }
 }
 
@@ -57,6 +54,13 @@ async function init() {
       console.error(e);
     }
   }
+
+  const hasMasterSeed = !!(await db.settings.get(settingsKeys.masterSeed))?.value;
+  if(!hasMasterSeed) {
+    const masterSeed = crypto.randomBytes(32).toString('hex');
+    await db.settings.put({ setting: settingsKeys.masterSeed, value: masterSeed });
+  }
+
   if (!db.isOpen()) {
     await db.open();
   }

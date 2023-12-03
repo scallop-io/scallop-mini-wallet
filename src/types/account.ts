@@ -1,5 +1,6 @@
 import { AccountType } from "@/accounts/Account";
 import type { ZkLoginProvider } from "@/accounts/zklogin/provider";
+import { JwtSerializedClaims } from "@/accounts/zklogin/zklogin";
 
 export interface SerializedAccount {
   readonly id: string;
@@ -24,7 +25,7 @@ export interface ZkLoginAccountSerialized extends SerializedAccount {
   /**
    * obfuscated data that contains user info as it was in jwt
    */
-  claims: string;
+  claims: JwtSerializedClaims;
   /**
    * the addressSeed obfuscated
    */

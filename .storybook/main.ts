@@ -37,9 +37,13 @@ const config: StorybookConfig = {
     ],
   }),
   webpackFinal: async (config, { configType }) => {
-    if (config.resolve)
+    if (config.resolve) {
       config.resolve.plugins = [new TsconfigPathsPlugin()];
-  
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        crypto: require.resolve('crypto-browserify'),
+      };
+    }
     return config;
   }
 };

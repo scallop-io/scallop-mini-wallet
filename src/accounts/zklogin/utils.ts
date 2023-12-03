@@ -9,10 +9,10 @@ import {
   getZkLoginSignature
 } from '@mysten/zklogin';
 import { ZkLoginProvider, zkLoginProviderDataMap } from "./provider";
-import { base64url, jwtVerify } from 'jose';
+import { base64url, decodeJwt } from 'jose';
 import { randomBytes } from "@noble/hashes/utils";
-import crypto from 'crypto';
-import { getDB } from "@/utils/db";
+import * as crypto from 'crypto';
+import { getDB, settingsKeys } from "@/utils/db";
 import type { PublicKey } from "@mysten/sui.js/cryptography";
 import { v4 as uuidV4 } from 'uuid';
 
@@ -40,28 +40,28 @@ export function prepareZkLogin(currentEpoch: number) {
  * @param authUrl
  */
 async function tryGetRedirectURLSilently(authUrl: string) {
-	// if (!forceSilentGetProviders.includes(provider)) {
-	// 	return null;
-	// }
-	try {
-		const responseText = await (await fetch(authUrl)).text();
-		const redirectURLMatch =
-			/<meta\s*http-equiv="refresh"\s*(CONTENT|content)=["']0;\s?URL='(.*)'["']\s*\/?>/.exec(
-				responseText,
-			);
-		if (redirectURLMatch) {
-			const redirectURL = redirectURLMatch[2];
-			if (
-				// redirectURL.startsWith(`https://${Browser.runtime.id}.chromiumapp.org`) &&
-				redirectURL.includes('id_token=')
-			) {
-				return new URL(redirectURL.replaceAll('&amp;', '&'));
-			}
-		}
-	} catch (e) {
-		//do nothing
-	}
-	return null;
+  // if (!forceSilentGetProviders.includes(provider)) {
+  // 	return null;
+  // }
+  try {
+    const responseText = await (await fetch(authUrl, { mode: 'no-cors' })).text();
+    const redirectURLMatch =
+      /<meta\s*http-equiv="refresh"\s*(CONTENT|content)=["']0;\s?URL='(.*)'["']\s*\/?>/.exec(
+        responseText,
+      );
+    if (redirectURLMatch) {
+      const redirectURL = redirectURLMatch[2];
+      if (
+        // redirectURL.startsWith(`https://${Browser.runtime.id}.chromiumapp.org`) &&
+        redirectURL.includes('id_token=')
+      ) {
+        return new URL(redirectURL.replaceAll('&amp;', '&'));
+      }
+    }
+  } catch (e) {
+    //do nothing
+  }
+  return null;
 }
 
 export async function zkLoginAuthenticate({
@@ -93,15 +93,44 @@ export async function zkLoginAuthenticate({
   const authUrl = `${url}?${params.toString()}`;
   let responseURL: any;
   if (!prompt) {
-  	responseURL = await tryGetRedirectURLSilently(authUrl);
-    if(responseURL) {
+    responseURL = await tryGetRedirectURLSilently(authUrl);
+    if (responseURL) {
       const jwt = await fetchJwt(responseURL);
       return jwt;
     }
+  } else {
+
   }
   if (!responseURL) {
-    window.location.href = authUrl;
-    return;
+    // Open a new popup window for the authentication flow
+    const authWindow = window.open(authUrl, '_blank', 'width=500,height=600');
+    if (!authWindow) {
+      throw new Error('Failed to open authentication window');
+    }
+    // Poll the popup window to get the authentication response
+    const authResponse = await new Promise<string>((resolve, reject) => {
+      const intervalId = setInterval(() => {
+        try {
+          if (authWindow.closed) {
+            reject(new Error('Authentication window was closed'));
+          } else if (authWindow.location.href.startsWith(window.location.origin)) {
+            resolve(authWindow.location.href);
+            authWindow.close();
+          }
+        } catch (error) {
+          // Ignore DOMException: Blocked a frame with origin "http://localhost" from accessing a cross-origin frame.
+        }
+      }, 250);
+
+      // Stop polling if the window was closed
+      authWindow.onbeforeunload = () => {
+        clearInterval(intervalId);
+      };
+    });
+
+    // Extract the token from the authentication response
+    const token = await fetchJwt(authResponse);
+    return token;
   }
 }
 
@@ -120,28 +149,17 @@ export async function fetchSalt(jwtToken: string): Promise<string> {
   const db = await getDB();
 
   // Get the master seed from the database
-  let seed = await db.secrets.get('masterSeed');
-  if (!seed) {
-    seed = crypto.randomBytes(32).toString('hex'); // generate a new master seed if it doesn't exist
-    console.log(`masterSeed: ${seed}`)
-    if (!seed) {
-      throw new Error('Failed to generate master seed');
-    }
-    await db.secrets.put(seed, 'masterSeed');
-  }
+  const masterSeed = (await db.settings.get(settingsKeys.masterSeed))?.value as string;
+  const hasSeed = !!masterSeed;
+  if (!hasSeed)
+    throw new Error('Master seed is missing');
+  
 
-  let decoded;
-  try {
-    // Validate and decode the JWT
-    const encoder = new TextEncoder();
-    const seedUint8Array = encoder.encode(seed);
-    decoded = await jwtVerify(jwtToken, seedUint8Array);
-  } catch (err) {
-    throw new Error('Invalid JWT');
-  }
+  // TODO: Validate JWT
+  const decoded = decodeJwt(jwtToken);
 
   // Extract the iss, aud, and sub claims
-  const { iss, aud, sub } = decoded.payload;
+  const { iss, aud, sub } = decoded;
 
   // Use the iss and aud claims as the salt for the HKDF
   const salt = `${iss || ''}${aud || ''}`;
@@ -152,11 +170,10 @@ export async function fetchSalt(jwtToken: string): Promise<string> {
   // Derive the user salt using HKDF
   const userSalt = crypto
     .createHmac('sha256', salt)
-    .update(seed + info)
+    .update(masterSeed + info)
     .digest('hex');
 
-  console.log(`User salt: ${userSalt}`)
-  return userSalt;
+  return `0x${userSalt}`;
 }
 
 type WalletInputs = {

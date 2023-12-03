@@ -1,7 +1,3 @@
-import {
-	decrypt as metamaskDecrypt,
-	encrypt as metamaskEncrypt,
-} from '@metamask/browser-passworder';
 
 export type Serializable =
 	| string
@@ -14,21 +10,21 @@ export type Serializable =
     
 const obfuscationPassword = 'Qe2wZcFYG5eFdSefWb27shstk2eUnNI39';
 
-export async function encrypt(password: string, secrets: Serializable): Promise<string> {
-	return metamaskEncrypt(password, secrets);
-}
+// export async function encrypt(password: string, secrets: Serializable): Promise<string> {
+// 	return metamaskEncrypt(password, secrets);
+// }
 
-export async function decrypt<T extends Serializable>(
-	password: string,
-	ciphertext: string,
-): Promise<T> {
-	return (await metamaskDecrypt(password, ciphertext)) as T;
-}
+// export async function decrypt<T extends Serializable>(
+// 	password: string,
+// 	ciphertext: string,
+// ): Promise<T> {
+// 	return (await metamaskDecrypt(password, ciphertext)) as T;
+// }
 
-export function obfuscate(value: Serializable) {
-	return encrypt(obfuscationPassword, value);
-}
+// export function obfuscate(value: Serializable) {
+// 	return encrypt(obfuscationPassword, value);
+// }
 
-export function deobfuscate<T extends Serializable>(obfuscatedValue: string) {
-	return decrypt<T>(obfuscationPassword, obfuscatedValue);
-}
+// export function deobfuscate<T extends Serializable>(obfuscatedValue: string) {
+// 	return decrypt<T>(obfuscationPassword, obfuscatedValue);
+// }

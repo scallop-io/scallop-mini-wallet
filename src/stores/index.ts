@@ -19,7 +19,7 @@ export const useLocalStorage = create<LocalStorageState>()(
           ...connectionLocalStorageSlice(...args),
         }),
         {
-          name: 'sui-scallop-dapp',
+          name: 'scallop-mini-wallet',
           partialize: (state) =>
             Object.fromEntries(Object.entries(state).filter(([key]) => !key.endsWith('Actions'))),
           version: STORE_VERSION,

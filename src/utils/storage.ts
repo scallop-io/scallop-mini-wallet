@@ -1,5 +1,5 @@
 import { randomBytes } from "@noble/hashes/utils";
-import { Serializable, decrypt, encrypt } from "./cryptography";
+import { Serializable } from "./cryptography";
 
 const PASSWORD =
 	process.env.WALLET_KEYRING_PASSWORD ||
@@ -43,25 +43,24 @@ export function makeEphemeraPassword(rndPass: string) {
 	return `${PASSWORD}${rndPass}`;
 }
 
-export async function setToSessionStorageEncrypted<T extends Serializable>(key: string, value: T) {
-	const random = getRandomPassword();
-	setToSessionStorage(key, {
-		random,
-		data: await encrypt(makeEphemeraPassword(random), value),
-	});
-}
-export async function getEncryptedFromSessionStorage<T extends Serializable>(key: string) {
-	const encryptedData = getFromSessionStorage<{ random: string; data: string }>(key);
-	if (!encryptedData) {
-		return null;
-	}
-	try {
-		return decrypt<T>(makeEphemeraPassword(encryptedData.random), encryptedData.data);
-	} catch (e) {
-		return null;
-	}
-}
-
+// export async function setToSessionStorageEncrypted<T extends Serializable>(key: string, value: T) {
+// 	const random = getRandomPassword();
+// 	setToSessionStorage(key, {
+// 		random,
+// 		data: await encrypt(makeEphemeraPassword(random), value),
+// 	});
+// }
+// export async function getEncryptedFromSessionStorage<T extends Serializable>(key: string) {
+// 	const encryptedData = getFromSessionStorage<{ random: string; data: string }>(key);
+// 	if (!encryptedData) {
+// 		return null;
+// 	}
+// 	try {
+// 		return decrypt<T>(makeEphemeraPassword(encryptedData.random), encryptedData.data);
+// 	} catch (e) {
+// 		return null;
+// 	}
+// }
 
 export const removeFromSessionStorage = (key: string): void => {
   sessionStorage.removeItem(key);
