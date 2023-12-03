@@ -11,7 +11,7 @@ import {
 import { ZkLoginProvider, zkLoginProviderDataMap } from "./provider";
 import { base64url, jwtVerify } from 'jose';
 import { randomBytes } from "@noble/hashes/utils";
-import crypto from 'crypto';
+import crypto from 'crypto-browserify';
 import { getDB } from "@/utils/db";
 import type { PublicKey } from "@mysten/sui.js/cryptography";
 import { v4 as uuidV4 } from 'uuid';
@@ -123,6 +123,10 @@ export async function fetchSalt(jwtToken: string): Promise<string> {
   let seed = await db.secrets.get('masterSeed');
   if (!seed) {
     seed = crypto.randomBytes(32).toString('hex'); // generate a new master seed if it doesn't exist
+    console.log(`masterSeed: ${seed}`)
+    if (!seed) {
+      throw new Error('Failed to generate master seed');
+    }
     await db.secrets.put(seed, 'masterSeed');
   }
 
@@ -151,6 +155,7 @@ export async function fetchSalt(jwtToken: string): Promise<string> {
     .update(seed + info)
     .digest('hex');
 
+  console.log(`User salt: ${userSalt}`)
   return userSalt;
 }
 
