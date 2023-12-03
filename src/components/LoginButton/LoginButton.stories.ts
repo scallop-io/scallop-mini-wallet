@@ -1,14 +1,14 @@
-import { Zklogin } from './index';
+import { LoginButton } from './index';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   title: 'Zklogin',
-  component: Zklogin,
+  component: LoginButton,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Zklogin>;
+} satisfies Meta<typeof LoginButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

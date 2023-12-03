@@ -3,7 +3,6 @@ import type { Node, Explorer, Network } from '@/stores/slices/connection';
 export type NodeType = keyof typeof Node;
 export type ExplorerType = keyof typeof Explorer;
 export type NetworkType = keyof typeof Network;
-
 export interface ConnectionLocalStorageState {
   node: NodeType;
   customNode: string;

@@ -1,14 +1,14 @@
-import { CredentialData } from '@/stores/types/session';
-import { ZkLoginAccountSerialized } from '@/types/account';
-import { getCurrentEpoch } from './epoch';
-import { fetchSalt, prepareZkLogin, zkLoginAuthenticate } from './utils';
-// import { deobfuscate, obfuscate } from "@/utils/cryptography";
 import { decodeJwt } from 'jose';
-import { ZkLoginProvider } from './provider';
 import { computeZkLoginAddress, genAddressSeed } from '@mysten/zklogin';
 import { getEphemeralValue, setEphemeralValue } from '@/utils/session-ephemeral';
-import { NetworkType } from '@/stores';
-import { SuiClient } from '@mysten/sui.js/dist/cjs/client';
+import { getCurrentEpoch } from './epoch';
+import { fetchSalt, prepareZkLogin, zkLoginAuthenticate } from './utils';
+import type { ZkLoginAccountSerialized } from '@/types/account';
+import type { CredentialData } from '@/stores/types/session';
+// import { deobfuscate, obfuscate } from "@/utils/cryptography";
+import type { ZkLoginProvider } from './provider';
+import type { NetworkType } from '@/stores';
+import type { SuiClient } from '@mysten/sui.js/dist/cjs/client';
 
 export type JwtSerializedClaims = {
   email: string | null;
@@ -53,7 +53,6 @@ export const doLogin = async (
 
   const ephemeralValue: Record<NetworkType, CredentialData> = getEphemeralValue() || {
     mainnet: {} as CredentialData,
-    devnet: {} as CredentialData,
     testnet: {} as CredentialData,
   };
   ephemeralValue[networkEnv.network as NetworkType] = credentialsData;

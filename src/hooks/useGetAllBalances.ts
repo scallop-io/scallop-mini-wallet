@@ -18,7 +18,7 @@ const useGetAllBalances = (
       : ['hooks-sui-getAllBalances', parsedAddress],
     queryFn: async () =>
       parsedAddress ? await client.getAllBalances({ owner: parsedAddress }) : [],
-    retry: false,
+    retry: true,
     staleTime: Infinity,
     gcTime: 24 * 60 * 60 * 1000,
     refetchInterval,

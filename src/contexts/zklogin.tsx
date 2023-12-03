@@ -68,7 +68,11 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
   }, []);
 
   const runFunctionDecorator = useCallback(
-    <T extends Function>(callback: T, onErrorCallbacks: Array<(error: any) => void> = []): T => {
+    <T extends Function>(
+      callback: T,
+      onErrorCallbacks: Array<(error: any) => void> = [],
+      finallyCallbacks: Array<() => void> = []
+    ): T => {
       return (async (...args: any[]) => {
         try {
           return await callback(...args);
@@ -76,36 +80,49 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
           handleError(e);
           onErrorCallbacks.forEach((callback) => callback(e));
           throw e; // Re-throw the error after handling it
+        } finally {
+          finallyCallbacks.forEach((callback) => callback());
         }
       }) as any;
     },
     []
   );
 
-  const login = runFunctionDecorator(async () => {
-    let account = (await (await getDB()).accounts.get(ZK_ACCOUNT_ID)) as ZkLoginAccountSerialized;
-    setAddress(account.address);
-
-    if (!account) {
-      const newAccount = await createNew({
-        provider: 'google',
-      });
-
-      const db = await getDB();
-      db.accounts.put({
-        ...newAccount,
-        id: ZK_ACCOUNT_ID,
-      });
-
-      // await doLogin(newAccount as ZkLoginAccountSerialized, networkEnv);
-      account = newAccount as ZkLoginAccountSerialized;
-    }
-    await doLogin(account, networkEnv);
-    if (address !== account.address) {
+  const loadAccount = useCallback(async () => {
+    const account = (await (await getDB()).accounts.get(ZK_ACCOUNT_ID)) as
+      | ZkLoginAccountSerialized
+      | undefined;
+    if (account && account.address !== address) {
       setAddress(account.address);
-      setIsLoggedIn(true);
+      return account;
     }
-  }, [() => setIsLoggedIn(false)]);
+    return undefined;
+  }, []);
+
+  const login = runFunctionDecorator(
+    async () => {
+      let account = await loadAccount();
+
+      if (!account) {
+        const newAccount = await createNew({
+          provider: 'google',
+        });
+
+        const db = await getDB();
+        db.accounts.put({
+          ...newAccount,
+          id: ZK_ACCOUNT_ID,
+        });
+
+        // await doLogin(newAccount as ZkLoginAccountSerialized, networkEnv);
+        account = newAccount as ZkLoginAccountSerialized;
+      }
+      await doLogin(account, networkEnv);
+      setIsLoggedIn(true);
+    },
+    [() => setIsLoggedIn(false)],
+    [loadAccount]
+  );
 
   const resetAccount = useCallback(() => {
     clearEphemeralValue();
@@ -175,7 +192,6 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
       const account = (await (
         await getDB()
       ).accounts.get(ZK_ACCOUNT_ID)) as ZkLoginAccountSerialized;
-      console.log('HEST');
       if (account) {
         setAddress(account.address);
         setIsLoggedIn(true);

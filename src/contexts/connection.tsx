@@ -9,27 +9,50 @@ import {
   defaultNetwork,
 } from '@/stores';
 import type { FC, PropsWithChildren } from 'react';
-import type { NodeType, ExplorerType, NetworkType } from '@/stores';
+import type { NodeType, ExplorerType, NetworkType, Network } from '@/stores';
 export type { NodeType };
 
 type RpcNodes = {
-  [N in Node]: string;
+  [Network.mainnet]: {
+    [N in Node]: string;
+  };
+  [Network.testnet]: {
+    [N in Node]: string;
+  };
 };
 
 type Explorers = {
-  [K in ExplorerType]: string;
+  [Network.mainnet]: {
+    [K in ExplorerType]: string;
+  },
+  [Network.testnet]: {
+    [K in ExplorerType]: string;
+  },
 };
 
 // The fullnode url provided by each node serves as the network.
 export const RPC: RpcNodes = {
-  [Node.sui]: getFullnodeUrl('mainnet'),
-  [Node.custom]: '',
+  mainnet: {
+    [Node.sui]: getFullnodeUrl('mainnet'),
+    [Node.custom]: '',
+  },
+  testnet: {
+    [Node.sui]: getFullnodeUrl('testnet'),
+    [Node.custom]: '',
+  }
 };
 
 export const EXPLORERS: Explorers = {
-  [Explorer.official]: 'https://explorer.sui.io',
-  [Explorer.suivision]: 'https://suivision.xyz',
-  [Explorer.suiscan]: 'https://suiscan.xyz',
+  mainnet: {
+    [Explorer.official]: 'https://suiexplorer.com',
+    [Explorer.suivision]: 'https://suivision.xyz',
+    [Explorer.suiscan]: 'https://suiscan.xyz',
+  },
+  testnet: {
+    [Explorer.official]: 'https://suiexplorer.com',
+    [Explorer.suivision]: 'https://testnet.suivision.xyz',
+    [Explorer.suiscan]: 'https://suiscan.xyz/testnet',
+  },
 };
 
 export interface ConnectionContextInterface {
@@ -47,14 +70,14 @@ export interface ConnectionContextInterface {
 }
 
 export const ConnectionContext = createContext<ConnectionContextInterface>({
-  client: new SuiClient({ url: RPC[defaultNode] }),
-  currentRpc: RPC[defaultNode],
+  client: new SuiClient({ url: RPC[defaultNetwork][defaultNode] }),
+  currentRpc: RPC[defaultNetwork][defaultNode],
   currentNode: defaultNode,
   setCurrentNode: () => undefined,
   customNode: '',
   setCustomNode: () => undefined,
   currentExplorer: defaultExplorer,
-  currentExplorerUrl: EXPLORERS[defaultExplorer],
+  currentExplorerUrl: EXPLORERS[defaultNetwork][defaultExplorer],
   setExplorer: () => undefined,
   currentNetwork: defaultNetwork,
   setCurrentNetwork: () => undefined,
@@ -68,7 +91,7 @@ export const ConnectionProvider: FC<PropsWithChildren<ConnectionProviderProps>> 
   const { connectionState, connectActions } = useLocalStorage();
 
   const currentRpc = useMemo(() => {
-    return RPC[connectionState.node];
+    return RPC[connectionState.network][connectionState.node];
   }, [connectionState.node]);
 
   const client = useMemo(() => new SuiClient({ url: currentRpc }), [currentRpc]);
@@ -78,7 +101,7 @@ export const ConnectionProvider: FC<PropsWithChildren<ConnectionProviderProps>> 
   }, []);
 
   const explorerUrl: string = useMemo(
-    () => EXPLORERS[connectionState.explorer],
+    () => EXPLORERS[connectionState.network][connectionState.explorer],
     [connectionState.explorer]
   );
 
