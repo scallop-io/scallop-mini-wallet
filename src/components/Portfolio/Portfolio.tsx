@@ -2,7 +2,7 @@ import './portfolio.scss';
 import React, { useEffect, type FC, useState, useMemo, useCallback } from 'react';
 import logo from '@/assets/images/basic/logo.png';
 import { CoinItem } from '@/components/CoinItem';
-import useGetAllBalances from '@/hooks/useGetAllBalances';
+import useGetAllBalances from '@/hooks/sui/useGetAllBalances';
 import { useZkLogin } from '@/contexts';
 import { shortenAddress } from '@/utils';
 import { ArrowLeftOnRectangle, ClipboardDocument } from '@/assets';
