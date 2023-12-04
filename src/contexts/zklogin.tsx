@@ -79,7 +79,6 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
         } catch (e) {
           handleError(e);
           onErrorCallbacks.forEach((callback) => callback(e));
-          throw e; // Re-throw the error after handling it
         } finally {
           finallyCallbacks.forEach((callback) => callback());
         }
