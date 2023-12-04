@@ -62,7 +62,13 @@ const Portfolio: FC<PortfolioProps> = () => {
         </div>
       </div>
       <div className="body">
-        <div className="coin-list">
+        <div
+          className="coin-list"
+          style={{
+            justifyContent: noCoinsFound ? 'center' : 'flex-start',
+            alignItems: noCoinsFound ? 'center' : 'flex-start',
+          }}
+        >
           {noCoinsFound ? (
             <div className="no-coin">
               <span>No coins found </span>

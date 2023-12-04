@@ -97,9 +97,9 @@
 
     & .coin-list {
       display: flex;
-      justify-content: center;
-      align-items: center;
+      flex-direction: column;
       height: 100%;
+      padding-right: 11px;
 
       & .no-coin {
         display: flex;
