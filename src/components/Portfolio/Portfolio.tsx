@@ -1,6 +1,6 @@
 import './portfolio.scss';
 import React, { useEffect, type FC, useState, useMemo } from 'react';
-import logo from '@/assets/basic/logo.png';
+import logo from '@/assets/images/basic/logo.png';
 import { CoinItem } from '@/components/CoinItem';
 import useGetAllBalances from '@/hooks/useGetAllBalances';
 import { useZkLogin } from '@/contexts';

@@ -1,3 +1,4 @@
+import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
@@ -33,6 +34,7 @@ export default [
       }),
       peerDepsExternal(),
       typescript({ tsconfig: './tsconfig.json' }),
+      tsConfigPaths(),
       nodeResolve({ browser: true, preferBuiltins: false, mainFields: ['browser'] }),
       postcss(),
       image(),
