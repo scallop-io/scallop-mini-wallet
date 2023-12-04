@@ -23,14 +23,16 @@
         width: auto;
         font-size: 12px;
   
-        &.logout-container > svg {
-          width: 20px;
-          height: 20px;
-          color: red;
-  
-          &:hover {
-            cursor: pointer;
-            opacity: 0.9;
+        &.logout-container {
+          & svg {
+            width: 20px;
+            height: 20px;
+            color: red;
+    
+            &:hover {
+              cursor: pointer;
+              opacity: 0.9;
+            }
           }
         }
       }

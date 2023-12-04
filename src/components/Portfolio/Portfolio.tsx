@@ -1,5 +1,5 @@
 import './portfolio.scss';
-import React, { useEffect, type FC, useState, useMemo } from 'react';
+import React, { useEffect, type FC, useState, useMemo, useCallback } from 'react';
 import logo from '@/assets/images/basic/logo.png';
 import { CoinItem } from '@/components/CoinItem';
 import useGetAllBalances from '@/hooks/useGetAllBalances';
@@ -12,15 +12,15 @@ import { useModal } from '@/contexts/modal';
 type PortfolioProps = {};
 
 const Portfolio: FC<PortfolioProps> = () => {
-  const { address, logout } = useZkLogin();
+  const { address, isLoggedIn, logout } = useZkLogin();
   const { showDialog } = useModal();
   const getAccountBalanceQuery = useGetAllBalances(address, 10 * 1000);
   const [isCopied, setIsCopied] = useState(false);
   const copyAddress = useCopyToClipboard(address, setIsCopied);
 
   const accountBalance = useMemo(() => {
-    return getAccountBalanceQuery.data ?? [];
-  }, [getAccountBalanceQuery.isFetching]);
+    return isLoggedIn ? getAccountBalanceQuery.data ?? [] : [];
+  }, [getAccountBalanceQuery.isFetching, isLoggedIn]);
 
   useEffect(() => {
     if (isCopied) {
@@ -31,14 +31,16 @@ const Portfolio: FC<PortfolioProps> = () => {
     return () => {};
   }, [isCopied]);
 
-  const handleLogout = () => {
-    showDialog({
-      content: 'Are you sure you want to logout?',
-      confirmButtonLabel: 'Yes',
-      cancelButtonLabel: 'No',
-      onConfirm: logout,
-    });
-  };
+  const handleLogout = useCallback(() => {
+    if (isLoggedIn) {
+      showDialog({
+        content: 'Are you sure you want to logout?',
+        confirmButtonLabel: 'Yes',
+        cancelButtonLabel: 'No',
+        onConfirm: logout,
+      });
+    }
+  }, []);
   return (
     <div className="portfolio-container">
       <div className="header">
@@ -51,7 +53,9 @@ const Portfolio: FC<PortfolioProps> = () => {
             {isCopied ? 'Address copied!' : <AddressDisplay address={address} />}
           </div>
           <div className="logout-container">
-            <ArrowLeftOnRectangle onClick={handleLogout} />
+            <span className={isLoggedIn ? '' : 'disabled'}>
+              <ArrowLeftOnRectangle onClick={handleLogout} />
+            </span>
           </div>
         </div>
       </div>
