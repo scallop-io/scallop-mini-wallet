@@ -22,6 +22,8 @@ const Portfolio: FC<PortfolioProps> = () => {
     return isLoggedIn ? getAccountBalanceQuery.data ?? [] : [];
   }, [getAccountBalanceQuery.isFetching, isLoggedIn]);
 
+  const noCoinsFound = useMemo(() => accountBalance.length === 0, [accountBalance]);
+
   useEffect(() => {
     if (isCopied) {
       const timer = setTimeout(() => setIsCopied(false), 500);
@@ -60,15 +62,26 @@ const Portfolio: FC<PortfolioProps> = () => {
         </div>
       </div>
       <div className="body">
-        {accountBalance.map((item, index) => {
-          return <CoinItem key={index} coinType={item.coinType} totalBalance={item.totalBalance} />;
-        })}
+        <div className="coin-list">
+          {noCoinsFound ? (
+            <div>
+              <span className="no-coin">No coins found </span>
+            </div>
+          ) : (
+            accountBalance.map((item, index) => {
+              if (!item) return null;
+              return (
+                <CoinItem key={index} coinType={item.coinType} totalBalance={item.totalBalance} />
+              );
+            })
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-const AddressDisplay: FC<{ address: string }> = ({ address }) => (
+const AddressDisplay: FC<{ address: string; }> = ({ address }) => (
   <div>
     {shortenAddress(address)}
     <ClipboardDocument />
