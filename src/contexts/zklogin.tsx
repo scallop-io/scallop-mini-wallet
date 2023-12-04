@@ -102,8 +102,11 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
 
   const login = runFunctionDecorator(
     async () => {
-      let account = await loadAccount();
-      if (!account) {
+      const account = await loadAccount();
+      if (account) {
+        await doLogin(account, networkEnv);
+        return;
+      } else {
         const [newAccount, jwt] = await createNew({
           provider: 'google',
         });
@@ -115,10 +118,7 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
         });
 
         // await doLogin(newAccount as ZkLoginAccountSerialized, networkEnv);
-        account = newAccount as ZkLoginAccountSerialized;
-        await doLogin(account, networkEnv, jwt);
-      } else {
-        await doLogin(account, networkEnv);
+        await doLogin(newAccount as ZkLoginAccountSerialized, networkEnv, jwt);
       }
     },
     [() => setIsLoggedIn(false)],

@@ -33,7 +33,7 @@ export const explorers = Object.keys(Explorer) as Array<ExplorerType>;
 export const defaultNode = Node.sui;
 // Define default explorer here.
 export const defaultExplorer = Explorer.suivision;
-export const defaultNetwork = Network.mainnet;
+export const defaultNetwork = Network.testnet;
 
 export const initialConnectionLocalStorageState = {
   connectionState: {
