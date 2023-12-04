@@ -1,9 +1,10 @@
 {
   "name": "@fum-is-chum/scallop-mini-wallet",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/fum-is-chum"
+    "registry": "https://npm.pkg.github.com/fum-is-chum",
+    "access": "public"
   },
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "",
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
@@ -16,7 +17,7 @@
     "test": "jest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "publish-package": "pnpm run rollup && npm publish --branch-name=master"
+    "publish-package": "pnpm run rollup && npm publish"
   },
   "keywords": [
     "react",
