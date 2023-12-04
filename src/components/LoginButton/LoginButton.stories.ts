@@ -23,7 +23,7 @@ export const Normal: Story = {
     label: 'Sign in with Google',
     provider: 'google',
     onClick: () => {
-      alert("TEST")
+      alert('TEST');
     },
     isLoading: true,
   },

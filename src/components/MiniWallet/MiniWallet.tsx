@@ -1,6 +1,7 @@
 import './miniwallet.scss';
 import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import classNames from 'classnames';
 import { Portfolio } from '@/components/Portfolio';
 import { ConnectionProvider, ZkLoginProvider, useZkLogin } from '@/contexts';
 import { ModalProvider } from '@/contexts/modal';
@@ -55,9 +56,14 @@ const MiniWallet: FC<MiniWalletProps> = () => {
 
   return (
     <div>
-      <div className="miniwallet-container">
-        <Portfolio />
-        {!isLoggedIn && (
+      <div
+        className={classNames(
+          isLoggedIn ? 'miniwallet-container' : 'miniwallet-container not-connected'
+        )}
+      >
+        {isLoggedIn ? (
+          <Portfolio />
+        ) : (
           <LoginButton
             label="Sign In with Google"
             provider="google"

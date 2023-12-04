@@ -50,11 +50,11 @@ const Portfolio: FC<PortfolioProps> = () => {
             <span>Scallop</span>
           </div>
           <div className="address" onClick={copyAddress}>
-            {isCopied ? 'Address copied!' : <AddressDisplay address={address} />}
+            {isLoggedIn && (isCopied ? 'Address copied!' : <AddressDisplay address={address} />)}
           </div>
           <div className="logout-container">
-            <span className={isLoggedIn ? '' : 'disabled'}>
-              <ArrowLeftOnRectangle onClick={handleLogout} />
+            <span className={isLoggedIn ? '' : 'hidden'}>
+              <ArrowLeftOnRectangle onClick={() => (isLoggedIn ? handleLogout() : '')} />
             </span>
           </div>
         </div>
@@ -68,7 +68,7 @@ const Portfolio: FC<PortfolioProps> = () => {
   );
 };
 
-const AddressDisplay: FC<{ address: string; }> = ({ address }) => (
+const AddressDisplay: FC<{ address: string }> = ({ address }) => (
   <div>
     {shortenAddress(address)}
     <ClipboardDocument />

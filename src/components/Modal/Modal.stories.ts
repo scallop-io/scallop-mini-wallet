@@ -7,7 +7,6 @@ const meta = {
   parameters: {
     layout: 'padded',
   },
-  
 } satisfies Meta<typeof Modal>;
 
 export default meta;

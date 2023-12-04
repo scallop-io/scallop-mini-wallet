@@ -16,6 +16,10 @@ code {
     monospace;
 }
 
+.hidden {
+  display: none;
+}
+
 .miniwallet-container {
   position: relative;
   max-width: 320px;
@@ -24,4 +28,13 @@ code {
   background-color: #252e3d;
   border-radius: 4px;
   padding: 0.5rem;
+}
+
+.not-connected {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }

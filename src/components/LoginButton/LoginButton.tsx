@@ -1,4 +1,3 @@
-
 import React, { useMemo, type FC } from 'react';
 import googleLogo from '@/assets/images/oauth-provider/google.svg';
 import type { ZkLoginProvider } from '@/accounts/zklogin/provider';
