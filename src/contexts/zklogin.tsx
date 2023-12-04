@@ -80,7 +80,9 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
           handleError(e);
           onErrorCallbacks.forEach((callback) => callback(e));
         } finally {
-          finallyCallbacks.forEach((callback) => callback());
+          for (const callback of finallyCallbacks) {
+            await callback();
+          }
         }
       }) as any;
     },
@@ -101,9 +103,8 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
   const login = runFunctionDecorator(
     async () => {
       let account = await loadAccount();
-
       if (!account) {
-        const newAccount = await createNew({
+        const [newAccount, jwt] = await createNew({
           provider: 'google',
         });
 
@@ -115,12 +116,13 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
 
         // await doLogin(newAccount as ZkLoginAccountSerialized, networkEnv);
         account = newAccount as ZkLoginAccountSerialized;
+        await doLogin(account, networkEnv, jwt);
+      } else {
+        await doLogin(account, networkEnv);
       }
-      await doLogin(account, networkEnv);
-      setIsLoggedIn(true);
     },
     [() => setIsLoggedIn(false)],
-    [loadAccount]
+    [loadAccount, () => setIsLoggedIn(true)]
   );
 
   const resetAccount = useCallback(() => {

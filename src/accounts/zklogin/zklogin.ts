@@ -28,7 +28,8 @@ export type NetworkEnvType = {
 
 export const doLogin = async (
   account: ZkLoginAccountSerialized,
-  networkEnv: NetworkEnvType
+  networkEnv: NetworkEnvType,
+  jwt: string | void
 ): Promise<CredentialData> => {
   const { provider, claims } = account;
   // TODO: deobfuscate
@@ -36,7 +37,9 @@ export const doLogin = async (
   const { sub, aud, iss } = claims;
   const epoch = await getCurrentEpoch(networkEnv);
   const { ephemeralKeyPair, nonce, randomness, maxEpoch } = prepareZkLogin(Number(epoch));
-  const jwt = await zkLoginAuthenticate({ provider, nonce, loginHint: sub });
+  if (!jwt) {
+    jwt = await zkLoginAuthenticate({ provider, nonce, loginHint: sub });
+  }
   if (!jwt) throw new Error('JWT is missing');
   const decodedJWT = decodeJwt(jwt);
   if (decodedJWT.aud !== aud || decodedJWT.sub !== sub || decodedJWT.iss !== iss) {
@@ -64,7 +67,7 @@ export const createNew = async ({
   provider,
 }: {
   provider: ZkLoginProvider;
-}): Promise<Omit<ZkLoginAccountSerialized, 'id'>> => {
+}): Promise<[Omit<ZkLoginAccountSerialized, 'id'>, string]> => {
   const jwt = await zkLoginAuthenticate({ provider, prompt: true });
   if (!jwt) throw new Error('JWT is missing');
 
@@ -89,24 +92,27 @@ export const createNew = async ({
   };
   const claimName = 'sub';
   const claimValue = decodedJWT.sub;
-  return {
-    type: 'zkLogin',
-    address: computeZkLoginAddress({
+  return [
+    {
+      type: 'zkLogin',
+      address: computeZkLoginAddress({
+        claimName,
+        claimValue,
+        iss: decodedJWT.iss,
+        aud,
+        userSalt: BigInt(salt),
+      }),
+      claims: claims,
+      salt: salt,
+      addressSeed: genAddressSeed(BigInt(salt), claimName, claimValue, aud).toString(),
+      provider,
+      publicKey: null,
+      nickname: claims.email || null,
+      createdAt: Date.now(),
       claimName,
-      claimValue,
-      iss: decodedJWT.iss,
-      aud,
-      userSalt: BigInt(salt),
-    }),
-    claims: claims,
-    salt: salt,
-    addressSeed: genAddressSeed(BigInt(salt), claimName, claimValue, aud).toString(),
-    provider,
-    publicKey: null,
-    nickname: claims.email || null,
-    createdAt: Date.now(),
-    claimName,
-  };
+    },
+    jwt,
+  ];
 };
 
 export const areCredentialsValid = (

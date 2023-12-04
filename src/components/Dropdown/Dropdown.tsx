@@ -48,12 +48,12 @@ interface DropdownState {
   contentRef: MutableRefObject<HTMLDivElement | null>;
 }
 
-type Actions = { type: ActionTypes.OpenDropdown; } | { type: ActionTypes.CloseDropdown; };
+type Actions = { type: ActionTypes.OpenDropdown } | { type: ActionTypes.CloseDropdown };
 
 const reducers: {
   [P in ActionTypes]: (
     state: DropdownState,
-    action: Extract<Actions, { type: P; }>
+    action: Extract<Actions, { type: P }>
   ) => DropdownState;
 } = {
   [ActionTypes.CloseDropdown]: (state) => {
@@ -171,7 +171,7 @@ type DropdownButtonPropsOwnControl = 'type' | 'onKeyDown' | 'onKeyUp' | 'onClick
 
 const DefaultDropdownButtonTag = 'button';
 
-const resolveType = (props: { type?: string; as?: unknown; }) => {
+const resolveType = (props: { type?: string; as?: unknown }) => {
   if (props.type) return props.type;
 
   const tag = props.as ?? 'button';

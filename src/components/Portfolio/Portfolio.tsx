@@ -64,8 +64,8 @@ const Portfolio: FC<PortfolioProps> = () => {
       <div className="body">
         <div className="coin-list">
           {noCoinsFound ? (
-            <div>
-              <span className="no-coin">No coins found </span>
+            <div className="no-coin">
+              <span>No coins found </span>
             </div>
           ) : (
             accountBalance.map((item, index) => {
@@ -81,7 +81,7 @@ const Portfolio: FC<PortfolioProps> = () => {
   );
 };
 
-const AddressDisplay: FC<{ address: string; }> = ({ address }) => (
+const AddressDisplay: FC<{ address: string }> = ({ address }) => (
   <div>
     {shortenAddress(address)}
     <ClipboardDocument />

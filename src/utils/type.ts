@@ -32,12 +32,12 @@ type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 export type XOR<T, U> = T | U extends __
   ? never
   : T extends __
-  ? U
-  : U extends __
-  ? T
-  : T | U extends object
-  ? (Without<T, U> & U) | (Without<U, T> & T)
-  : T | U;
+    ? U
+    : U extends __
+      ? T
+      : T | U extends object
+        ? (Without<T, U> & U) | (Without<U, T> & T)
+        : T | U;
 
 export type ReactTag = keyof JSX.IntrinsicElements | JSXElementConstructor<any>;
 
@@ -67,8 +67,8 @@ export type OwnProps<T extends ReactTag, TSlot> = {
 export type HasProperty<T extends object, K extends PropertyKey> = T extends never
   ? never
   : K extends keyof T
-  ? true
-  : never;
+    ? true
+    : never;
 
 // Conditionally override the `className`, to also allow for a function
 // if and only if the PropsOf<T> already defines `className`.
