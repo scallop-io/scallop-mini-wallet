@@ -40,7 +40,7 @@ const Portfolio: FC<PortfolioProps> = () => {
         onConfirm: logout,
       });
     }
-  }, []);
+  }, [isLoggedIn]);
   return (
     <div className="portfolio-container">
       <div className="header">
