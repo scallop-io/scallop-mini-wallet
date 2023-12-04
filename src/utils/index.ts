@@ -6,3 +6,6 @@ export * from './session-ephemeral';
 export * from './storage';
 export * from './sui';
 export * from './coin';
+export * from './type';
+export * from './data';
+export * from './document';

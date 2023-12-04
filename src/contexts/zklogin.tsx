@@ -166,20 +166,11 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
           break;
 
         case BroadcastEvents.LOGOUT: {
-          console.log('Logout Event');
           if (bcData.id === id) return;
+          console.log('Logout Event', console.log(bcData.id, id));
           resetAccount();
           setIsLoggedIn(false);
         }
-      }
-
-      // load data from session storage if exist
-      const cred = getEphemeralValue();
-      if (!cred) {
-        channel.postMessage({
-          event: BroadcastEvents.REQUEST_DATA,
-          id,
-        });
       }
 
       return () => {
@@ -188,7 +179,7 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
     };
   }, []);
 
-  // load account from db
+  // load account from db and jwt from session
   useEffect(() => {
     runFunctionDecorator(async () => {
       const account = (await (
@@ -196,13 +187,18 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
       ).accounts.get(ZK_ACCOUNT_ID)) as ZkLoginAccountSerialized;
       if (account) {
         setAddress(account.address);
-        // TODO: Currently we do not need to check if the account is valid because we do not need any signing
-        // const cred = getEphemeralValue();
-        // console.log(cred);
-        // if (cred) {
-        //   setIsLoggedIn(true);
-        // }
-        setIsLoggedIn(true);
+
+        // load data from session storage if exist
+        const cred = getEphemeralValue();
+        if (!cred) {
+          channel.postMessage({
+            event: BroadcastEvents.REQUEST_DATA,
+            id,
+          });
+        } else {
+          setIsLoggedIn(true);
+        }
+        // setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
       }

@@ -1,4 +1,3 @@
-
 import React, { useMemo, type FC } from 'react';
 import googleLogo from '@/assets/images/oauth-provider/google.svg';
 import type { ZkLoginProvider } from '@/accounts/zklogin/provider';
@@ -32,7 +31,7 @@ export const LoginButton: FC<LoginButtonProps> = ({
         {!isLoading && buttonLogo && <img src={buttonLogo} alt={label} />}
         <span className="btn-label">
           {!isLoading && label}
-          {isLoading && <span className="spinner">&#8987;</span>}
+          {isLoading && <span className="spinner spin-animation">&#8987;</span>}
         </span>
       </button>
     </div>

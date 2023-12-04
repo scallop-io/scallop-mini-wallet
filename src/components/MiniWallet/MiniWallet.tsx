@@ -1,12 +1,15 @@
-import './miniwallet.scss';
+import './miniWallet.scss';
 import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import classNames from 'classnames';
 import { Portfolio } from '@/components/Portfolio';
 import { ConnectionProvider, ZkLoginProvider, useZkLogin } from '@/contexts';
 import { ModalProvider } from '@/contexts/modal';
 import { Modal } from '@/components/Modal';
 import { LoginButton } from '@/components/LoginButton';
 import type { FC } from 'react';
+import '@/style.css';
+
 type MiniWalletContainerProps = {};
 
 const queryClient = new QueryClient({
@@ -54,19 +57,26 @@ const MiniWallet: FC<MiniWalletProps> = () => {
   }, []);
 
   return (
-    <div>
-      <div className="miniwallet-container">
-        <Portfolio />
-        {!isLoggedIn && (
-          <LoginButton
-            label="Sign In with Google"
-            provider="google"
-            onClick={onClick}
-            isLoading={loading}
-          />
+    <>
+      <div
+        className={classNames(
+          isLoggedIn ? 'miniwallet-container' : 'miniwallet-container not-connected'
+        )}
+      >
+        {isLoggedIn ? (
+          <Portfolio />
+        ) : (
+          <div>
+            <LoginButton
+              label="Sign In with Google"
+              provider="google"
+              onClick={onClick}
+              isLoading={loading}
+            />
+          </div>
         )}
         <Modal />
       </div>
-    </div>
+    </>
   );
 };

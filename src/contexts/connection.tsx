@@ -24,10 +24,10 @@ type RpcNodes = {
 type Explorers = {
   [Network.mainnet]: {
     [K in ExplorerType]: string;
-  },
+  };
   [Network.testnet]: {
     [K in ExplorerType]: string;
-  },
+  };
 };
 
 // The fullnode url provided by each node serves as the network.
@@ -39,7 +39,7 @@ export const RPC: RpcNodes = {
   testnet: {
     [Node.sui]: getFullnodeUrl('testnet'),
     [Node.custom]: '',
-  }
+  },
 };
 
 export const EXPLORERS: Explorers = {

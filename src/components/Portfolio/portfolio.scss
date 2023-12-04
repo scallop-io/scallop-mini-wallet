@@ -1,17 +1,23 @@
 .portfolio-container {
   width: 100%;
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  height: 100%;
 
   & .header {
+    position: absolute;
+    top: 0px;
+    left: 0px;
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     color: white;
+    background-color: #252e3d;
+    padding-bottom: .75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    border-bottom: 1px solid #e0e0e0;
 
     & div:first-child {
       width: 100%;
@@ -22,15 +28,17 @@
       & div {
         width: auto;
         font-size: 12px;
-  
-        &.logout-container > svg {
-          width: 20px;
-          height: 20px;
-          color: red;
-  
-          &:hover {
-            cursor: pointer;
-            opacity: 0.9;
+
+        &.logout-container {
+          & svg {
+            width: 20px;
+            height: 20px;
+            color: red;
+
+            &:hover {
+              cursor: pointer;
+              opacity: 0.9;
+            }
           }
         }
       }
@@ -42,12 +50,12 @@
         justify-content: center;
         align-items: center;
         gap: 8px;
-  
+
         & img {
           width: 20px;
           height: 20px;
         }
-  
+
         & span {
           font-size: 12px;
           font-weight: 600;
@@ -82,10 +90,25 @@
   }
 
   & .body {
-    border-top: 1px solid #e0e0e0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 4px;
+    position: relative;
+    top: 52px;
+    height: calc(100% - 52px);
+    overflow-y: auto;
+
+    & .coin-list {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 4px;
+
+      & .no-coin {
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+      }
+    }
+
   }
 }
