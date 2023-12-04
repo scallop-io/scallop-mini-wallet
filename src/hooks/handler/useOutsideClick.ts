@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
-import { useDocumentEvent } from '@/app/hooks';
-import { isFocusableElement, FocusableMode } from '@/app/utils';
+import { useDocumentEvent } from '@/hooks';
+import { isFocusableElement, FocusableMode } from '@/utils';
 import type { MutableRefObject } from 'react';
 
 type Container = MutableRefObject<HTMLElement | null> | HTMLElement | null;

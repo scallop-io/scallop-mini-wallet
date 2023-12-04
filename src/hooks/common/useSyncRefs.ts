@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { useEvent } from '@/app/hooks';
+import { useEvent } from '@/hooks';
 
 const Optional = Symbol();
 

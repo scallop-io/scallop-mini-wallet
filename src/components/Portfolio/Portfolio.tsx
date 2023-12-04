@@ -6,7 +6,7 @@ import useGetAllBalances from '@/hooks/sui/useGetAllBalances';
 import { useZkLogin } from '@/contexts';
 import { shortenAddress } from '@/utils';
 import { ArrowLeftOnRectangle, ClipboardDocument } from '@/assets';
-import { useCopyToClipboard } from '@/hooks';
+import { useCopyToClipboard } from '@/hooks/common';
 import { useModal } from '@/contexts/modal';
 
 type PortfolioProps = {};

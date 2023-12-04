@@ -31,7 +31,7 @@ export const LoginButton: FC<LoginButtonProps> = ({
         {!isLoading && buttonLogo && <img src={buttonLogo} alt={label} />}
         <span className="btn-label">
           {!isLoading && label}
-          {isLoading && <span className="spinner">&#8987;</span>}
+          {isLoading && <span className="spinner spin-animation">&#8987;</span>}
         </span>
       </button>
     </div>

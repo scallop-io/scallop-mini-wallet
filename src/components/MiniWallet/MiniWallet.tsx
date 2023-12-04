@@ -8,6 +8,8 @@ import { ModalProvider } from '@/contexts/modal';
 import { Modal } from '@/components/Modal';
 import { LoginButton } from '@/components/LoginButton';
 import type { FC } from 'react';
+import '@/index.css';
+
 type MiniWalletContainerProps = {};
 
 const queryClient = new QueryClient({
