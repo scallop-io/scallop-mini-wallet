@@ -166,6 +166,8 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
           break;
 
         case BroadcastEvents.LOGOUT: {
+          console.log('Logout Event');
+          if (bcData.id === id) return;
           resetAccount();
           setIsLoggedIn(false);
         }
@@ -194,6 +196,12 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
       ).accounts.get(ZK_ACCOUNT_ID)) as ZkLoginAccountSerialized;
       if (account) {
         setAddress(account.address);
+        // TODO: Currently we do not need to check if the account is valid because we do not need any signing
+        // const cred = getEphemeralValue();
+        // console.log(cred);
+        // if (cred) {
+        //   setIsLoggedIn(true);
+        // }
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);

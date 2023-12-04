@@ -14,7 +14,7 @@ export type CoinIconProps = {
 
 const CoinIcon: React.FC<CoinIconProps> = ({ iconUrl, coinName }) => {
   let imageURL = iconUrl ?? '';
-  console.log('coinName', coinName);
+  // console.log('coinName', coinName);
   if (!iconUrl) {
     switch (coinName) {
       case 'sui':

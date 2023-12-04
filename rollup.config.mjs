@@ -1,9 +1,10 @@
+import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
 import dts from 'rollup-plugin-dts';
-``;
+import image from '@rollup/plugin-image';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import postcss from 'rollup-plugin-postcss';
 import terser from '@rollup/plugin-terser';
@@ -33,8 +34,10 @@ export default [
       }),
       peerDepsExternal(),
       typescript({ tsconfig: './tsconfig.json' }),
+      tsConfigPaths(),
       nodeResolve({ browser: true, preferBuiltins: false, mainFields: ['browser'] }),
       postcss(),
+      image(),
       terser(),
     ],
   },
