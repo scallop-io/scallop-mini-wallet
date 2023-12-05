@@ -1,6 +1,10 @@
 import { create } from 'zustand';
 import { devtools, persist, subscribeWithSelector } from 'zustand/middleware';
-import { connectionLocalStorageSlice, initialConnectionLocalStorageState } from '@/stores/slices';
+import {
+  coinTypeLocalStorageSlice,
+  connectionLocalStorageSlice,
+  initialConnectionLocalStorageState,
+} from '@/stores/slices';
 import { type LocalStorageState } from '@/stores/types';
 
 export * from '@/stores/slices';
@@ -14,6 +18,7 @@ export const useLocalStorage = create<LocalStorageState>()(
       persist(
         (...args) => ({
           ...connectionLocalStorageSlice(...args),
+          ...coinTypeLocalStorageSlice(...args),
         }),
         {
           name: 'scallop-mini-wallet',

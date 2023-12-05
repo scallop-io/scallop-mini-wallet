@@ -1,8 +1,9 @@
 import type { StateCreator, Mutate, StoreApi } from 'zustand';
 import type { ConnectionLocalStorageSlice } from '@/stores/types/connection';
+import type { CoinTypeLocalStorageSlice } from './coinType';
 
 export type * from '@/stores/types/connection';
-export type * from '@/stores/types/session';
+export type * from '@/stores/types/coinType';
 
 export type CreateConnectionLocalStorageSlice = StateCreator<
   LocalStorageState,
@@ -11,8 +12,14 @@ export type CreateConnectionLocalStorageSlice = StateCreator<
   ConnectionLocalStorageSlice
 >;
 
-export type LocalStorageState = ConnectionLocalStorageSlice;
+export type CreateCoinTypeLocalStorageSlice = StateCreator<
+  LocalStorageState,
+  Mis,
+  [],
+  CoinTypeLocalStorageSlice
+>;
 
+export type LocalStorageState = ConnectionLocalStorageSlice & CoinTypeLocalStorageSlice;
 export type LocalStorageStateCreatorArgs = {
   setState: Get<Mutate<StoreApi<LocalStorageState>, Mis>, 'setState', undefined>;
   getState: Get<Mutate<StoreApi<LocalStorageState>, Mis>, 'getState', undefined>;

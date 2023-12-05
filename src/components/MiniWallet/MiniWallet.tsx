@@ -1,4 +1,4 @@
-import './miniwallet.scss';
+import './miniWallet.scss';
 import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import classNames from 'classnames';
@@ -8,8 +8,11 @@ import { ModalProvider } from '@/contexts/modal';
 import { Modal } from '@/components/Modal';
 import { LoginButton } from '@/components/LoginButton';
 import { ChevronRight } from '@/assets';
+import { DbProvider } from '@/contexts/db';
+import { ZkAccountProvider, useZkAccounts } from '@/contexts/accounts';
 import type { FC } from 'react';
 import '@/style.css';
+import type { ZkLoginAccountSerialized } from '@/types';
 
 type MiniWalletContainerProps = {};
 
@@ -25,11 +28,15 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ConnectionProvider>
-        <ZkLoginProvider>
-          <ModalProvider>
-            <MiniWallet />
-          </ModalProvider>
-        </ZkLoginProvider>
+        <DbProvider>
+          <ZkAccountProvider>
+            <ZkLoginProvider>
+              <ModalProvider>
+                <MiniWallet />
+              </ModalProvider>
+            </ZkLoginProvider>
+          </ZkAccountProvider>
+        </DbProvider>
       </ConnectionProvider>
     </QueryClientProvider>
   );
@@ -37,6 +44,7 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
 
 type MiniWalletProps = {};
 const MiniWallet: FC<MiniWalletProps> = () => {
+  const { accounts, currentAccount, switchAccount, createNewAccount } = useZkAccounts();
   const { isLoggedIn, login } = useZkLogin();
   const [loading, setLoading] = useState(false);
   const [hide, setHide] = useState(false);
@@ -44,19 +52,36 @@ const MiniWallet: FC<MiniWalletProps> = () => {
   // const { setCurrentNetwork } = useNetwork();
   //TODO: Allow user to select network
 
-  const onClick = useCallback(async () => {
+  const onLoginButtonClick = useCallback(async () => {
     try {
       setLoading(true);
-      await login();
+      if (!currentAccount) {
+        const [newAcccount, jwt] = await createNewAccount();
+        await login(newAcccount as ZkLoginAccountSerialized, jwt);
+      } else {
+        await login(currentAccount);
+      }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentAccount]);
 
   useEffect(() => {
-    // setCurrentNetwork('testnet');
-    console.log(isLoggedIn);
-  }, []);
+    // TODO: Allow user to select account
+    if (accounts && accounts?.length > 0) {
+      switchAccount(accounts[0].id);
+    }
+  }, [accounts]);
+
+  // const onCreateNewClick = useCallback(async () => {
+  //   try {
+  //     setLoading(true);
+  //     const [newAcccount, jwt] = await createNewAccount();
+  //     await login(newAcccount as ZkLoginAccountSerialized, jwt);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   return (
     <div className="main" style={{ transform: hide ? 'translate(-100%)' : '' }}>
@@ -72,7 +97,7 @@ const MiniWallet: FC<MiniWalletProps> = () => {
             <LoginButton
               label="Sign In with Google"
               provider="google"
-              onClick={onClick}
+              onClick={onLoginButtonClick}
               isLoading={loading}
             />
           </div>

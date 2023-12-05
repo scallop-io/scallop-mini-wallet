@@ -8,43 +8,51 @@ import React, {
   useState,
 } from 'react';
 import { v4 as uuid } from 'uuid';
-import { createNew, doLogin } from '@/accounts/zklogin/zklogin';
+import { getZkLoginSignature } from '@mysten/zklogin';
+import { toSerializedSignature } from '@mysten/sui.js/cryptography';
+import { areCredentialsValid, doLogin, generateProofs } from '@/accounts/zklogin/zklogin';
 import { BroadcastEvents } from '@/types/events';
-import { getDB } from '@/utils/db';
 import {
   clearEphemeralValue,
+  exportEphemeralValues,
   getEphemeralValue,
+  importEphemeralValues,
   setEphemeralValue,
 } from '@/utils/session-ephemeral';
+import { fromExportedKeypair, getCurrentEpoch } from '@/accounts/zklogin';
 import { useConnection, useConnectionClient } from './connection';
+import { useZkAccounts } from './accounts';
 import type { BroadcastEventData } from '@/types/events';
 import type { ZkLoginAccountSerialized } from '@/types/account';
 import type { FC, PropsWithChildren } from 'react';
+import type { TransactionBlock } from '@mysten/sui.js/transactions';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 
 export interface ZkLoginContextInterface {
   logout: () => void;
-  login: () => Promise<void>;
+  login: (account: ZkLoginAccountSerialized, jwt?: string) => Promise<void>;
+  signAndSend: (
+    account: ZkLoginAccountSerialized,
+    txb: TransactionBlock
+  ) => Promise<SuiTransactionBlockResponse | void>;
   isLoggedIn: boolean;
-  address: string;
   error: string;
 }
 
 export const ZkLoginContext = createContext<ZkLoginContextInterface>({
   logout: () => undefined,
   login: async () => undefined,
+  signAndSend: async () => undefined,
   isLoggedIn: false,
-  address: '',
   error: '',
 });
 
 type ZkLoginProviderProps = {};
 
-const ZK_ACCOUNT_ID = 'zkAccount';
-
 export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ children }) => {
   const client = useConnectionClient();
+  const { address } = useZkAccounts();
   const { currentNetwork: network } = useConnection();
-  const [address, setAddress] = useState<string | undefined>();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>();
   const channel = useRef(new BroadcastChannel('scallop-mini-wallet')).current;
@@ -89,55 +97,114 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
     []
   );
 
-  const loadAccount = useCallback(async () => {
-    const account = (await (await getDB()).accounts.get(ZK_ACCOUNT_ID)) as
-      | ZkLoginAccountSerialized
-      | undefined;
-    if (account && account.address !== address) {
-      setAddress(account.address);
-      return account;
-    }
-    return undefined;
-  }, []);
-
-  const login = runFunctionDecorator(
-    async () => {
-      const account = await loadAccount();
-      if (account) {
-        await doLogin(account, networkEnv);
-        return;
-      } else {
-        const [newAccount, jwt] = await createNew({
-          provider: 'google',
-        });
-
-        const db = await getDB();
-        db.accounts.put({
-          ...newAccount,
-          id: ZK_ACCOUNT_ID,
-        });
-
+  const login = useCallback(
+    runFunctionDecorator(
+      async (account: ZkLoginAccountSerialized, jwt?: string) => {
         // await doLogin(newAccount as ZkLoginAccountSerialized, networkEnv);
-        await doLogin(newAccount as ZkLoginAccountSerialized, networkEnv, jwt);
-      }
-    },
-    [() => setIsLoggedIn(false)],
-    [loadAccount, () => setIsLoggedIn(true)]
+        await doLogin(account, networkEnv, jwt);
+
+        setIsLoggedIn(true);
+      },
+      [() => setIsLoggedIn(false)],
+      []
+    ),
+    []
   );
 
-  const resetAccount = useCallback(() => {
-    clearEphemeralValue();
-    setAddress(undefined);
-  }, []);
+  const logout = useCallback(
+    (emit: boolean = true) => {
+      if (address) clearEphemeralValue(address);
+      setIsLoggedIn(false);
+      if (emit) {
+        channel.postMessage({
+          id,
+          event: BroadcastEvents.LOGOUT,
+        });
+      }
+    },
+    [address]
+  );
 
-  const logout = useCallback(() => {
-    resetAccount();
-    setIsLoggedIn(false);
-    channel.postMessage({
-      id,
-      event: BroadcastEvents.LOGOUT,
-    });
-  }, []);
+  const signData = runFunctionDecorator(
+    async (account: ZkLoginAccountSerialized, digest: Uint8Array) => {
+      if (!account || !address) {
+        setError('Please login first');
+        return;
+      }
+
+      const currentEpoch = await getCurrentEpoch(networkEnv);
+      const credentials = getEphemeralValue(address);
+      if (!credentials) {
+        setError('Please login first');
+        return;
+      }
+
+      let credentialsData = credentials[network];
+      if (!credentialsData) {
+        setError('Please login first');
+        return;
+      }
+
+      if (!areCredentialsValid(currentEpoch, networkEnv.network, credentialsData)) {
+        credentialsData = await doLogin(account, networkEnv, credentialsData.jwt);
+      }
+
+      const { ephemeralKeyPair, proofs: storedProofs, maxEpoch, jwt, randomness } = credentialsData;
+      const keyPair = fromExportedKeypair(ephemeralKeyPair);
+      let proofs = storedProofs;
+      if (!proofs) {
+        proofs = await generateProofs(
+          account,
+          jwt,
+          BigInt(randomness),
+          maxEpoch,
+          keyPair.getPublicKey()
+        );
+        credentialsData.proofs = proofs;
+        // store the proofs to avoid creating them again
+        const newEphemeralValue = getEphemeralValue(address);
+        if (!newEphemeralValue) {
+          // this should never happen
+          throw new Error('Missing data, account is locked');
+        }
+        newEphemeralValue[network] = credentialsData;
+        setEphemeralValue(address, newEphemeralValue);
+      }
+
+      const userSignature = toSerializedSignature({
+        signature: await keyPair.sign(digest),
+        signatureScheme: keyPair.getKeyScheme(),
+        publicKey: keyPair.getPublicKey(),
+      });
+
+      return getZkLoginSignature({
+        inputs: { ...proofs, addressSeed: address },
+        maxEpoch,
+        userSignature,
+      });
+    },
+    [],
+    []
+  );
+
+  const signAndSend = runFunctionDecorator(
+    async (account: ZkLoginAccountSerialized, txb: TransactionBlock) => {
+      const digest = await txb.build({ client });
+      const signature = await signData(account as ZkLoginAccountSerialized, digest);
+      if (!signature) {
+        throw new Error('Error on generating signature');
+      }
+
+      txb.setSenderIfNotSet(account.address);
+
+      return client.executeTransactionBlock({
+        transactionBlock: digest,
+        signature,
+      });
+    },
+    [],
+    []
+  );
 
   // subscribe to broadcast channel
   useEffect(() => {
@@ -152,7 +219,7 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
             channel.postMessage({
               event: BroadcastEvents.CRED_DATA,
               target: bcData.id,
-              data: getEphemeralValue(),
+              data: exportEphemeralValues(),
             } as BroadcastEventData);
           }
           break;
@@ -160,7 +227,7 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
         case BroadcastEvents.CRED_DATA:
           {
             if (bcData.target === id) {
-              setEphemeralValue(bcData.data);
+              importEphemeralValues(bcData.data);
               setIsLoggedIn(true);
             }
           }
@@ -169,8 +236,7 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
         case BroadcastEvents.LOGOUT: {
           if (bcData.id === id) return;
           console.log('Logout Event', console.log(bcData.id, id));
-          resetAccount();
-          setIsLoggedIn(false);
+          logout(false);
         }
       }
 
@@ -180,40 +246,14 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
     };
   }, []);
 
-  // load account from db and jwt from session
-  useEffect(() => {
-    runFunctionDecorator(async () => {
-      const account = (await (
-        await getDB()
-      ).accounts.get(ZK_ACCOUNT_ID)) as ZkLoginAccountSerialized;
-      if (account) {
-        setAddress(account.address);
-
-        // load data from session storage if exist
-        const cred = getEphemeralValue();
-        if (!cred) {
-          channel.postMessage({
-            event: BroadcastEvents.REQUEST_DATA,
-            id,
-          });
-        } else {
-          setIsLoggedIn(true);
-        }
-        // setIsLoggedIn(true);
-      } else {
-        setIsLoggedIn(false);
-      }
-    }, [() => setIsLoggedIn(false)])();
-  }, []);
-
   return (
     <ZkLoginContext.Provider
       value={{
-        address: address ?? '',
         isLoggedIn: isLoggedIn,
         error: error ?? '',
         login,
         logout,
+        signAndSend,
       }}
     >
       {children}
@@ -222,11 +262,10 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
 };
 
 export const useZkLogin = () => {
-  const { address, isLoggedIn, error, login, logout } = useContext(ZkLoginContext);
+  const { isLoggedIn, error, login, logout } = useContext(ZkLoginContext);
 
   // Return the context value directly without using useMemo
   return {
-    address,
     isLoggedIn,
     error,
     login,
