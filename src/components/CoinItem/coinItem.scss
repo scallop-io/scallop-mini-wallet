@@ -73,7 +73,7 @@
         align-items: center;
         color: #7ca6b2;
       }
-      & div:last-child {
+      & div:nth-child(3) {
         display: none;
       }
     }

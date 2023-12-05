@@ -4,13 +4,15 @@ import { normalizeStructTag } from '@mysten/sui.js/utils';
 import logo from '@/assets/images/basic/logo.png';
 import { CoinItem } from '@/components/CoinItem';
 import useGetAllBalances from '@/hooks/sui/useGetAllBalances';
-import { useNetwork, useZkLogin } from '@/contexts';
+import { useZkLogin } from '@/contexts';
 import { getCoinNameFromType, shortenAddress } from '@/utils';
 import { ArrowLeftOnRectangle, ClipboardDocument } from '@/assets';
 import { useCopyToClipboard } from '@/hooks/common';
 import { useModal } from '@/contexts/modal';
-import { DEFAULT_COINS } from '@/constants/coins';
+import AdjustmentHorizontal from '@/assets/AdjustmentHorizontal';
+import { ManageToken } from '@/components/ManageToken';
 import { useZkAccounts } from '@/contexts/accounts';
+import { useLocalCoinType } from '@/contexts/coinType';
 import type { CoinBalance } from '@mysten/sui.js/client';
 
 type PortfolioProps = {};
@@ -18,10 +20,11 @@ type PortfolioProps = {};
 const Portfolio: FC<PortfolioProps> = () => {
   const { address } = useZkAccounts();
   const { isLoggedIn, logout } = useZkLogin();
+  const { coinTypes } = useLocalCoinType();
   const { showDialog } = useModal();
-  const { currentNetwork } = useNetwork();
   const getAccountBalanceQuery = useGetAllBalances(address, 10 * 1000);
   const [isCopied, setIsCopied] = useState(false);
+  const [isManageToken, setIsManageToken] = useState(false);
   const copyAddress = useCopyToClipboard(address ?? '', setIsCopied);
 
   const accountBalance = useMemo(() => {
@@ -29,15 +32,38 @@ const Portfolio: FC<PortfolioProps> = () => {
       let coinBalances = getAccountBalanceQuery.data ?? [];
 
       if (coinBalances.length === 0) {
-        coinBalances = [...DEFAULT_COINS[currentNetwork]];
+        coinBalances = [
+          ...coinTypes
+            .filter((coin) => coin.active)
+            .map((coin) => ({
+              coinType: coin.coinType,
+              totalBalance: '0',
+              coinObjectCount: 0,
+              lockedBalance: {},
+            })),
+        ];
       } else {
         const balanceCoinTypes = coinBalances.map((coinBalance) =>
           normalizeStructTag(coinBalance.coinType)
         );
-        const newCoins = DEFAULT_COINS[currentNetwork].filter(
-          (coin) => !balanceCoinTypes.includes(coin.coinType)
-        );
-        coinBalances = [...coinBalances, ...newCoins];
+        const newCoins = [
+          ...coinTypes
+            .filter((coin) => coin.active && !balanceCoinTypes.includes(coin.coinType))
+            .map((coin) => ({
+              coinType: coin.coinType,
+              totalBalance: '0',
+              coinObjectCount: 0,
+              lockedBalance: {},
+            })),
+        ].filter((coin) => !balanceCoinTypes.includes(coin.coinType));
+        coinBalances = [
+          ...coinBalances.filter((coin) =>
+            coinTypes.find(
+              (val) => val.coinType === normalizeStructTag(coin.coinType) && val.active
+            )
+          ),
+          ...newCoins,
+        ];
       }
 
       coinBalances.sort((a: CoinBalance, b: CoinBalance) => {
@@ -49,7 +75,7 @@ const Portfolio: FC<PortfolioProps> = () => {
       return coinBalances;
     }
     return [];
-  }, [getAccountBalanceQuery.isFetching, isLoggedIn]);
+  }, [getAccountBalanceQuery.isFetching, isLoggedIn, isManageToken]);
 
   useEffect(() => {
     if (isCopied) {
@@ -70,6 +96,10 @@ const Portfolio: FC<PortfolioProps> = () => {
       });
     }
   }, [isLoggedIn]);
+
+  const handleManageTokenList = useCallback(() => {
+    setIsManageToken(true);
+  }, [isManageToken]);
   return (
     <div className="portfolio-container">
       <div className="header">
@@ -90,13 +120,25 @@ const Portfolio: FC<PortfolioProps> = () => {
         </div>
       </div>
       <div className="body">
-        <div className="coin-list">
-          {accountBalance.map((item, index) => {
-            return (
-              <CoinItem key={index} coinType={item.coinType} totalBalance={item.totalBalance} />
-            );
-          })}
-        </div>
+        {isManageToken ? (
+          <ManageToken handleBack={() => setIsManageToken(false)} />
+        ) : (
+          <>
+            <div className="coin-list-manage">
+              <button onClick={handleManageTokenList}>
+                <AdjustmentHorizontal />
+                Manage Token List
+              </button>
+            </div>
+            <div className="coin-list">
+              {accountBalance.map((item, index) => {
+                return (
+                  <CoinItem key={index} coinType={item.coinType} totalBalance={item.totalBalance} />
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

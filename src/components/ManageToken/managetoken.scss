@@ -1,0 +1,118 @@
+.managetoken-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  height: calc(100%);
+  overflow-y: auto;
+  background-color: transparent;
+
+  & .managetoken-header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 8px 8px 8px;
+
+    & div:first-child {
+      width: 16px;
+      height: 16px;
+      color: white;
+
+      & svg:hover {
+        cursor: pointer;
+        opacity: 0.9;
+      }
+    }
+
+    & div:last-child {
+      width: 100%;
+
+      & input {
+        width: 100%;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        border:1px solid #9cd0dd;
+        background-color: transparent;
+        transition: all 0.2s ease-in-out;
+        color: white;
+        padding: 4px;
+
+        &:hover {
+          cursor: pointer;
+          opacity: 0.9;
+        }
+
+        &:focus {
+          outline: none;
+        }
+
+        &::placeholder {
+          color: white;
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+
+  & .managetoken-body {
+    height: calc(100%);
+    
+    & .token-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      padding-left: 8px;
+      padding-right: 8px;
+      gap: 8px;
+
+      &:hover {
+        background-color: rgba($color: #fff, $alpha: 0.1);
+      }
+
+      & .coinitem-container{
+        &:hover {
+          background-color: none !important;
+          background: none !important;
+          cursor: default !important;
+        }
+
+        padding-left: 0px;
+        padding-right: 0px;
+      }
+    }
+  }
+
+  & .managetoken-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+
+    & button {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 0.5em 1em;
+      font-size: 12px;
+      font-weight: 500;
+      color: black;
+      background-color: #9cd0dd;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        cursor: pointer;
+        opacity: 0.9;
+      }
+
+      &:active {
+        background-color: #8bc0cc;
+        color: black;
+      }
+    }
+  }
+}

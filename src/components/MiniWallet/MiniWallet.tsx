@@ -1,4 +1,4 @@
-import './miniWallet.scss';
+import './miniwallet1.scss';
 import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import classNames from 'classnames';
@@ -10,6 +10,7 @@ import { LoginButton } from '@/components/LoginButton';
 import { ChevronRight } from '@/assets';
 import { DbProvider } from '@/contexts/db';
 import { ZkAccountProvider, useZkAccounts } from '@/contexts/accounts';
+import { LocalCoinTypeProvider } from '@/contexts/coinType';
 import type { FC } from 'react';
 import '@/style.css';
 import type { ZkLoginAccountSerialized } from '@/types';
@@ -29,13 +30,15 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
     <QueryClientProvider client={queryClient}>
       <ConnectionProvider>
         <DbProvider>
-          <ZkAccountProvider>
-            <ZkLoginProvider>
-              <ModalProvider>
-                <MiniWallet />
-              </ModalProvider>
-            </ZkLoginProvider>
-          </ZkAccountProvider>
+          <LocalCoinTypeProvider>
+            <ZkAccountProvider>
+              <ZkLoginProvider>
+                <ModalProvider>
+                  <MiniWallet />
+                </ModalProvider>
+              </ZkLoginProvider>
+            </ZkAccountProvider>
+          </LocalCoinTypeProvider>
         </DbProvider>
       </ConnectionProvider>
     </QueryClientProvider>

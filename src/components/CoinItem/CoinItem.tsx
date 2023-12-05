@@ -10,10 +10,15 @@ import { getCoinAddressFromType, getCoinNameFromType } from '@/utils/coin';
 
 export type CoinItemProps = {
   coinType: string;
-  totalBalance: string;
+  totalBalance?: string;
+  withPrice?: boolean;
 };
 
-export const CoinItem: React.FC<CoinItemProps> = ({ coinType, totalBalance }: CoinItemProps) => {
+export const CoinItem: React.FC<CoinItemProps> = ({
+  coinType,
+  totalBalance,
+  withPrice = true,
+}: CoinItemProps) => {
   const [isCopied, setIsCopied] = React.useState(false);
   const coinAddress = useMemo(() => {
     return getCoinAddressFromType(coinType);
@@ -22,7 +27,7 @@ export const CoinItem: React.FC<CoinItemProps> = ({ coinType, totalBalance }: Co
   const coinMetadata = useGetCoinMetadata(normalizeStructTag(coinType), 10000);
 
   const coinBalance = useMemo(() => {
-    return new BigNumber(totalBalance).shiftedBy(-1 * (coinMetadata.data?.decimals ?? 0));
+    return new BigNumber(totalBalance ?? 0).shiftedBy(-1 * (coinMetadata.data?.decimals ?? 0));
   }, [coinMetadata.data?.decimals, totalBalance]);
 
   const coinName = useMemo(() => {
@@ -45,16 +50,20 @@ export const CoinItem: React.FC<CoinItemProps> = ({ coinType, totalBalance }: Co
         <div className="info">
           <div>
             <span>{coinName}</span>
-            <span>{numberWithCommas(coinBalance.toString())}</span>
+            {totalBalance && <span>{coinBalance.toFixed(4)}</span>}
           </div>
-          <div>
-            <span>≈ ${}</span>
-            <span>${numberWithCommas(coinBalance.times(1).toString())}</span>
-          </div>
-          <div>
-            <span>{isCopied ? 'Address copied' : 'Click to copy address'}</span>
-            <span>{shortenAddress(coinAddress, 5, 4)}</span>
-          </div>
+          {withPrice && (
+            <>
+              <div>
+                <span>≈ ${}</span>
+                <span>${numberWithCommas(coinBalance.times(1).toString())}</span>
+              </div>
+              <div>
+                <span>{isCopied ? 'Address copied' : 'Click to copy address'}</span>
+                <span>{shortenAddress(coinAddress, 5, 4)}</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

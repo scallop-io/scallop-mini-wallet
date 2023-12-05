@@ -1,3 +1,4 @@
+import { DEFAULT_COINS } from '@/constants/coins';
 import type {
   CoinTypeLocalStorageState,
   CreateCoinTypeLocalStorageSlice,
@@ -6,7 +7,26 @@ import type {
 
 export const intialCoinTypeLocalStorageState = {
   localCoinTypeState: {
-    coinTypes: [],
+    coinTypes: {
+      mainnet: DEFAULT_COINS.mainnet
+        .map((x) => {
+          if (x) return { ...x, active: true };
+          return null;
+        })
+        .filter((x) => x),
+      testnet: DEFAULT_COINS.testnet
+        .map((x) => {
+          if (x) return { ...x, active: true };
+          return null;
+        })
+        .filter((x) => x),
+      devnet: DEFAULT_COINS.devnet
+        .map((x) => {
+          if (x) return { ...x, active: true };
+          return null;
+        })
+        .filter((x) => x),
+    },
   } as CoinTypeLocalStorageState,
 };
 
@@ -14,18 +34,18 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
   return {
     ...intialCoinTypeLocalStorageState,
     localCoinTypeActions: {
-      addType: (coinType: string) => {
+      addType: (network: string, coinType: string) => {
         setState((state: any) => {
           const store = { ...state };
-          store.localCoinTypeState.coinTypes.push({ coinType, active: true });
+          store.localCoinTypeState.coinTypes[network].push({ coinType, active: true });
           return store;
         });
       },
-      setActive: (coinType: string) => {
+      setActive: (network: string, coinType: string) => {
         setState((state: any) => {
           const store = { ...state };
-          if (store && store.localCoinTypeState.coinTypes) {
-            const s = (store.localCoinTypeState.coinTypes as LocalCoinType[]).find(
+          if (store && store.localCoinTypeState.coinTypes[network]) {
+            const s = (store.localCoinTypeState.coinTypes[network] as LocalCoinType[]).find(
               (x) => x.coinType === coinType
             );
             if (s) s.active = true;
@@ -33,11 +53,11 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
           return store;
         });
       },
-      setInactive: (coinType: string) => {
+      setInactive: (network: string, coinType: string) => {
         setState((state: any) => {
           const store = { ...state };
-          if (store && store.localCoinTypeState.coinTypes) {
-            const s = (store.localCoinTypeState.coinTypes as LocalCoinType[]).find(
+          if (store && store.localCoinTypeState.coinTypes[network]) {
+            const s = (store.localCoinTypeState.coinTypes[network] as LocalCoinType[]).find(
               (x) => x.coinType === coinType
             );
             if (s) s.active = false;

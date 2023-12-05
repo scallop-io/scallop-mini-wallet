@@ -7,6 +7,7 @@ import React, {
   useContext,
 } from 'react';
 import { useLocalStorage, type LocalCoinType } from '@/stores';
+import { useNetwork } from './connection';
 
 export interface LocalCoinTypeContextInterface {
   coinTypes: LocalCoinType[];
@@ -22,31 +23,44 @@ export const LocalCoinTypeContext = createContext<LocalCoinTypeContextInterface>
   setInactive: () => undefined,
 });
 
-type LocalCoinProviderProps = {};
+type LocalCoinTypeProviderProps = {};
 
-export const LocalCoinProvider: FC<PropsWithChildren<LocalCoinProviderProps>> = ({ children }) => {
+export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderProps>> = ({
+  children,
+}) => {
   const { localCoinTypeState, localCoinTypeActions } = useLocalStorage();
+  const { currentNetwork } = useNetwork();
 
   const coinTypes = useMemo(() => {
     return localCoinTypeState.coinTypes;
   }, [localCoinTypeState.coinTypes]);
 
-  const addCoinType = useCallback((coinType: string) => {
-    return localCoinTypeActions.addType(coinType);
-  }, []);
+  const addCoinType = useCallback(
+    (coinType: string) => {
+      return localCoinTypeActions.addType(currentNetwork, coinType);
+    },
+    [currentNetwork]
+  );
 
-  const setActive = useCallback((coinType: string) => {
-    return localCoinTypeActions.setActive(coinType);
-  }, []);
+  const setActive = useCallback(
+    (coinType: string) => {
+      return localCoinTypeActions.setActive(currentNetwork, coinType);
+    },
+    [currentNetwork]
+  );
 
-  const setInactive = useCallback((coinType: string) => {
-    return localCoinTypeActions.setInactive(coinType);
-  }, []);
+  const setInactive = useCallback(
+    (coinType: string) => {
+      return localCoinTypeActions.setInactive(currentNetwork, coinType);
+    },
+    [currentNetwork]
+  );
 
+  const currentCoinTypes = useMemo(() => coinTypes[currentNetwork], [currentNetwork, coinTypes]);
   return (
     <LocalCoinTypeContext.Provider
       value={{
-        coinTypes: coinTypes,
+        coinTypes: currentCoinTypes,
         addCoinType,
         setActive,
         setInactive,

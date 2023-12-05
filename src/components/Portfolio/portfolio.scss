@@ -92,14 +92,51 @@
   & .body {
     position: relative;
     top: 52px;
-    height: calc(100% - 52px);
+    max-height: calc(100% - 52px);
     overflow-y: auto;
+
+    & .coin-list-manage {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-self: center;
+      padding: 10px 14px 10px 10px;
+
+      & button {
+        width: 100%;
+        height: 100%;
+        border: 1px solid #9cd0dd;
+        color: white;
+        background-color: transparent;
+        border-radius: 4px;
+        padding: 8px;
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        align-items: center;
+
+        & svg {
+          width: 16px;
+          height: 16px;
+        }
+
+        &:hover {
+          cursor: pointer;
+          background-color: #9cd0dd;
+          color: black;
+        }
+
+        &:active {
+          background-color: #8bc0cc;
+          color: black;
+        }
+      }
+    }
 
     & .coin-list {
       display: flex;
       flex-direction: column;
       height: 100%;
-      padding-right: 11px;
 
       & .no-coin {
         display: flex;

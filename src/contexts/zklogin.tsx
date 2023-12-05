@@ -246,6 +246,19 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
     };
   }, []);
 
+  useEffect(() => {
+    if (!address) return;
+    const cred = getEphemeralValue(address);
+    if (!cred) {
+      channel.postMessage({
+        id,
+        event: BroadcastEvents.REQUEST_DATA,
+      });
+    } else {
+      setIsLoggedIn(true);
+    }
+  }, [address]);
+
   return (
     <ZkLoginContext.Provider
       value={{
