@@ -92,7 +92,7 @@
   & .body {
     position: relative;
     top: 52px;
-    height: calc(100% - 52px);
+    max-height: calc(100% - 52px);
     overflow-y: auto;
 
     & .coin-list-manage {
@@ -137,7 +137,6 @@
       display: flex;
       flex-direction: column;
       height: 100%;
-      padding-right: 11px;
 
       & .no-coin {
         display: flex;

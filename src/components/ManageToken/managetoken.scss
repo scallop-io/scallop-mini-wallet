@@ -12,7 +12,7 @@
     justify-content: start;
     align-items: center;
     gap: 8px;
-    padding: 8px;
+    padding: 12px 8px 8px 8px;
 
     & div:first-child {
       width: 16px;
@@ -60,9 +60,29 @@
   & .managetoken-body {
     height: calc(100%);
     
-    & div {
+    & .token-row {
       display: flex;
       flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      padding-left: 8px;
+      padding-right: 8px;
+      gap: 8px;
+
+      &:hover {
+        background-color: rgba($color: #fff, $alpha: 0.1);
+      }
+
+      & .coinitem-container{
+        &:hover {
+          background-color: none !important;
+          background: none !important;
+          cursor: default !important;
+        }
+
+        padding-left: 0px;
+        padding-right: 0px;
+      }
     }
   }
 

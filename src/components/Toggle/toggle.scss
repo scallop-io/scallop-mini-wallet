@@ -1,0 +1,55 @@
+.toggle-container {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: flex-start;
+
+    & label {
+        display: flex;
+        cursor: pointer;
+        align-items: center;
+        gap: 1px;
+
+        & > .toggle-button {
+            display: flex;
+            gap: 2px;
+
+            & > input {
+                display: none;
+            }
+
+            & .trail {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: fit-content;
+                border-radius: 9999px;
+                border: 1px solid white;
+                width: 36px;
+                padding: 3px 3px;
+                background-color: #606060;
+
+                transition: all 0.15s ease-in-out;
+
+                &.checked {
+                    background-color: #9cd0dd;
+                }
+
+                & .dot {
+                    display: block;
+                    height: 14px;
+                    width: 14px;
+                    // left: 0;
+                    border-radius: 50%;
+                    background-color: white;
+                    transition: all 0.15s ease-in-out;
+
+                    &.checked {
+                        transform: translateX(100%);
+                    }
+                }
+            }
+        }
+    }
+}

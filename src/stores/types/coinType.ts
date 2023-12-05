@@ -4,13 +4,17 @@ export type LocalCoinType = {
 };
 
 export interface CoinTypeLocalStorageState {
-  coinTypes: LocalCoinType[];
+  coinTypes: {
+    mainnet: LocalCoinType[];
+    testnet: LocalCoinType[];
+    devnet: LocalCoinType[];
+  };
 }
 
 export interface LocalCoinTypeStorageActions {
-  addType: (coinType: string) => void;
-  setActive: (coinType: string) => void;
-  setInactive: (coinType: string) => void;
+  addType: (network: string, coinType: string) => void;
+  setActive: (network: string, coinType: string) => void;
+  setInactive: (network: string, coinType: string) => void;
 }
 
 export interface CoinTypeLocalStorageSlice {

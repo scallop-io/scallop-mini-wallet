@@ -1,10 +1,11 @@
 import './managetoken.scss';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { normalizeStructTag } from '@mysten/sui.js/utils';
 import { CoinItem } from '@/components/CoinItem';
 import { ArrowLeft } from '@/assets/';
 import { useLocalCoinType } from '@/contexts/coinType';
 import { useGetCoinMetadata } from '@/hooks';
+import { Toggle } from '@/components/Toggle';
 import type { ChangeEvent } from 'react';
 
 type ManageTokenProps = {
@@ -13,23 +14,46 @@ type ManageTokenProps = {
 
 const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   const [searchedToken, setSearchedCoin] = useState('');
-  const { coinTypes, addCoinType, setInactive, setActive } = useLocalCoinType();
-  const coinMetaData = useGetCoinMetadata(searchedToken);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { coinTypes, setInactive, addCoinType, setActive } = useLocalCoinType();
+  const coinMetaDataQuery = useGetCoinMetadata(searchedToken);
+
+  const searchCoinType = useMemo(
+    () => coinTypes.find((coin) => coin.coinType === searchedToken),
+    [coinTypes, searchedToken]
+  );
+
+  const searchedCoinHasMetadata = useMemo(() => {
+    return coinMetaDataQuery.data;
+  }, [coinMetaDataQuery.data]);
 
   // Search by coin type
-  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setSearchedCoin(e.target.value);
+  const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   }, []);
 
-  // Add coin type to local storage
-  const handleAddToken = (coinType: string) => {
-    const isExist = coinTypes.some((val) => val.coinType === coinType);
-    if (!isExist) {
-      addCoinType(coinType);
-    } else {
-      setActive(coinType);
-    }
-  };
+  const handleToggle = useCallback(
+    (active: any, coinType: string) => {
+      if (active) {
+        setInactive(coinType);
+      } else {
+        if (!searchCoinType && searchedCoinHasMetadata) {
+          addCoinType(coinType);
+        } else {
+          setActive(coinType);
+        }
+      }
+    },
+    [coinTypes, searchCoinType]
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchedCoin(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   return (
     <div className="managetoken-container">
@@ -38,41 +62,31 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
           <ArrowLeft onClick={handleBack} />
         </div>
         <div>
-          <input type="text" placeholder="Coin Type" onChange={onChange} />
+          <input type="text" placeholder="Coin Type" onChange={handleSearch} />
         </div>
       </div>
       <div className="managetoken-body">
-        {coinMetaData.data ? (
-          <div>
+        {searchedCoinHasMetadata ? (
+          <div className="token-row">
             <CoinItem coinType={searchedToken} withPrice={false} />
-            <input
-              type="checkbox"
-              id="checkbox"
-              checked={coinTypes.find((val) => val.coinType === searchedToken)?.active}
-              onChange={(e) => {
-                const normalizedCoinType = normalizeStructTag(searchedToken);
-                if (e.target.checked) {
-                  handleAddToken(normalizedCoinType);
-                } else {
-                  setInactive(normalizedCoinType);
-                }
+            <Toggle
+              id="token-new"
+              checked={searchCoinType?.active ?? false}
+              onChange={() => {
+                handleToggle(searchCoinType?.active ?? false, normalizeStructTag(searchedToken));
               }}
             />
           </div>
         ) : (
           coinTypes.map((coin, index) => {
             return (
-              <div key={index}>
-                <CoinItem coinType={coin.coinType} withPrice={false} />
-                <input
-                  type="checkbox"
+              <div className="token-row" key={index}>
+                <CoinItem coinType={coin.coinType} withPrice={true} />
+                <Toggle
+                  id={'token-' + index}
                   checked={coin.active}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      handleAddToken(coin.coinType);
-                    } else {
-                      setInactive(coin.coinType);
-                    }
+                  onChange={() => {
+                    handleToggle(coin.active, coin.coinType);
                   }}
                 />
               </div>
