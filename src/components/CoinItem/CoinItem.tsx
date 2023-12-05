@@ -40,7 +40,7 @@ export const CoinItem: React.FC<CoinItemProps> = ({ coinType, totalBalance }: Co
     <div className="coinitem-container" onClick={copyAddress}>
       <div className="token">
         <div className="icon">
-          <CoinIcon coinName={coinName} iconUrl={coinMetadata.data?.iconUrl ?? ''} />
+          <CoinIcon coinName={coinName.toLowerCase()} iconUrl={coinMetadata.data?.iconUrl ?? ''} />
         </div>
         <div className="info">
           <div>

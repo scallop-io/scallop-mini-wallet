@@ -1,28 +1,53 @@
 import './portfolio.scss';
 import React, { useEffect, type FC, useState, useMemo, useCallback } from 'react';
+import { normalizeStructTag } from '@mysten/sui.js/utils';
 import logo from '@/assets/images/basic/logo.png';
 import { CoinItem } from '@/components/CoinItem';
 import useGetAllBalances from '@/hooks/sui/useGetAllBalances';
-import { useZkLogin } from '@/contexts';
-import { shortenAddress } from '@/utils';
+import { useNetwork, useZkLogin } from '@/contexts';
+import { getCoinNameFromType, shortenAddress } from '@/utils';
 import { ArrowLeftOnRectangle, ClipboardDocument } from '@/assets';
 import { useCopyToClipboard } from '@/hooks/common';
 import { useModal } from '@/contexts/modal';
+import { DEFAULT_COINS } from '@/constants/coins';
+import type { CoinBalance } from '@mysten/sui.js/client';
 
 type PortfolioProps = {};
 
 const Portfolio: FC<PortfolioProps> = () => {
   const { address, isLoggedIn, logout } = useZkLogin();
   const { showDialog } = useModal();
+  const { currentNetwork } = useNetwork();
   const getAccountBalanceQuery = useGetAllBalances(address, 10 * 1000);
   const [isCopied, setIsCopied] = useState(false);
   const copyAddress = useCopyToClipboard(address, setIsCopied);
 
   const accountBalance = useMemo(() => {
-    return isLoggedIn ? getAccountBalanceQuery.data ?? [] : [];
-  }, [getAccountBalanceQuery.isFetching, isLoggedIn]);
+    if (isLoggedIn) {
+      let coinBalances = getAccountBalanceQuery.data ?? [];
 
-  const noCoinsFound = useMemo(() => accountBalance.length === 0, [accountBalance]);
+      if (coinBalances.length === 0) {
+        coinBalances = [...DEFAULT_COINS[currentNetwork]];
+      } else {
+        const balanceCoinTypes = coinBalances.map((coinBalance) =>
+          normalizeStructTag(coinBalance.coinType)
+        );
+        const newCoins = DEFAULT_COINS[currentNetwork].filter(
+          (coin) => !balanceCoinTypes.includes(coin.coinType)
+        );
+        coinBalances = [...coinBalances, ...newCoins];
+      }
+
+      coinBalances.sort((a: CoinBalance, b: CoinBalance) => {
+        const aCoinName = getCoinNameFromType(a.coinType);
+        const bCoinName = getCoinNameFromType(b.coinType);
+        return aCoinName.localeCompare(bCoinName);
+      });
+
+      return coinBalances;
+    }
+    return [];
+  }, [getAccountBalanceQuery.isFetching, isLoggedIn]);
 
   useEffect(() => {
     if (isCopied) {
@@ -62,25 +87,12 @@ const Portfolio: FC<PortfolioProps> = () => {
         </div>
       </div>
       <div className="body">
-        <div
-          className="coin-list"
-          style={{
-            justifyContent: noCoinsFound ? 'center' : 'flex-start',
-            alignItems: noCoinsFound ? 'center' : 'flex-start',
-          }}
-        >
-          {noCoinsFound ? (
-            <div className="no-coin">
-              <span>No coins found </span>
-            </div>
-          ) : (
-            accountBalance.map((item, index) => {
-              if (!item) return null;
-              return (
-                <CoinItem key={index} coinType={item.coinType} totalBalance={item.totalBalance} />
-              );
-            })
-          )}
+        <div className="coin-list">
+          {accountBalance.map((item, index) => {
+            return (
+              <CoinItem key={index} coinType={item.coinType} totalBalance={item.totalBalance} />
+            );
+          })}
         </div>
       </div>
     </div>

@@ -87,7 +87,7 @@ const MiniWallet: FC<MiniWalletProps> = () => {
           }}
         >
           <ChevronRight
-            style={{ height: '18px', width: '18px', transform: hide ? 'rotateY(180deg)' : '' }}
+            style={{ height: '18px', width: '18px', transform: !hide ? 'rotateY(180deg)' : '' }}
           />
         </button>
       </div>
