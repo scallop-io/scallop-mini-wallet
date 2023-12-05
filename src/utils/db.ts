@@ -6,7 +6,7 @@ import { randomBytes } from 'crypto-browserify';
 import Dexie, { type Table } from 'dexie';
 import { exportDB, importDB } from 'dexie-export-import';
 import { getFromLocalStorage, setToLocalStorage } from '@/utils/storage';
-import type { SerializedAccount } from '@/types/account';
+import type { ZkLoginAccountSerialized } from '@/types/account';
 
 const dbName = 'ScallopMiniWallet DB';
 const dbLocalStorageBackupKey = 'indexed-db-backup';
@@ -15,8 +15,8 @@ export const settingsKeys = {
   isPopulated: 'isPopulated',
   masterSeed: 'masterSeed',
 };
-class DB extends Dexie {
-  accounts!: Table<SerializedAccount, string>;
+export class DB extends Dexie {
+  accounts!: Table<ZkLoginAccountSerialized, string>;
   settings!: Table<{ value: string | boolean | number | null; setting: string }, string>;
 
   constructor() {

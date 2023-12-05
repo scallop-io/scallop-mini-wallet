@@ -8,11 +8,14 @@ import { randomBytes } from '@noble/hashes/utils';
 import { createHmac } from 'crypto-browserify';
 import { base64url, decodeJwt } from 'jose';
 import { v4 as uuidV4 } from 'uuid';
+import { fromB64 } from '@mysten/sui.js/utils';
+import { Secp256k1Keypair } from '@mysten/sui.js/keypairs/secp256k1';
+import { Secp256r1Keypair } from '@mysten/sui.js/keypairs/secp256r1';
 import { getDB, settingsKeys } from '@/utils/db';
 import { zkLoginProviderDataMap } from './provider';
 import type { ZkLoginProvider } from './provider';
 import type { getZkLoginSignature } from '@mysten/zklogin';
-import type { PublicKey } from '@mysten/sui.js/cryptography';
+import type { ExportedKeypair, Keypair, PublicKey } from '@mysten/sui.js/cryptography';
 
 export function prepareZkLogin(currentEpoch: number) {
   const maxEpoch = currentEpoch + 2;
@@ -212,4 +215,27 @@ export async function createPartialZkLoginSignature({
   }
 
   return response.json();
+}
+
+const PRIVATE_KEY_SIZE = 32;
+const LEGACY_PRIVATE_KEY_SIZE = 64;
+export function fromExportedKeypair(keypair: ExportedKeypair): Keypair {
+  const secretKey = fromB64(keypair.privateKey);
+
+  switch (keypair.schema) {
+    case 'ED25519': {
+      let pureSecretKey = secretKey;
+      if (secretKey.length === LEGACY_PRIVATE_KEY_SIZE) {
+        // This is a legacy secret key, we need to strip the public key bytes and only read the first 32 bytes
+        pureSecretKey = secretKey.slice(0, PRIVATE_KEY_SIZE);
+      }
+      return Ed25519Keypair.fromSecretKey(pureSecretKey);
+    }
+    case 'Secp256k1':
+      return Secp256k1Keypair.fromSecretKey(secretKey);
+    case 'Secp256r1':
+      return Secp256r1Keypair.fromSecretKey(secretKey);
+    default:
+      throw new Error(`Invalid keypair schema ${keypair.schema}`);
+  }
 }

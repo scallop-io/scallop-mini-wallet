@@ -1,14 +1,21 @@
 import { decodeJwt } from 'jose';
 import { computeZkLoginAddress, genAddressSeed } from '@mysten/zklogin';
-import { getEphemeralValue, setEphemeralValue } from '@/utils/session-ephemeral';
+import { setEphemeralValue } from '@/utils/session-ephemeral';
 import { getCurrentEpoch } from './epoch';
-import { fetchSalt, prepareZkLogin, zkLoginAuthenticate } from './utils';
+import {
+  createPartialZkLoginSignature,
+  fetchSalt,
+  prepareZkLogin,
+  zkLoginAuthenticate,
+} from './utils';
+import type { EphemeralCredentialValue } from '@/utils/session-ephemeral';
 import type { ZkLoginAccountSerialized } from '@/types/account';
-import type { CredentialData } from '@/stores/types/session';
+import type { CredentialData } from '@/types';
 // import { deobfuscate, obfuscate } from "@/utils/cryptography";
 import type { ZkLoginProvider } from './provider';
 import type { NetworkType } from '@/stores';
-import type { SuiClient } from '@mysten/sui.js/dist/cjs/client';
+import type { SuiClient } from '@mysten/sui.js/client';
+import type { PublicKey } from '@mysten/sui.js/cryptography';
 
 export type JwtSerializedClaims = {
   email: string | null;
@@ -29,7 +36,7 @@ export type NetworkEnvType = {
 export const doLogin = async (
   account: ZkLoginAccountSerialized,
   networkEnv: NetworkEnvType,
-  jwt: string | void
+  jwt: string | void | undefined | null
 ): Promise<CredentialData> => {
   const { provider, claims } = account;
   // TODO: deobfuscate
@@ -54,12 +61,15 @@ export const doLogin = async (
     jwt,
   };
 
-  const ephemeralValue: Record<NetworkType, CredentialData> = getEphemeralValue() || {
+  const ephemeralCredentialValue: EphemeralCredentialValue = {
     mainnet: {} as CredentialData,
     testnet: {} as CredentialData,
   };
-  ephemeralValue[networkEnv.network as NetworkType] = credentialsData;
-  setEphemeralValue(ephemeralValue);
+
+  ephemeralCredentialValue[networkEnv.network] = credentialsData;
+
+  console.log(ephemeralCredentialValue);
+  setEphemeralValue(account.address, ephemeralCredentialValue);
   return credentialsData;
 };
 
@@ -119,10 +129,30 @@ export const areCredentialsValid = (
   currentEpoch: number,
   activeNetwork: NetworkType,
   credentials?: CredentialData
-): credentials is CredentialData => {
+): boolean => {
   if (!credentials) {
     return false;
   }
   const { maxEpoch, network } = credentials;
   return activeNetwork === network && currentEpoch <= maxEpoch;
+};
+
+export const generateProofs = async (
+  account: ZkLoginAccountSerialized,
+  jwt: string,
+  randomness: bigint,
+  maxEpoch: number,
+  ephemeralPublicKey: PublicKey
+) => {
+  // const { salt: obfuscatedSalt, claimName } = account;
+  // const salt = await deobfuscate<string>(obfuscatedSalt);
+  const { salt, claimName } = account;
+  return await createPartialZkLoginSignature({
+    jwt,
+    ephemeralPublicKey,
+    userSalt: BigInt(salt),
+    jwtRandomness: randomness,
+    keyClaimName: claimName,
+    maxEpoch,
+  });
 };

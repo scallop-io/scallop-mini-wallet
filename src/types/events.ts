@@ -1,5 +1,4 @@
-import type { NetworkType } from '@/stores/types';
-import type { CredentialData } from '@/stores/types/session';
+import type { EphemeralValue } from '@/utils';
 
 export enum BroadcastEvents {
   LOGOUT = 'logout',
@@ -12,5 +11,5 @@ export type BroadcastEventData = {
   id: string | null;
   target: string | null;
   event: BroadcastEvents;
-  data: Record<NetworkType, CredentialData>;
+  data: EphemeralValue;
 };

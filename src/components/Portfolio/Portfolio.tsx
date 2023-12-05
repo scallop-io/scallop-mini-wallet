@@ -12,18 +12,20 @@ import { useModal } from '@/contexts/modal';
 import { DEFAULT_COINS } from '@/constants/coins';
 import AdjustmentHorizontal from '@/assets/AdjustmentHorizontal';
 import { ManageToken } from '@/components/ManageToken';
+import { useZkAccounts } from '@/contexts/accounts';
 import type { CoinBalance } from '@mysten/sui.js/client';
 
 type PortfolioProps = {};
 
 const Portfolio: FC<PortfolioProps> = () => {
-  const { address, isLoggedIn, logout } = useZkLogin();
+  const { address } = useZkAccounts();
+  const { isLoggedIn, logout } = useZkLogin();
   const { showDialog } = useModal();
   const { currentNetwork } = useNetwork();
   const getAccountBalanceQuery = useGetAllBalances(address, 10 * 1000);
   const [isCopied, setIsCopied] = useState(false);
   const [isManageToken, setIsManageToken] = useState(false);
-  const copyAddress = useCopyToClipboard(address, setIsCopied);
+  const copyAddress = useCopyToClipboard(address ?? '', setIsCopied);
 
   const accountBalance = useMemo(() => {
     if (isLoggedIn) {
@@ -84,7 +86,8 @@ const Portfolio: FC<PortfolioProps> = () => {
             <span>Scallop</span>
           </div>
           <div className="address" onClick={copyAddress}>
-            {isLoggedIn && (isCopied ? 'Address copied!' : <AddressDisplay address={address} />)}
+            {isLoggedIn &&
+              (isCopied ? 'Address copied!' : <AddressDisplay address={address ?? ''} />)}
           </div>
           <div className="logout-container">
             <span className={isLoggedIn ? '' : 'hidden'}>
