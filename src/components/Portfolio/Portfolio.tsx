@@ -112,9 +112,9 @@ const Portfolio: FC<PortfolioProps> = () => {
           </div>
         </div>
         <div className="address" onClick={copyAddress}>
+          <div className="email">{email}</div>
           {isLoggedIn &&
             (isCopied ? 'Address copied!' : <AddressDisplay address={address ?? ''} />)}
-          <div className="email">{email}</div>
         </div>
       </div>
       <div className="body">
