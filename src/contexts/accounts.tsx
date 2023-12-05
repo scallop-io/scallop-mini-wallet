@@ -7,6 +7,7 @@ import type { ZkLoginAccountSerialized } from '@/types';
 
 export interface ZkAccountInterface {
   address: string | undefined;
+  email: string | undefined;
   currentAccount: ZkLoginAccountSerialized | undefined;
   accounts: ZkLoginAccountSerialized[] | undefined;
   switchAccount: (id: string) => void;
@@ -16,6 +17,7 @@ export interface ZkAccountInterface {
 
 export const ZkAccountContext = createContext<ZkAccountInterface>({
   address: '',
+  email: '',
   currentAccount: {} as ZkLoginAccountSerialized | undefined,
   accounts: undefined,
   switchAccount: () => undefined,
@@ -30,6 +32,7 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
   const [currentAccount, setCurrentAccount] = useState<ZkLoginAccountSerialized | undefined>();
 
   const address = useMemo(() => currentAccount?.address, [currentAccount]);
+  const email = useMemo(() => currentAccount?.nickname, [currentAccount]);
 
   const switchAccount = useCallback(
     (id: string) => {
@@ -76,6 +79,7 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
     <ZkAccountContext.Provider
       value={{
         address,
+        email,
         currentAccount,
         accounts,
         switchAccount,
@@ -89,10 +93,18 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
 };
 
 export const useZkAccounts = () => {
-  const { address, accounts, currentAccount, switchAccount, createNewAccount, removeAccount } =
-    useContext(ZkAccountContext);
+  const {
+    address,
+    email,
+    accounts,
+    currentAccount,
+    switchAccount,
+    createNewAccount,
+    removeAccount,
+  } = useContext(ZkAccountContext);
   return {
     address,
+    email,
     accounts,
     currentAccount,
     switchAccount,

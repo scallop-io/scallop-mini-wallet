@@ -18,7 +18,7 @@ import type { CoinBalance } from '@mysten/sui.js/client';
 type PortfolioProps = {};
 
 const Portfolio: FC<PortfolioProps> = () => {
-  const { address } = useZkAccounts();
+  const { address, email } = useZkAccounts();
   const { isLoggedIn, logout } = useZkLogin();
   const { coinTypes } = useLocalCoinType();
   const { showDialog } = useModal();
@@ -83,7 +83,7 @@ const Portfolio: FC<PortfolioProps> = () => {
       return () => clearTimeout(timer);
     }
 
-    return () => {};
+    return () => { };
   }, [isCopied]);
 
   const handleLogout = useCallback(() => {
@@ -97,26 +97,24 @@ const Portfolio: FC<PortfolioProps> = () => {
     }
   }, [isLoggedIn]);
 
-  const handleManageTokenList = useCallback(() => {
-    setIsManageToken(true);
-  }, [isManageToken]);
   return (
     <div className="portfolio-container">
       <div className="header">
         <div>
           <div className="scallop-icon">
             <img src={logo} alt="scallop logo" />
-            <span>Scallop</span>
-          </div>
-          <div className="address" onClick={copyAddress}>
-            {isLoggedIn &&
-              (isCopied ? 'Address copied!' : <AddressDisplay address={address ?? ''} />)}
+            {/* <span>Scallop</span> */}
           </div>
           <div className="logout-container">
             <span className={isLoggedIn ? '' : 'hidden'}>
               <ArrowLeftOnRectangle onClick={() => (isLoggedIn ? handleLogout() : '')} />
             </span>
           </div>
+        </div>
+        <div className="address" onClick={copyAddress}>
+          {isLoggedIn &&
+            (isCopied ? 'Address copied!' : <AddressDisplay address={address ?? ''} />)}
+          <div className="email">{email}</div>
         </div>
       </div>
       <div className="body">
@@ -125,7 +123,7 @@ const Portfolio: FC<PortfolioProps> = () => {
         ) : (
           <>
             <div className="coin-list-manage">
-              <button onClick={handleManageTokenList}>
+              <button onClick={() => setIsManageToken(true)}>
                 <AdjustmentHorizontal />
                 Manage Token List
               </button>
@@ -144,7 +142,7 @@ const Portfolio: FC<PortfolioProps> = () => {
   );
 };
 
-const AddressDisplay: FC<{ address: string }> = ({ address }) => (
+const AddressDisplay: FC<{ address: string; }> = ({ address }) => (
   <div>
     {shortenAddress(address)}
     <ClipboardDocument />
