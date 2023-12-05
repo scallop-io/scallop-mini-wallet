@@ -81,7 +81,7 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
           coinTypes.map((coin, index) => {
             return (
               <div className="token-row" key={index}>
-                <CoinItem coinType={coin.coinType} withPrice={true} />
+                <CoinItem coinType={coin.coinType} withPrice={false} />
                 <Toggle
                   id={'token-' + index}
                   checked={coin.active}
