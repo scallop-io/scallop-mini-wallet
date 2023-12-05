@@ -51,6 +51,7 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
       id: uuid(),
     });
 
+    setCurrentAccount(newAccount as ZkLoginAccountSerialized);
     return [newAccount, jwt] as [ZkLoginAccountSerialized, string];
   }, []);
 

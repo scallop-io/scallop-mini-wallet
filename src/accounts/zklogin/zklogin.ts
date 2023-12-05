@@ -10,7 +10,7 @@ import {
 } from './utils';
 import type { EphemeralCredentialValue } from '@/utils/session-ephemeral';
 import type { ZkLoginAccountSerialized } from '@/types/account';
-import type { CredentialData } from '@/stores/types/session';
+import type { CredentialData } from '@/types';
 // import { deobfuscate, obfuscate } from "@/utils/cryptography";
 import type { ZkLoginProvider } from './provider';
 import type { NetworkType } from '@/stores';

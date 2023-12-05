@@ -79,7 +79,8 @@ const Portfolio: FC<PortfolioProps> = () => {
             <span>Scallop</span>
           </div>
           <div className="address" onClick={copyAddress}>
-            {isLoggedIn && (isCopied ? 'Address copied!' : <AddressDisplay address={address ?? ''} />)}
+            {isLoggedIn &&
+              (isCopied ? 'Address copied!' : <AddressDisplay address={address ?? ''} />)}
           </div>
           <div className="logout-container">
             <span className={isLoggedIn ? '' : 'hidden'}>

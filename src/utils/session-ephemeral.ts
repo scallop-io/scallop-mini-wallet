@@ -1,6 +1,6 @@
 import { getFromSessionStorage, setToSessionStorage } from './storage';
+import type { CredentialData } from '@/types';
 import type { NetworkType } from '@/stores/types';
-import type { CredentialData } from '@/stores/types/session';
 
 export type EphemeralCredentialValue = Record<NetworkType, CredentialData>;
 export type EphemeralValue = Record<string, EphemeralCredentialValue>;
@@ -30,7 +30,9 @@ export const exportEphemeralValues = () => {
 };
 
 export const importEphemeralValues = (data: EphemeralValue) => {
-  return setToSessionStorage<EphemeralValue>(SESSION_KEY, data);
+  const values = getFromSessionStorage<EphemeralValue>(SESSION_KEY) || {};
+  Object.assign(values, data);
+  return setToSessionStorage<EphemeralValue>(SESSION_KEY, values);
 };
 
 export const clearEphemeralValue = (address: string) => {
