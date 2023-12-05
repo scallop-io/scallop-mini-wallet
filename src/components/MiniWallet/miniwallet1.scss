@@ -19,7 +19,7 @@ code {
   position: fixed;
   z-index: 20;
   display: flex;
-  top: 20%;
+  top: calc(50% - 270px);
   align-items: center;
   justify-content: center;
   width: auto;
