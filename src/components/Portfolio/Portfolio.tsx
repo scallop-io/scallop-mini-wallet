@@ -4,12 +4,11 @@ import { normalizeStructTag } from '@mysten/sui.js/utils';
 import logo from '@/assets/images/basic/logo.png';
 import { CoinItem } from '@/components/CoinItem';
 import useGetAllBalances from '@/hooks/sui/useGetAllBalances';
-import { useNetwork, useZkLogin } from '@/contexts';
+import { useZkLogin } from '@/contexts';
 import { getCoinNameFromType, shortenAddress } from '@/utils';
 import { ArrowLeftOnRectangle, ClipboardDocument } from '@/assets';
 import { useCopyToClipboard } from '@/hooks/common';
 import { useModal } from '@/contexts/modal';
-import { DEFAULT_COINS } from '@/constants/coins';
 import AdjustmentHorizontal from '@/assets/AdjustmentHorizontal';
 import { ManageToken } from '@/components/ManageToken';
 import { useZkAccounts } from '@/contexts/accounts';
@@ -23,7 +22,6 @@ const Portfolio: FC<PortfolioProps> = () => {
   const { isLoggedIn, logout } = useZkLogin();
   const { coinTypes } = useLocalCoinType();
   const { showDialog } = useModal();
-  const { currentNetwork } = useNetwork();
   const getAccountBalanceQuery = useGetAllBalances(address, 10 * 1000);
   const [isCopied, setIsCopied] = useState(false);
   const [isManageToken, setIsManageToken] = useState(false);
@@ -34,12 +32,7 @@ const Portfolio: FC<PortfolioProps> = () => {
       let coinBalances = getAccountBalanceQuery.data ?? [];
 
       if (coinBalances.length === 0) {
-        coinBalances = [...DEFAULT_COINS[currentNetwork]];
-      } else {
-        const balanceCoinTypes = coinBalances.map((coinBalance) =>
-          normalizeStructTag(coinBalance.coinType)
-        );
-        const newCoins = [
+        coinBalances = [
           ...coinTypes
             .filter((coin) => coin.active)
             .map((coin) => ({
@@ -48,8 +41,29 @@ const Portfolio: FC<PortfolioProps> = () => {
               coinObjectCount: 0,
               lockedBalance: {},
             })),
+        ];
+      } else {
+        const balanceCoinTypes = coinBalances.map((coinBalance) =>
+          normalizeStructTag(coinBalance.coinType)
+        );
+        const newCoins = [
+          ...coinTypes
+            .filter((coin) => coin.active && !balanceCoinTypes.includes(coin.coinType))
+            .map((coin) => ({
+              coinType: coin.coinType,
+              totalBalance: '0',
+              coinObjectCount: 0,
+              lockedBalance: {},
+            })),
         ].filter((coin) => !balanceCoinTypes.includes(coin.coinType));
-        coinBalances = [...coinBalances, ...newCoins];
+        coinBalances = [
+          ...coinBalances.filter((coin) =>
+            coinTypes.find(
+              (val) => val.coinType === normalizeStructTag(coin.coinType) && val.active
+            )
+          ),
+          ...newCoins,
+        ];
       }
 
       coinBalances.sort((a: CoinBalance, b: CoinBalance) => {

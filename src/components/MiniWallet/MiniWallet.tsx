@@ -10,7 +10,7 @@ import { LoginButton } from '@/components/LoginButton';
 import { ChevronRight } from '@/assets';
 import { DbProvider } from '@/contexts/db';
 import { ZkAccountProvider, useZkAccounts } from '@/contexts/accounts';
-import { LocalCoinProvider, useLocalCoinType } from '@/contexts/coinType';
+import { LocalCoinTypeProvider, useLocalCoinType } from '@/contexts/coinType';
 import { DEFAULT_COINS } from '@/constants/coins';
 import type { FC } from 'react';
 import '@/style.css';
@@ -34,9 +34,9 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
           <ZkAccountProvider>
             <ZkLoginProvider>
               <ModalProvider>
-                <LocalCoinProvider>
+                <LocalCoinTypeProvider>
                   <MiniWallet />
-                </LocalCoinProvider>
+                </LocalCoinTypeProvider>
               </ModalProvider>
             </ZkLoginProvider>
           </ZkAccountProvider>
