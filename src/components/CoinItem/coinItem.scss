@@ -14,7 +14,7 @@
           display: none;
         }
 
-        & div:last-child {
+        & div:nth-child(3) {
           display: flex;
           flex-direction: row;
           gap: 4px;
@@ -73,7 +73,7 @@
         align-items: center;
         color: #7ca6b2;
       }
-      & div:last-child {
+      & div:nth-child(3) {
         display: none;
       }
     }

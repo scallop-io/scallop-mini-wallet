@@ -10,6 +10,8 @@ import { ArrowLeftOnRectangle, ClipboardDocument } from '@/assets';
 import { useCopyToClipboard } from '@/hooks/common';
 import { useModal } from '@/contexts/modal';
 import { DEFAULT_COINS } from '@/constants/coins';
+import AdjustmentHorizontal from '@/assets/AdjustmentHorizontal';
+import { ManageToken } from '@/components/ManageToken';
 import type { CoinBalance } from '@mysten/sui.js/client';
 
 type PortfolioProps = {};
@@ -20,6 +22,7 @@ const Portfolio: FC<PortfolioProps> = () => {
   const { currentNetwork } = useNetwork();
   const getAccountBalanceQuery = useGetAllBalances(address, 10 * 1000);
   const [isCopied, setIsCopied] = useState(false);
+  const [isManageToken, setIsManageToken] = useState(false);
   const copyAddress = useCopyToClipboard(address, setIsCopied);
 
   const accountBalance = useMemo(() => {
@@ -68,6 +71,10 @@ const Portfolio: FC<PortfolioProps> = () => {
       });
     }
   }, [isLoggedIn]);
+
+  const handleManageTokenList = useCallback(() => {
+    setIsManageToken(true);
+  }, [isManageToken]);
   return (
     <div className="portfolio-container">
       <div className="header">
@@ -87,13 +94,25 @@ const Portfolio: FC<PortfolioProps> = () => {
         </div>
       </div>
       <div className="body">
-        <div className="coin-list">
-          {accountBalance.map((item, index) => {
-            return (
-              <CoinItem key={index} coinType={item.coinType} totalBalance={item.totalBalance} />
-            );
-          })}
-        </div>
+        {isManageToken ? (
+          <ManageToken handleBack={() => setIsManageToken(false)} />
+        ) : (
+          <>
+            <div className="coin-list-manage">
+              <button onClick={handleManageTokenList}>
+                <AdjustmentHorizontal />
+                Manage Token List
+              </button>
+            </div>
+            <div className="coin-list">
+              {accountBalance.map((item, index) => {
+                return (
+                  <CoinItem key={index} coinType={item.coinType} totalBalance={item.totalBalance} />
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
