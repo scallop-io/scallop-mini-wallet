@@ -24,7 +24,9 @@ export const LocalCoinTypeContext = createContext<LocalCoinTypeContextInterface>
 
 type LocalCoinTypeProviderProps = {};
 
-export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderProps>> = ({ children }) => {
+export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderProps>> = ({
+  children,
+}) => {
   const { localCoinTypeState, localCoinTypeActions } = useLocalStorage();
 
   const coinTypes = useMemo(() => {

@@ -13,6 +13,7 @@ import { DEFAULT_COINS } from '@/constants/coins';
 import AdjustmentHorizontal from '@/assets/AdjustmentHorizontal';
 import { ManageToken } from '@/components/ManageToken';
 import { useZkAccounts } from '@/contexts/accounts';
+import { useLocalCoinType } from '@/contexts/coinType';
 import type { CoinBalance } from '@mysten/sui.js/client';
 
 type PortfolioProps = {};
@@ -20,6 +21,7 @@ type PortfolioProps = {};
 const Portfolio: FC<PortfolioProps> = () => {
   const { address } = useZkAccounts();
   const { isLoggedIn, logout } = useZkLogin();
+  const { coinTypes } = useLocalCoinType();
   const { showDialog } = useModal();
   const { currentNetwork } = useNetwork();
   const getAccountBalanceQuery = useGetAllBalances(address, 10 * 1000);
@@ -37,9 +39,16 @@ const Portfolio: FC<PortfolioProps> = () => {
         const balanceCoinTypes = coinBalances.map((coinBalance) =>
           normalizeStructTag(coinBalance.coinType)
         );
-        const newCoins = DEFAULT_COINS[currentNetwork].filter(
-          (coin) => !balanceCoinTypes.includes(coin.coinType)
-        );
+        const newCoins = [
+          ...coinTypes
+            .filter((coin) => coin.active)
+            .map((coin) => ({
+              coinType: coin.coinType,
+              totalBalance: '0',
+              coinObjectCount: 0,
+              lockedBalance: {},
+            })),
+        ].filter((coin) => !balanceCoinTypes.includes(coin.coinType));
         coinBalances = [...coinBalances, ...newCoins];
       }
 
@@ -52,7 +61,7 @@ const Portfolio: FC<PortfolioProps> = () => {
       return coinBalances;
     }
     return [];
-  }, [getAccountBalanceQuery.isFetching, isLoggedIn]);
+  }, [getAccountBalanceQuery.isFetching, isLoggedIn, isManageToken]);
 
   useEffect(() => {
     if (isCopied) {

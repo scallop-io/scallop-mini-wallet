@@ -68,7 +68,6 @@ export const doLogin = async (
 
   ephemeralCredentialValue[networkEnv.network] = credentialsData;
 
-  console.log(ephemeralCredentialValue);
   setEphemeralValue(account.address, ephemeralCredentialValue);
   return credentialsData;
 };

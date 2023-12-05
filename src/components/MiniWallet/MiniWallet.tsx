@@ -3,13 +3,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { Portfolio } from '@/components/Portfolio';
-import { ConnectionProvider, ZkLoginProvider, useZkLogin } from '@/contexts';
+import { ConnectionProvider, ZkLoginProvider, useNetwork, useZkLogin } from '@/contexts';
 import { ModalProvider } from '@/contexts/modal';
 import { Modal } from '@/components/Modal';
 import { LoginButton } from '@/components/LoginButton';
 import { ChevronRight } from '@/assets';
 import { DbProvider } from '@/contexts/db';
 import { ZkAccountProvider, useZkAccounts } from '@/contexts/accounts';
+import { LocalCoinProvider, useLocalCoinType } from '@/contexts/coinType';
+import { DEFAULT_COINS } from '@/constants/coins';
 import type { FC } from 'react';
 import '@/style.css';
 import type { ZkLoginAccountSerialized } from '@/types';
@@ -32,7 +34,9 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
           <ZkAccountProvider>
             <ZkLoginProvider>
               <ModalProvider>
-                <MiniWallet />
+                <LocalCoinProvider>
+                  <MiniWallet />
+                </LocalCoinProvider>
               </ModalProvider>
             </ZkLoginProvider>
           </ZkAccountProvider>
@@ -44,10 +48,12 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
 
 type MiniWalletProps = {};
 const MiniWallet: FC<MiniWalletProps> = () => {
-  const { accounts, currentAccount, switchAccount, createNewAccount } = useZkAccounts();
+  const { accounts, currentAccount, switchAccount, createNewAccount, address } = useZkAccounts();
   const { isLoggedIn, login } = useZkLogin();
   const [loading, setLoading] = useState(false);
   const [hide, setHide] = useState(false);
+  const { currentNetwork } = useNetwork();
+  const { coinTypes, addCoinType } = useLocalCoinType();
 
   // const { setCurrentNetwork } = useNetwork();
   //TODO: Allow user to select network
@@ -71,7 +77,16 @@ const MiniWallet: FC<MiniWalletProps> = () => {
     if (accounts && accounts?.length > 0) {
       switchAccount(accounts[0].id);
     }
-  }, [accounts]);
+
+    if (address) {
+      DEFAULT_COINS[currentNetwork].forEach((coin) => {
+        const isExist = coinTypes.some((val) => val.coinType === coin.coinType);
+        if (!isExist) {
+          addCoinType(coin.coinType);
+        }
+      });
+    }
+  }, [accounts, address]);
 
   // const onCreateNewClick = useCallback(async () => {
   //   try {

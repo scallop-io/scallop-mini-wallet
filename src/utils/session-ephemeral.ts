@@ -41,6 +41,5 @@ export const clearEphemeralValue = (address: string) => {
     return;
   }
   delete data[address];
-  console.log(data);
   return importEphemeralValues(data);
 };
