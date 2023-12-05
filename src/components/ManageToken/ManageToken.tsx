@@ -7,7 +7,8 @@ import { DEFAULT_COINS } from '@/constants/coins';
 import { useNetwork, useZkLogin } from '@/contexts';
 import { useGetAllBalances } from '@/hooks';
 import { getCoinNameFromType } from '@/utils';
-import { Checkbox } from '../Checkbox';
+import { useZkAccounts } from '@/contexts/accounts';
+import { useLocalCoinType } from '@/contexts/coinType';
 import type { ChangeEvent } from 'react';
 import type { CoinBalance } from '@mysten/sui.js/client';
 
@@ -17,10 +18,11 @@ type ManageTokenProps = {
 
 const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   const [searchedToken, setSearchedCoin] = useState('');
-  const { address, isLoggedIn } = useZkLogin();
+  const { address } = useZkAccounts();
+  const { isLoggedIn } = useZkLogin();
+  const { addCoinType, setInactive } = useLocalCoinType();
   const { currentNetwork } = useNetwork();
   const getAccountBalanceQuery = useGetAllBalances(address, 10 * 1000);
-  const [checked, setChecked] = useState(false);
 
   const accountBalance = useMemo(() => {
     if (isLoggedIn) {
@@ -55,7 +57,11 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   }, []);
 
   // TODO: Add token to local storage
-  const handleAddToken = useCallback(() => {}, [searchedToken]);
+  const handleAddToken = (coinType: string) => {
+    console.log(coinType);
+    addCoinType(coinType);
+  };
+
   return (
     <div className="managetoken-container">
       <div className="managetoken-header">
@@ -73,10 +79,8 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
             <input
               type="checkbox"
               id="checkbox"
-              checked={checked}
               onChange={() => {
-                setChecked(!checked);
-                handleAddToken();
+                handleAddToken(searchedToken);
               }}
             />
           </div>
@@ -88,8 +92,11 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
                 <input
                   type="checkbox"
                   onChange={(e) => {
-                    setChecked(e.target.checked);
-                    handleAddToken();
+                    console.log(e.target.checked);
+                    if (e.target.checked) {
+                      handleAddToken(coinBalance.coinType);
+                    }
+                    setInactive(coinBalance.coinType);
                   }}
                 />
               </div>

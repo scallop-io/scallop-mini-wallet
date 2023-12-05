@@ -14,7 +14,7 @@
           display: none;
         }
 
-        & div:nth-child(3) {
+        & div:last-child {
           display: flex;
           flex-direction: row;
           gap: 4px;

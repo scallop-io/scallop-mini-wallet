@@ -1,6 +1,5 @@
 import './checkbox.scss';
 import React, { forwardRef, memo } from 'react';
-import classNames from 'classnames';
 import type { ChangeEvent, DetailedHTMLProps, ForwardedRef, InputHTMLAttributes } from 'react';
 
 type BasicCheckboxProps = {
@@ -12,14 +11,7 @@ export type CheckboxProps<T> = DetailedHTMLProps<InputHTMLAttributes<T>, T> & Ba
 
 const Checkbox = forwardRef(
   (
-    {
-      className,
-      checked = false,
-      children,
-      disabled,
-      onChange,
-      ...rest
-    }: CheckboxProps<HTMLInputElement>,
+    { checked = false, children, disabled, onChange, ...rest }: CheckboxProps<HTMLInputElement>,
     ref?: ForwardedRef<HTMLInputElement>
   ): JSX.Element => {
     const handleClick = (event: ChangeEvent<HTMLInputElement>) => {

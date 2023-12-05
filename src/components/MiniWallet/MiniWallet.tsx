@@ -1,4 +1,4 @@
-import './miniWallet.scss';
+import './miniwallet1.scss';
 import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import classNames from 'classnames';
