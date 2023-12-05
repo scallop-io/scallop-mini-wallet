@@ -6,6 +6,7 @@ export type Props = React.SVGProps<SVGSVGElement>;
 const ClipboardDocument: FC<Props> = (props: Props) => {
   return (
     <svg
+      className="clipboard"
       {...props}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"

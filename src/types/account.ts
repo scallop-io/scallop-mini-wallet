@@ -11,7 +11,7 @@ export interface SerializedAccount {
   //  * indicates if it's the selected account in the UI (active account)
   //  */
   // readonly selected: boolean;
-  readonly nickname: string | null;
+  readonly nickname: string;
   readonly createdAt: number;
 }
 
