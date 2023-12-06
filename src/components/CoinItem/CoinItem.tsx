@@ -10,12 +10,14 @@ import { getCoinAddressFromType, getCoinNameFromType } from '@/utils/coin';
 
 export type CoinItemProps = {
   coinType: string;
+  coinSymbol?: string;
   totalBalance?: string;
   withPrice?: boolean;
 };
 
 export const CoinItem: React.FC<CoinItemProps> = ({
   coinType,
+  coinSymbol,
   totalBalance,
   withPrice = true,
 }: CoinItemProps) => {
@@ -31,7 +33,7 @@ export const CoinItem: React.FC<CoinItemProps> = ({
   }, [coinMetadata.data?.decimals, totalBalance]);
 
   const coinName = useMemo(() => {
-    return getCoinNameFromType(coinType);
+    return coinSymbol ?? getCoinNameFromType(coinType);
   }, [coinType]);
 
   useEffect(() => {
@@ -45,12 +47,12 @@ export const CoinItem: React.FC<CoinItemProps> = ({
     <div className="coinitem-container" onClick={copyAddress}>
       <div className="token">
         <div className="icon">
-          <CoinIcon coinName={coinName.toLowerCase()} iconUrl={coinMetadata.data?.iconUrl ?? ''} />
+          <CoinIcon coinName={coinName} iconUrl={coinMetadata.data?.iconUrl ?? ''} />
         </div>
         <div className="info">
           <div>
             <span>{coinName}</span>
-            {totalBalance && <span>{coinBalance.toFixed(4)}</span>}
+            {totalBalance && <span>{numberWithCommas(coinBalance.toString())}</span>}
           </div>
           {withPrice && (
             <>

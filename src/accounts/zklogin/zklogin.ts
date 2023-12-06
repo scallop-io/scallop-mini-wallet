@@ -116,7 +116,7 @@ export const createNew = async ({
       addressSeed: genAddressSeed(BigInt(salt), claimName, claimValue, aud).toString(),
       provider,
       publicKey: null,
-      nickname: claims.email || null,
+      nickname: claims.email || '',
       createdAt: Date.now(),
       claimName,
     },

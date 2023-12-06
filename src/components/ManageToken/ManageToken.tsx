@@ -13,19 +13,33 @@ type ManageTokenProps = {
 };
 
 const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
-  const [searchedToken, setSearchedCoin] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const { coinTypes, setInactive, addCoinType, setActive } = useLocalCoinType();
-  const coinMetaDataQuery = useGetCoinMetadata(searchedToken);
+  const [trigger, setTrigger] = useState(true);
+  const coinMetaDataQuery = useGetCoinMetadata(searchInput);
 
-  const searchCoinType = useMemo(
-    () => coinTypes.find((coin) => coin.coinType === searchedToken),
-    [coinTypes, searchedToken]
+  const matchedLocalCoinType = useMemo(
+    () =>
+      coinTypes.filter(
+        (coin) => coin.coinType === searchInput || coin.symbol.includes(searchInput.toUpperCase())
+      ),
+    [coinTypes, searchInput, trigger]
   );
 
   const searchedCoinHasMetadata = useMemo(() => {
-    return coinMetaDataQuery.data;
-  }, [coinMetaDataQuery.data]);
+    return !!coinMetaDataQuery.data;
+  }, [coinMetaDataQuery.isFetching]);
+
+  const newValidCoinType = useMemo(() => {
+    return matchedLocalCoinType.length === 0 && searchedCoinHasMetadata;
+  }, [matchedLocalCoinType, searchedCoinHasMetadata]);
+
+  const coinTypeList = useMemo(() => {
+    if (matchedLocalCoinType.length > 0) return matchedLocalCoinType;
+    else if (searchInput === '') return coinTypes;
+    else return [];
+  }, [matchedLocalCoinType, coinTypes]);
 
   // Search by coin type
   const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -37,19 +51,20 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
       if (active) {
         setInactive(coinType);
       } else {
-        if (!searchCoinType && searchedCoinHasMetadata) {
-          addCoinType(coinType);
+        if (newValidCoinType) {
+          addCoinType({ coinType, symbol: coinMetaDataQuery.data?.symbol ?? '' });
+          setTrigger(!trigger);
         } else {
           setActive(coinType);
         }
       }
     },
-    [coinTypes, searchCoinType]
+    [newValidCoinType]
   );
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSearchedCoin(searchQuery);
+      setSearchInput(searchQuery);
     }, 500);
 
     return () => clearTimeout(timer);
@@ -66,22 +81,26 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
         </div>
       </div>
       <div className="managetoken-body">
-        {searchedCoinHasMetadata ? (
+        {newValidCoinType ? (
           <div className="token-row">
-            <CoinItem coinType={searchedToken} withPrice={false} />
+            <CoinItem
+              coinType={searchInput}
+              coinSymbol={coinMetaDataQuery.data?.symbol}
+              withPrice={true}
+            />
             <Toggle
               id="token-new"
-              checked={searchCoinType?.active ?? false}
+              checked={!newValidCoinType}
               onChange={() => {
-                handleToggle(searchCoinType?.active ?? false, normalizeStructTag(searchedToken));
+                handleToggle(!newValidCoinType, normalizeStructTag(searchInput));
               }}
             />
           </div>
         ) : (
-          coinTypes.map((coin, index) => {
+          coinTypeList.map((coin, index) => {
             return (
               <div className="token-row" key={index}>
-                <CoinItem coinType={coin.coinType} withPrice={false} />
+                <CoinItem coinType={coin.coinType} coinSymbol={coin.symbol} withPrice={true} />
                 <Toggle
                   id={'token-' + index}
                   checked={coin.active}

@@ -19,6 +19,9 @@ type RpcNodes = {
   [Network.testnet]: {
     [N in Node]: string;
   };
+  [Network.devnet]: {
+    [N in Node]: string;
+  };
 };
 
 type Explorers = {
@@ -26,6 +29,9 @@ type Explorers = {
     [K in ExplorerType]: string;
   };
   [Network.testnet]: {
+    [K in ExplorerType]: string;
+  };
+  [Network.devnet]: {
     [K in ExplorerType]: string;
   };
 };
@@ -40,6 +46,10 @@ export const RPC: RpcNodes = {
     [Node.sui]: getFullnodeUrl('testnet'),
     [Node.custom]: '',
   },
+  devnet: {
+    [Node.sui]: getFullnodeUrl('devnet'),
+    [Node.custom]: '',
+  },
 };
 
 export const EXPLORERS: Explorers = {
@@ -49,6 +59,11 @@ export const EXPLORERS: Explorers = {
     [Explorer.suiscan]: 'https://suiscan.xyz',
   },
   testnet: {
+    [Explorer.official]: 'https://suiexplorer.com',
+    [Explorer.suivision]: 'https://testnet.suivision.xyz',
+    [Explorer.suiscan]: 'https://suiscan.xyz/testnet',
+  },
+  devnet: {
     [Explorer.official]: 'https://suiexplorer.com',
     [Explorer.suivision]: 'https://testnet.suivision.xyz',
     [Explorer.suiscan]: 'https://suiscan.xyz/testnet',
