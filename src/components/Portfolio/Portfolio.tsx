@@ -58,7 +58,7 @@ const Portfolio: FC<PortfolioProps> = () => {
   const accountBalance = useMemo(() => {
     return (getAccountBalanceQuery.data ?? []).filter(
       ({ coinType }) =>
-        localCoinTypeMap[coinType].active || localCoinTypeMap[coinType] === undefined
+        localCoinTypeMap[coinType]?.active || localCoinTypeMap[coinType] === undefined
     );
   }, [localCoinTypeMap, getAccountBalanceQuery.isFetching]);
 
