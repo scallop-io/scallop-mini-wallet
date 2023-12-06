@@ -145,7 +145,6 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
 
   const handleImportCustomToken = () => {
     if (coinTypeInput === '' || symbolInput === '' || decimaInput === undefined) return;
-    // console.log(coinTypeInput, symbolInput, decimaInput);
     const success = addCoinType({
       coinType: normalizeStructTag(coinTypeInput),
       symbol: symbolInput,

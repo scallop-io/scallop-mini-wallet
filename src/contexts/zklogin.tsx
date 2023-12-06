@@ -220,7 +220,6 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
 
         case BroadcastEvents.LOGOUT: {
           if (bcData.id === id) return;
-          // console.log('Logout Event', console.log(bcData.id, id));
           logout(false);
         }
       }

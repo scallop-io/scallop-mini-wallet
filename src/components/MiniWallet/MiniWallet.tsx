@@ -124,7 +124,6 @@ const MiniWallet: FC<MiniWalletProps> = ({ googleClientID }) => {
       <div className="miniwallet-control">
         <button
           onClick={() => {
-            console.log('clicked');
             setHide(!hide);
           }}
         >
