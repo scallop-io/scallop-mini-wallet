@@ -5,7 +5,7 @@ import logo from '@/assets/images/basic/logo.png';
 import { CoinItem } from '@/components/CoinItem';
 import useGetAllBalances from '@/hooks/sui/useGetAllBalances';
 import { useNetwork, useZkLogin } from '@/contexts';
-import { getCoinNameFromType, shortenAddress } from '@/utils';
+import { shortenAddress } from '@/utils';
 import { ArrowLeftOnRectangle, ClipboardDocument, SettingGear } from '@/assets';
 import { useCopyToClipboard } from '@/hooks/common';
 import { useModal } from '@/contexts/modal';
