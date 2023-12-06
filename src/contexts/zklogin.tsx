@@ -65,56 +65,21 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
     return { client, network };
   }, [client, network]);
 
-  const handleError = useCallback((error: any) => {
-    if (error instanceof Error) {
-      // This is a standard Error object, so it has a message property
-      const errorMessage = error.message || 'An unknown error occurred';
-      setError(errorMessage);
-    } else {
-      // This is not a standard Error object, so handle it differently
-      // For example, you might want to convert it to a string
-      const errorMessage = String(error) || 'An unknown error occurred';
-      setError(errorMessage);
-    }
-  }, []);
-
-  const runFunctionDecorator = useCallback(
-    <T extends Function>(
-      callback: T,
-      onErrorCallbacks: Array<(error: any) => void> = [],
-      finallyCallbacks: Array<() => void> = []
-    ): T => {
-      return (async (...args: any[]) => {
-        try {
-          return await callback(...args);
-        } catch (e) {
-          handleError(e);
-          onErrorCallbacks.forEach((callback) => callback(e));
-        } finally {
-          for (const callback of finallyCallbacks) {
-            await callback();
-          }
-        }
-      }) as any;
-    },
-    []
-  );
-
   const login = useCallback(
-    runFunctionDecorator(
-      async (account: ZkLoginAccountSerialized, jwt?: string) => {
+    async (account: ZkLoginAccountSerialized, jwt?: string) => {
+      try {
         // await doLogin(newAccount as ZkLoginAccountSerialized, networkEnv);
         await doLogin(zkLoginProviderData, account, networkEnv, jwt);
         setIsLoggedIn(true);
-      },
-      [() => setIsLoggedIn(false)],
-      []
-    ),
-    []
+      } catch (e) {
+        console.error(e);
+        setIsLoggedIn(false);
+      }
+    },
+    [zkLoginProviderData, networkEnv]
   );
 
   const logout = (emit: boolean = true) => {
-    console.log(address);
     if (address) clearEphemeralValue(address);
     removeCurrentAccount();
     setIsLoggedIn(false);
@@ -126,90 +91,103 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
     }
   };
 
-  const signData = runFunctionDecorator(
+  const signData = useCallback(
     async (account: ZkLoginAccountSerialized, digest: Uint8Array) => {
-      if (!account || !address) {
-        setError('Please login first');
-        return;
-      }
-
-      const currentEpoch = await getCurrentEpoch(networkEnv);
-      const credentials = getEphemeralValue(address);
-      if (!credentials) {
-        setError('Please login first');
-        return;
-      }
-
-      let credentialsData = credentials[network];
-      if (!credentialsData) {
-        setError('Please login first');
-        return;
-      }
-
-      if (!areCredentialsValid(currentEpoch, networkEnv.network, credentialsData)) {
-        credentialsData = await doLogin(
-          zkLoginProviderData,
-          account,
-          networkEnv,
-          credentialsData.jwt
-        );
-      }
-
-      const { ephemeralKeyPair, proofs: storedProofs, maxEpoch, jwt, randomness } = credentialsData;
-      const keyPair = fromExportedKeypair(ephemeralKeyPair);
-      let proofs = storedProofs;
-      if (!proofs) {
-        proofs = await generateProofs(
-          account,
-          jwt,
-          BigInt(randomness),
-          maxEpoch,
-          keyPair.getPublicKey()
-        );
-        credentialsData.proofs = proofs;
-        // store the proofs to avoid creating them again
-        const newEphemeralValue = getEphemeralValue(address);
-        if (!newEphemeralValue) {
-          // this should never happen
-          throw new Error('Missing data, account is locked');
+      try {
+        if (!account || !address) {
+          setError('Please login first');
+          return;
         }
-        newEphemeralValue[network] = credentialsData;
-        setEphemeralValue(address, newEphemeralValue);
+
+        const currentEpoch = await getCurrentEpoch(networkEnv);
+        const credentials = getEphemeralValue(address);
+        if (!credentials) {
+          setError('Please login first');
+          return;
+        }
+
+        let credentialsData = credentials[network];
+        if (!credentialsData) {
+          setError('Please login first');
+          return;
+        }
+
+        if (!areCredentialsValid(currentEpoch, networkEnv.network, credentialsData)) {
+          credentialsData = await doLogin(
+            zkLoginProviderData,
+            account,
+            networkEnv,
+            credentialsData.jwt
+          );
+        }
+
+        const {
+          ephemeralKeyPair,
+          proofs: storedProofs,
+          maxEpoch,
+          jwt,
+          randomness,
+        } = credentialsData;
+        const keyPair = fromExportedKeypair(ephemeralKeyPair);
+        let proofs = storedProofs;
+        if (!proofs) {
+          proofs = await generateProofs(
+            account,
+            jwt,
+            BigInt(randomness),
+            maxEpoch,
+            keyPair.getPublicKey()
+          );
+          credentialsData.proofs = proofs;
+          // store the proofs to avoid creating them again
+          const newEphemeralValue = getEphemeralValue(address);
+          if (!newEphemeralValue) {
+            // this should never happen
+            throw new Error('Missing data, account is locked');
+          }
+          newEphemeralValue[network] = credentialsData;
+          setEphemeralValue(address, newEphemeralValue);
+        }
+
+        const userSignature = toSerializedSignature({
+          signature: await keyPair.sign(digest),
+          signatureScheme: keyPair.getKeyScheme(),
+          publicKey: keyPair.getPublicKey(),
+        });
+
+        return getZkLoginSignature({
+          inputs: { ...proofs, addressSeed: address },
+          maxEpoch,
+          userSignature,
+        });
+      } catch (e) {
+        console.error(e);
       }
-
-      const userSignature = toSerializedSignature({
-        signature: await keyPair.sign(digest),
-        signatureScheme: keyPair.getKeyScheme(),
-        publicKey: keyPair.getPublicKey(),
-      });
-
-      return getZkLoginSignature({
-        inputs: { ...proofs, addressSeed: address },
-        maxEpoch,
-        userSignature,
-      });
     },
-    [],
-    []
+    [address, networkEnv]
   );
 
-  const signAndSend = runFunctionDecorator(
+  const signAndSend = useCallback(
     async (account: ZkLoginAccountSerialized, txb: TransactionBlock) => {
-      const digest = await txb.build({ client });
-      const signature = await signData(account as ZkLoginAccountSerialized, digest);
-      if (!signature) {
-        throw new Error('Error on generating signature');
+      try {
+        const digest = await txb.build({ client });
+        const signature = await signData(account as ZkLoginAccountSerialized, digest);
+        if (!signature) {
+          throw new Error('Error on generating signature');
+        }
+
+        txb.setSenderIfNotSet(account.address);
+
+        return client.executeTransactionBlock({
+          transactionBlock: digest,
+          signature,
+        });
+      } catch (e) {
+        console.error();
+        return undefined;
       }
-
-      txb.setSenderIfNotSet(account.address);
-
-      return client.executeTransactionBlock({
-        transactionBlock: digest,
-        signature,
-      });
     },
-    [],
-    []
+    [client]
   );
 
   // subscribe to broadcast channel
