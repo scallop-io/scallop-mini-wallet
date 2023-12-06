@@ -64,7 +64,7 @@
       }
     }
 
-    & .address {
+    & .address-container {
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -76,15 +76,20 @@
       top: 0px;
       height: 53.6px;
 
-      & svg.clipboard {
-        width: 12px;
-        height: 12px;
-      }
 
-      &:hover {
-        cursor: pointer;
-        color: white;
-        opacity: 0.8;
+
+      & .address {
+        width: auto;
+        & svg.clipboard {
+          width: 12px;
+          height: 12px;
+        }
+
+        &:hover {
+          cursor: pointer;
+          color: white;
+          opacity: 0.8;
+        }
       }
 
       & div {
@@ -102,6 +107,21 @@
   }
 
   & .body {
+    &::-webkit-scrollbar {
+      width: 0.4rem;
+      display: block;
+      background-color: transparent;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      border-radius: 12px;
+      background: rgba(229, 231, 235, 0.2);
+    }
+  
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
     position: relative;
     top: 53.6px;
     max-height: calc(100% - 53.6px);
@@ -113,7 +133,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 4px;
+      gap: 8px;
       padding: 10px 14px 10px 10px;
 
       & button {
@@ -172,21 +192,31 @@
             /* divide-y divide-panel-light/75 */
 
             & .setting-content-network {
-              padding: 0.25rem 0.5rem; /* px-2 py-1 */
-            
+              padding: 0.25rem 0.5rem;
+              /* px-2 py-1 */
+
               & .setting-network-title {
-                font-size: 0.875rem; /* text-sm */
-                color: #ffffff; /* text-white */
+                font-size: 0.875rem;
+                /* text-sm */
+                color: #ffffff;
+                /* text-white */
               }
-            
+
               & .setting-network-select {
-                margin-top: 0.25rem; /* mt-1 */
-                width: 100%; /* w-full */
-                border-radius: 0.25rem; /* rounded */
-                background-color: #c6c8cc; /* bg-white */
-                padding: 0.25rem; /* p-1 */
-                font-size: 0.75rem; /* text-xs */
-                border: none; /* border-none */
+                margin-top: 0.25rem;
+                /* mt-1 */
+                width: 100%;
+                /* w-full */
+                border-radius: 0.25rem;
+                /* rounded */
+                background-color: #c6c8cc;
+                /* bg-white */
+                padding: 0.25rem;
+                /* p-1 */
+                font-size: 0.75rem;
+                /* text-xs */
+                border: none;
+                /* border-none */
               }
             }
           }

@@ -64,6 +64,7 @@ export const doLogin = async (
   const ephemeralCredentialValue: EphemeralCredentialValue = {
     mainnet: {} as CredentialData,
     testnet: {} as CredentialData,
+    devnet: {} as CredentialData,
   };
 
   ephemeralCredentialValue[networkEnv.network] = credentialsData;

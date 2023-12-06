@@ -26,14 +26,13 @@ const Portfolio: FC<PortfolioProps> = () => {
   const { coinTypes, addBulkCoinType } = useLocalCoinType();
   const { showDialog } = useModal();
   const getAccountBalanceQuery = useGetAllBalances(address, 30 * 1000);
-  const [isCopied, setIsCopied] = useState(false);
   const [isManageToken, setIsManageToken] = useState(false);
   const [localTypeSymbol, setLocalTypeSymbol] = useState<any>({});
   const [newCoinTypes, setNewCoinTypes] = useState<any>([]);
-  const copyAddress = useCopyToClipboard(address ?? '', setIsCopied);
 
   const accountBalance = useMemo(() => {
     if (!isLoggedIn) return [];
+    if (getAccountBalanceQuery.isFetching) return [];
     let coinBalances = getAccountBalanceQuery.data ?? [];
     const typeSymbol: any = {};
 
@@ -99,15 +98,6 @@ const Portfolio: FC<PortfolioProps> = () => {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    if (isCopied) {
-      const timer = setTimeout(() => setIsCopied(false), 500);
-      return () => clearTimeout(timer);
-    }
-
-    return () => { };
-  }, [isCopied]);
-
-  useEffect(() => {
     if (newCoinTypes.length > 0) {
       addBulkCoinType(newCoinTypes);
       setNewCoinTypes([]);
@@ -132,10 +122,9 @@ const Portfolio: FC<PortfolioProps> = () => {
             </span>
           </div>
         </div>
-        <div className="address" onClick={copyAddress}>
+        <div className="address-container">
           <div className="email">{email}</div>
-          {isLoggedIn &&
-            (isCopied ? 'Address copied!' : <AddressDisplay address={address ?? ''} />)}
+          {isLoggedIn && <AddressDisplay address={address ?? ''} />}
         </div>
       </div>
       <div className="body">
@@ -200,11 +189,24 @@ const Portfolio: FC<PortfolioProps> = () => {
   );
 };
 
-const AddressDisplay: FC<{ address: string; }> = ({ address }) => (
-  <div>
-    {shortenAddress(address)}
-    <ClipboardDocument />
-  </div>
-);
+const AddressDisplay: FC<{ address: string }> = ({ address }) => {
+  const [isCopied, setIsCopied] = useState(false);
+  const copyAddress = useCopyToClipboard(address ?? '', setIsCopied);
+  useEffect(() => {
+    if (isCopied) {
+      const timer = setTimeout(() => setIsCopied(false), 500);
+      return () => clearTimeout(timer);
+    }
+
+    return () => {};
+  }, [isCopied]);
+
+  return (
+    <div className="address" onClick={copyAddress}>
+      {isCopied ? 'Address copied!' : shortenAddress(address)}
+      <ClipboardDocument />
+    </div>
+  );
+};
 
 export default Portfolio;

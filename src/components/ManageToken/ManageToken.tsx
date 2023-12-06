@@ -86,7 +86,7 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
             <CoinItem
               coinType={searchInput}
               coinSymbol={coinMetaDataQuery.data?.symbol}
-              withPrice={true}
+              withPrice={false}
             />
             <Toggle
               id="token-new"
@@ -100,7 +100,7 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
           coinTypeList.map((coin, index) => {
             return (
               <div className="token-row" key={index}>
-                <CoinItem coinType={coin.coinType} coinSymbol={coin.symbol} withPrice={true} />
+                <CoinItem coinType={coin.coinType} coinSymbol={coin.symbol} withPrice={false} />
                 <Toggle
                   id={'token-' + index}
                   checked={coin.active}
