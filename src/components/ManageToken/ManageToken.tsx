@@ -52,7 +52,13 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
         setInactive(coinType);
       } else {
         if (newValidCoinType) {
-          addCoinType({ coinType, symbol: coinMetaDataQuery.data?.symbol ?? '' });
+          addCoinType({
+            coinType,
+            symbol: coinMetaDataQuery.data?.symbol ?? '',
+            decimals: coinMetaDataQuery.data?.decimals ?? 0,
+            name: coinMetaDataQuery.data?.name ?? '',
+            active: true,
+          });
           setTrigger(!trigger);
         } else {
           setActive(coinType);

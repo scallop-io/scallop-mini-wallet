@@ -6,13 +6,12 @@ import React, {
   type FC,
   useContext,
 } from 'react';
-import { useLocalStorage, type LocalCoinType, type PartialCoinMetadata } from '@/stores';
+import { useLocalStorage, type LocalCoinType } from '@/stores';
 import { useNetwork } from './connection';
 
 export interface LocalCoinTypeContextInterface {
   coinTypes: LocalCoinType[];
-  addCoinType: (coinMetadata: PartialCoinMetadata) => void;
-  addBulkCoinType: (coinMetadata: PartialCoinMetadata[]) => void;
+  addCoinType: (coinMetadata: LocalCoinType) => void;
   setActive: (coinType: string) => void;
   setInactive: (coinType: string) => void;
 }
@@ -20,7 +19,6 @@ export interface LocalCoinTypeContextInterface {
 export const LocalCoinTypeContext = createContext<LocalCoinTypeContextInterface>({
   coinTypes: [],
   addCoinType: () => undefined,
-  addBulkCoinType: () => undefined,
   setActive: () => undefined,
   setInactive: () => undefined,
 });
@@ -38,15 +36,8 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
   }, [currentNetwork]);
 
   const addCoinType = useCallback(
-    (coinMetadata: PartialCoinMetadata) => {
+    (coinMetadata: LocalCoinType) => {
       return localCoinTypeActions.addType(currentNetwork, coinMetadata);
-    },
-    [currentNetwork]
-  );
-
-  const addBulkCoinType = useCallback(
-    (coinMetadata: PartialCoinMetadata[]) => {
-      return localCoinTypeActions.addBulk(currentNetwork, coinMetadata);
     },
     [currentNetwork]
   );
@@ -69,7 +60,6 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
     <LocalCoinTypeContext.Provider
       value={{
         coinTypes: coinTypes,
-        addBulkCoinType,
         addCoinType,
         setActive,
         setInactive,
@@ -81,12 +71,10 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
 };
 
 export const useLocalCoinType = () => {
-  const { coinTypes, addCoinType, addBulkCoinType, setActive, setInactive } =
-    useContext(LocalCoinTypeContext);
+  const { coinTypes, addCoinType, setActive, setInactive } = useContext(LocalCoinTypeContext);
 
   return {
     coinTypes,
-    addBulkCoinType,
     addCoinType,
     setActive,
     setInactive,

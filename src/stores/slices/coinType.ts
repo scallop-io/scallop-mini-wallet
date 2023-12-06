@@ -4,7 +4,6 @@ import type {
   CoinTypeLocalStorageState,
   CreateCoinTypeLocalStorageSlice,
   LocalCoinType,
-  PartialCoinMetadata,
 } from '@/stores';
 
 export const intialCoinTypeLocalStorageState = {
@@ -51,7 +50,7 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
   return {
     ...intialCoinTypeLocalStorageState,
     localCoinTypeActions: {
-      addType: (network: string, coinMetadata: PartialCoinMetadata) => {
+      addType: (network: string, coinMetadata: LocalCoinType) => {
         setState((state: any) => {
           const store = { ...state };
           const duplicate = store.localCoinTypeState.coinTypes[network].some(
@@ -62,21 +61,6 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
             coinMetadata.symbol = coinMetadata.symbol.toUpperCase();
             store.localCoinTypeState.coinTypes[network].push({ ...coinMetadata, active: true });
           }
-          return store;
-        });
-      },
-      addBulk: (network, coinMetadatas) => {
-        setState((state: any) => {
-          const store = { ...state };
-          coinMetadatas.forEach((item) => {
-            const duplicate = store.localCoinTypeState.coinTypes[network].some(
-              (x: any) => x.coinType === item.coinType
-            );
-            if (!duplicate) {
-              item.symbol = item.symbol.toUpperCase();
-              store.localCoinTypeState.coinTypes[network].push({ ...item, active: true });
-            }
-          });
           return store;
         });
       },

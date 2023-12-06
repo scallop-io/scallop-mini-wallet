@@ -23,12 +23,11 @@ const Portfolio: FC<PortfolioProps> = () => {
   const { currentNetwork, setCurrentNetwork } = useNetwork();
   const { address, email } = useZkAccounts();
   const { isLoggedIn, logout } = useZkLogin();
-  const { coinTypes, addBulkCoinType } = useLocalCoinType();
+  const { coinTypes } = useLocalCoinType();
   const { showDialog } = useModal();
   const getAccountBalanceQuery = useGetAllBalances(address, 30 * 1000);
   const [isManageToken, setIsManageToken] = useState(false);
   const [localTypeSymbol, setLocalTypeSymbol] = useState<any>({});
-  const [newCoinTypes, setNewCoinTypes] = useState<any>([]);
 
   const accountBalance = useMemo(() => {
     if (!isLoggedIn) return [];
@@ -52,16 +51,9 @@ const Portfolio: FC<PortfolioProps> = () => {
         lockedBalance: {},
       }));
     } else {
-      const newTypes: any = [];
       const balanceCoinTypes = new Set(
-        coinBalances.map((coinBalance) => {
-          if (!coinTypesMap[coinBalance.coinType]) {
-            newTypes.push({ coinType: coinBalance.coinType, symbol: '' });
-          }
-          return normalizeStructTag(coinBalance.coinType);
-        })
+        coinBalances.map((coinBalance) => normalizeStructTag(coinBalance.coinType))
       );
-      setNewCoinTypes(newTypes);
 
       const newCoins = Object.keys(coinTypesMap)
         .filter((coinType) => coinTypesMap[coinType] && !balanceCoinTypes.has(coinType))
@@ -96,13 +88,6 @@ const Portfolio: FC<PortfolioProps> = () => {
       });
     }
   }, [isLoggedIn]);
-
-  useEffect(() => {
-    if (newCoinTypes.length > 0) {
-      addBulkCoinType(newCoinTypes);
-      setNewCoinTypes([]);
-    }
-  }, [accountBalance]);
 
   useEffect(() => {
     getAccountBalanceQuery.refetch();
@@ -189,7 +174,7 @@ const Portfolio: FC<PortfolioProps> = () => {
   );
 };
 
-const AddressDisplay: FC<{ address: string }> = ({ address }) => {
+const AddressDisplay: FC<{ address: string; }> = ({ address }) => {
   const [isCopied, setIsCopied] = useState(false);
   const copyAddress = useCopyToClipboard(address ?? '', setIsCopied);
   useEffect(() => {
@@ -198,7 +183,7 @@ const AddressDisplay: FC<{ address: string }> = ({ address }) => {
       return () => clearTimeout(timer);
     }
 
-    return () => {};
+    return () => { };
   }, [isCopied]);
 
   return (

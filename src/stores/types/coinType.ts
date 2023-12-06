@@ -1,12 +1,10 @@
-import type { CoinMetadata } from '@mysten/sui.js/client';
-
 export type LocalCoinType = {
   coinType: string;
   active: boolean;
   symbol: string;
+  decimals: number;
+  name: string;
 };
-
-export type PartialCoinMetadata = Pick<LocalCoinType, 'coinType'> & Pick<CoinMetadata, 'symbol'>;
 
 export interface CoinTypeLocalStorageState {
   coinTypes: {
@@ -16,10 +14,8 @@ export interface CoinTypeLocalStorageState {
   };
 }
 
-
 export interface LocalCoinTypeStorageActions {
-  addType: (network: string, coinMetadata: PartialCoinMetadata) => void;
-  addBulk: (network: string, coinMetadata: PartialCoinMetadata[]) => void;
+  addType: (network: string, coinMetadata: LocalCoinType) => void;
   setActive: (network: string, coinType: string) => void;
   setInactive: (network: string, coinType: string) => void;
 }
