@@ -1,5 +1,6 @@
 import './portfolio.scss';
 import React, { useEffect, type FC, useState, useMemo, useCallback, type ChangeEvent } from 'react';
+import { normalizeStructTag } from '@mysten/sui.js/utils';
 import logo from '@/assets/images/basic/logo.png';
 import { CoinItem } from '@/components/CoinItem';
 import useGetAllBalances from '@/hooks/sui/useGetAllBalances';
@@ -149,8 +150,8 @@ const Portfolio: FC<PortfolioProps> = () => {
                   return (
                     <CoinItem
                       key={index}
-                      coinType={item.coinType}
-                      coinSymbol={localCoinTypeMap[item.coinType]?.symbol}
+                      coinType={normalizeStructTag(item.coinType)}
+                      coinSymbol={localCoinTypeMap[normalizeStructTag(item.coinType)]?.symbol}
                       totalBalance={item.totalBalance}
                     />
                   );

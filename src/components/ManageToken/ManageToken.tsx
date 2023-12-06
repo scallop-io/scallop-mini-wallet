@@ -212,7 +212,12 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
                     <div className="form-coin-type-title">Decimal</div>
                     <input value={decimaInput} onChange={handleDecimalInput} />
                     <div className="form-coin-type-title">Image</div>
-                    <input ref={inputFileRef} type="file" accept="image/*" onChange={handleImageInput} />
+                    <input
+                      ref={inputFileRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageInput}
+                    />
                     {base64Image && <img height="30" src={base64Image} alt="Selected" />}
                     <button
                       disabled={!isCoinTypeValid}

@@ -3,3 +3,4 @@ export { default as useEvent } from './useEvent';
 export { default as useLatestValue } from './useLastestValue';
 export { default as useDocumentEvent } from './useDocumentEvent';
 export { default as useCopyToClipboard } from './useCopyToClipboard';
+export { default as useGetLocalMetadata } from './useGetLocalMetadata';

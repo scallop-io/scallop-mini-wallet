@@ -3,7 +3,7 @@ import './coinItem.scss';
 import BigNumber from 'bignumber.js';
 import { normalizeStructTag } from '@mysten/sui.js/utils';
 import { shortenAddress } from '@/utils';
-import { useCopyToClipboard, useGetCoinMetadata } from '@/hooks';
+import { useCopyToClipboard, useGetCoinMetadata, useGetLocalMetadata } from '@/hooks';
 import { numberWithCommas } from '@/utils/number';
 import { CoinIcon } from '@/components/CoinIcon';
 import { getCoinAddressFromType, getCoinNameFromType } from '@/utils/coin';
@@ -29,10 +29,13 @@ export const CoinItem: React.FC<CoinItemProps> = ({
   }, [coinType]);
   const copyAddress = useCopyToClipboard(coinAddress, setIsCopied);
   const coinMetadata = useGetCoinMetadata(normalizeStructTag(coinType));
+  const localCoinMetadata = useGetLocalMetadata(coinType);
 
   const coinBalance = useMemo(() => {
-    return new BigNumber(totalBalance ?? 0).shiftedBy(-1 * (coinMetadata.data?.decimals ?? 0));
-  }, [coinMetadata.data?.decimals, totalBalance]);
+    return new BigNumber(totalBalance ?? 0).shiftedBy(
+      -1 * (coinMetadata.data?.decimals ?? localCoinMetadata?.decimals ?? 0)
+    );
+  }, [coinMetadata.data?.decimals, totalBalance, localCoinMetadata]);
 
   const coinName = useMemo(() => {
     return coinSymbol && coinSymbol !== '' ? coinSymbol : getCoinNameFromType(coinType);
@@ -58,13 +61,13 @@ export const CoinItem: React.FC<CoinItemProps> = ({
         <div className="info">
           <div>
             <span>{coinName}</span>
-            {totalBalance && <span>{numberWithCommas(coinBalance.toString())}</span>}
+            {totalBalance && <span>{numberWithCommas(coinBalance.toFixed(3).toString())}</span>}
           </div>
           {withPrice && (
             <>
               <div>
-                <span>≈ ${}</span>
-                <span>${numberWithCommas(coinBalance.times(1).toString())}</span>
+                <span>≈ ${0}</span>
+                <span>${numberWithCommas(coinBalance.times(0).toFixed(3).toString())}</span>
               </div>
               <div>
                 <span>{isCopied ? 'Address copied' : 'Click to copy address'}</span>

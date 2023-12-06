@@ -9,7 +9,7 @@ export interface DbContextInterface {
   addAccount: (account: ZkLoginAccountSerialized) => Promise<void>;
   removeAccount: (id: string) => Promise<void>;
   updateAccount: (account: ZkLoginAccountSerialized) => Promise<void>;
-  coinTypeImageCache: { [coinType: string]: any; };
+  coinTypeImageCache: { [coinType: string]: any };
   addCoinTypeImage: (coinType: string, image: string) => Promise<void>;
   removeCoinTypeImage: (coinType: string) => Promise<void>;
 }
@@ -27,7 +27,7 @@ export const DbContext = createContext<DbContextInterface>({
 type DbProviderProps = {};
 export const DbProvider: FC<PropsWithChildren<DbProviderProps>> = ({ children }) => {
   const [db, setDb] = useState<DB | undefined>();
-  const [coinTypeImageCache, setCoinTypeImageCache] = useState<{ [coinType: string]: any; }>({});
+  const [coinTypeImageCache, setCoinTypeImageCache] = useState<{ [coinType: string]: any }>({});
 
   const _getDB = useCallback(async () => {
     if (db) {
@@ -103,7 +103,7 @@ export const DbProvider: FC<PropsWithChildren<DbProviderProps>> = ({ children })
           acc[curr.coinType] = curr.image;
           return acc;
         },
-        {} as { [coinType: string]: any; }
+        {} as { [coinType: string]: any }
       );
       setCoinTypeImageCache(coinTypeImageCache);
     };

@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { useLocalStorage, type LocalCoinType } from '@/stores';
 import { useNetwork } from './connection';
-import { useCoinTypeDB } from "./db";
+import { useCoinTypeDB } from './db';
 
 export interface LocalCoinTypeContextInterface {
   coinTypes: LocalCoinType[];
