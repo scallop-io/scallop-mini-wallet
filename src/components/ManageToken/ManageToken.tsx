@@ -44,7 +44,7 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
     if (matchedLocalCoinType.length > 0) return matchedLocalCoinType;
     else if (searchInput === '') return coinTypes;
     else return [];
-  }, [matchedLocalCoinType, coinTypes]);
+  }, [matchedLocalCoinType, coinTypes, trigger]);
 
   const isCoinTypeValid = useMemo(() => {
     if (coinTypeInput === '') return true;
@@ -113,10 +113,13 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
     [newValidCoinType]
   );
 
-  const handleDeleteCoinType = useCallback((coinType: string) => {
-    removeCoinType(coinType);
-    setTrigger(!trigger);
-  }, []);
+  const handleDeleteCoinType = useCallback(
+    (coinType: string) => {
+      removeCoinType(coinType);
+      setTrigger(!trigger);
+    },
+    [trigger]
+  );
 
   const handleImportCustomToken = () => {
     if (coinTypeInput === '' || symbolInput === '' || decimaInput === undefined) return;

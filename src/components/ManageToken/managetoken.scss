@@ -203,10 +203,10 @@
         padding-right: 0px;
       }
 
-      & svg {
+      & svg.trash-bin {
         cursor: pointer;
         color: red;
-        width: 24px;
+        width: 22px;
         height: auto;
       }
     }

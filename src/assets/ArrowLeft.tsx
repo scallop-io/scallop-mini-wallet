@@ -11,7 +11,7 @@ export const ArrowLeft: React.FC<Props> = (props: Props) => {
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke="currentColor"
-      className="h-6 w-6"
+      className="arrow-left"
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
     </svg>

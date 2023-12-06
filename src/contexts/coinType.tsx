@@ -4,6 +4,7 @@ import React, {
   useCallback,
   type FC,
   useContext,
+  useMemo,
 } from 'react';
 import { useLocalStorage, type LocalCoinType } from '@/stores';
 import { useNetwork } from './connection';
@@ -31,6 +32,11 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
 }) => {
   const { localCoinTypeState, localCoinTypeActions } = useLocalStorage();
   const { currentNetwork } = useNetwork();
+
+  const coinTypes = useMemo(
+    () => localCoinTypeState.coinTypes[currentNetwork],
+    [localCoinTypeState.coinTypes, currentNetwork]
+  );
 
   const addCoinType = useCallback(
     (coinMetadata: LocalCoinType) => {
@@ -67,7 +73,7 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
   return (
     <LocalCoinTypeContext.Provider
       value={{
-        coinTypes: localCoinTypeState.coinTypes[currentNetwork],
+        coinTypes: coinTypes,
         addCoinType,
         removeCoinType,
         setActive,
