@@ -28,17 +28,21 @@ const Portfolio: FC<PortfolioProps> = () => {
   const getAccountBalanceQuery = useGetAllBalances(address, 10 * 1000);
   const [isCopied, setIsCopied] = useState(false);
   const [isManageToken, setIsManageToken] = useState(false);
+  const [localTypeSymbol, setLocalTypeSymbol] = useState<any>({});
   const copyAddress = useCopyToClipboard(address ?? '', setIsCopied);
 
   const accountBalance = useMemo(() => {
     if (!isLoggedIn) return [];
 
     let coinBalances = getAccountBalanceQuery.data ?? [];
-
+    const typeSymbol: any = {};
     const coinTypesMap = coinTypes.reduce((acc: any = {}, coin) => {
       acc[coin.coinType] = coin.active;
+      typeSymbol[coin.coinType] = coin.symbol;
       return acc;
     }, {});
+
+    setLocalTypeSymbol(typeSymbol);
 
     if (coinBalances.length === 0) {
       coinBalances = Object.keys(coinTypesMap)
@@ -75,7 +79,7 @@ const Portfolio: FC<PortfolioProps> = () => {
     });
 
     return coinBalances;
-  }, [getAccountBalanceQuery.isFetching, isLoggedIn, isManageToken]);
+  }, [getAccountBalanceQuery.isFetching, isLoggedIn, isManageToken, coinTypes]);
 
   const handleNetworkChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
     const network = e.target.value as NetworkType;
@@ -172,7 +176,12 @@ const Portfolio: FC<PortfolioProps> = () => {
             <div className="coin-list">
               {accountBalance.map((item, index) => {
                 return (
-                  <CoinItem key={index} coinType={item.coinType} totalBalance={item.totalBalance} />
+                  <CoinItem
+                    key={index}
+                    coinType={item.coinType}
+                    coinSymbol={localTypeSymbol[item.coinType]}
+                    totalBalance={item.totalBalance}
+                  />
                 );
               })}
             </div>
@@ -183,7 +192,7 @@ const Portfolio: FC<PortfolioProps> = () => {
   );
 };
 
-const AddressDisplay: FC<{ address: string; }> = ({ address }) => (
+const AddressDisplay: FC<{ address: string }> = ({ address }) => (
   <div>
     {shortenAddress(address)}
     <ClipboardDocument />
