@@ -43,7 +43,7 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
         setCurrentAccount(account);
       }
     },
-    [accounts]
+    [accounts, currentAccount]
   );
 
   const createNewAccount = useCallback(async () => {
@@ -57,9 +57,14 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
       id: uuid(),
     });
 
-    setCurrentAccount(newAccount as ZkLoginAccountSerialized);
+    setCurrentAccount({
+      ...newAccount,
+      id: uuid(),
+    } as ZkLoginAccountSerialized);
+    const _accounts = await getAccounts();
+    setAccounts(_accounts);
     return [newAccount, jwt] as [ZkLoginAccountSerialized, string];
-  }, []);
+  }, [currentAccount, accounts]);
 
   const removeCurrentAccount = useCallback(async () => {
     if (!currentAccount) {
@@ -70,7 +75,7 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
     const newAccounts = await getAccounts();
     setAccounts(newAccounts);
     setCurrentAccount(undefined);
-  }, [currentAccount]);
+  }, [currentAccount, accounts]);
 
   useEffect(() => {
     (async () => {
