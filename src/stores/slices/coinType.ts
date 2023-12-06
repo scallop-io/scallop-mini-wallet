@@ -64,6 +64,18 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
           return store;
         });
       },
+      removeType: (network: string, coinType: string) => {
+        setState((state: any) => {
+          const store = { ...state };
+          const index = store.localCoinTypeState.coinTypes[network].findIndex(
+            (item: any) => item.coinType === coinType
+          );
+          if (index >= 0) {
+            store.localCoinTypeState.coinTypes[network].splice(index, 1);
+          }
+          return store;
+        });
+      },
       setActive: (network: string, coinType: string) => {
         setState((state: any) => {
           const store = { ...state };

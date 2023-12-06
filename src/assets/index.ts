@@ -6,3 +6,4 @@ export { default as ArrowLeft } from './ArrowLeft';
 export { default as SettingGear } from './SettingGear';
 export { default as Plus } from './Plus';
 export { default as DefaulCoinIcon } from './DefaultCoinIcon';
+export { default as TrashBin } from './TrashBin';

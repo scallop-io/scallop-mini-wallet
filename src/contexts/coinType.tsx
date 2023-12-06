@@ -1,6 +1,5 @@
 import React, {
   type PropsWithChildren,
-  useMemo,
   createContext,
   useCallback,
   type FC,
@@ -12,6 +11,7 @@ import { useNetwork } from './connection';
 export interface LocalCoinTypeContextInterface {
   coinTypes: LocalCoinType[];
   addCoinType: (coinMetadata: LocalCoinType) => void;
+  removeCoinType: (coinType: string) => void;
   setActive: (coinType: string) => void;
   setInactive: (coinType: string) => void;
 }
@@ -19,6 +19,7 @@ export interface LocalCoinTypeContextInterface {
 export const LocalCoinTypeContext = createContext<LocalCoinTypeContextInterface>({
   coinTypes: [],
   addCoinType: () => undefined,
+  removeCoinType: () => undefined,
   setActive: () => undefined,
   setInactive: () => undefined,
 });
@@ -31,27 +32,34 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
   const { localCoinTypeState, localCoinTypeActions } = useLocalStorage();
   const { currentNetwork } = useNetwork();
 
-  const coinTypes = useMemo(() => {
-    return localCoinTypeState.coinTypes[currentNetwork];
-  }, [localCoinTypeState.coinTypes, currentNetwork]);
-
   const addCoinType = useCallback(
     (coinMetadata: LocalCoinType) => {
-      return localCoinTypeActions.addType(currentNetwork, coinMetadata);
+      localCoinTypeActions.addType(currentNetwork, coinMetadata);
+      return;
+    },
+    [currentNetwork]
+  );
+
+  const removeCoinType = useCallback(
+    (coinType: string) => {
+      localCoinTypeActions.removeType(currentNetwork, coinType);
+      return;
     },
     [currentNetwork]
   );
 
   const setActive = useCallback(
     (coinType: string) => {
-      return localCoinTypeActions.setActive(currentNetwork, coinType);
+      localCoinTypeActions.setActive(currentNetwork, coinType);
+      return;
     },
     [currentNetwork]
   );
 
   const setInactive = useCallback(
     (coinType: string) => {
-      return localCoinTypeActions.setInactive(currentNetwork, coinType);
+      localCoinTypeActions.setInactive(currentNetwork, coinType);
+      return;
     },
     [currentNetwork]
   );
@@ -59,8 +67,9 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
   return (
     <LocalCoinTypeContext.Provider
       value={{
-        coinTypes: coinTypes,
+        coinTypes: localCoinTypeState.coinTypes[currentNetwork],
         addCoinType,
+        removeCoinType,
         setActive,
         setInactive,
       }}
@@ -71,11 +80,13 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
 };
 
 export const useLocalCoinType = () => {
-  const { coinTypes, addCoinType, setActive, setInactive } = useContext(LocalCoinTypeContext);
+  const { coinTypes, addCoinType, removeCoinType, setActive, setInactive } =
+    useContext(LocalCoinTypeContext);
 
   return {
     coinTypes,
     addCoinType,
+    removeCoinType,
     setActive,
     setInactive,
   };
