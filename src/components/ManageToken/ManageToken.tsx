@@ -21,7 +21,6 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   const [symbolInput, setSymbolInput] = useState('');
   const [decimaInput, setDecimalInput] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [trigger, setTrigger] = useState(true);
   const coinMetaDataQuery = useGetCoinMetadata(searchInput);
 
   const matchedLocalCoinType = useMemo(
@@ -29,7 +28,7 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
       coinTypes.filter(
         (coin) => coin.coinType === searchInput || coin.symbol.includes(searchInput.toUpperCase())
       ),
-    [coinTypes, searchInput, trigger]
+    [coinTypes, searchInput]
   );
 
   const searchedCoinHasMetadata = useMemo(() => {
@@ -40,12 +39,6 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
     return matchedLocalCoinType.length === 0 && searchedCoinHasMetadata;
   }, [matchedLocalCoinType, searchedCoinHasMetadata]);
 
-  const coinTypeList = useMemo(() => {
-    if (matchedLocalCoinType.length > 0) return matchedLocalCoinType;
-    else if (searchInput === '') return coinTypes;
-    else return [];
-  }, [matchedLocalCoinType, coinTypes, trigger]);
-
   const isCoinTypeValid = useMemo(() => {
     if (coinTypeInput === '') return true;
     try {
@@ -55,6 +48,22 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
       return false;
     }
   }, [coinTypeInput]);
+
+  const coinTypeList = useMemo(() => {
+    if (matchedLocalCoinType.length > 0) return matchedLocalCoinType;
+    else if (newValidCoinType)
+      return [
+        {
+          coinType: searchInput,
+          symbol: coinMetaDataQuery.data?.symbol ?? '',
+          decimals: coinMetaDataQuery.data?.decimals ?? 0,
+          name: coinMetaDataQuery.data?.name ?? '',
+          active: false,
+        },
+      ];
+    else if (searchInput === '') return coinTypes;
+    else return [];
+  }, [matchedLocalCoinType, newValidCoinType]);
 
   // Search by coin type
   const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -104,7 +113,6 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
             name: coinMetaDataQuery.data?.name ?? '',
             active: true,
           });
-          setTrigger(!trigger);
         } else {
           setActive(coinType);
         }
@@ -113,25 +121,20 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
     [newValidCoinType]
   );
 
-  const handleDeleteCoinType = useCallback(
-    (coinType: string) => {
-      removeCoinType(coinType);
-      setTrigger(!trigger);
-    },
-    [trigger]
-  );
+  const handleDeleteCoinType = useCallback((coinType: string) => {
+    removeCoinType(coinType);
+  }, []);
 
   const handleImportCustomToken = () => {
     if (coinTypeInput === '' || symbolInput === '' || decimaInput === undefined) return;
     // console.log(coinTypeInput, symbolInput, decimaInput);
     addCoinType({
-      coinType: coinTypeInput,
+      coinType: normalizeStructTag(coinTypeInput),
       symbol: symbolInput,
       decimals: +decimaInput,
       name: '',
       active: true,
     });
-    setTrigger(!trigger);
   };
 
   const resetInput = () => {
@@ -199,38 +202,23 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
         </Dropdown>
       </div>
       <div className="managetoken-body">
-        {newValidCoinType ? (
-          <div className="token-row">
-            <CoinItem
-              coinType={searchInput}
-              coinSymbol={coinMetaDataQuery.data?.symbol}
-              withPrice={false}
-            />
-            <Toggle
-              id="token-new"
-              checked={!newValidCoinType}
-              onChange={() => {
-                handleToggle(!newValidCoinType, normalizeStructTag(searchInput));
-              }}
-            />
-          </div>
-        ) : (
-          coinTypeList.map((coin, index) => {
-            return (
-              <div className="token-row" key={index}>
-                <CoinItem coinType={coin.coinType} coinSymbol={coin.symbol} withPrice={false} />
+        {coinTypeList.map((coin) => {
+          return (
+            <div className="token-row" key={coin.coinType}>
+              <CoinItem coinType={coin.coinType} coinSymbol={coin.symbol} withPrice={false} />
+              {!newValidCoinType && (
                 <TrashBin onClick={() => handleDeleteCoinType(coin.coinType)} />
-                <Toggle
-                  id={'token-' + index}
-                  checked={coin.active}
-                  onChange={() => {
-                    handleToggle(coin.active, coin.coinType);
-                  }}
-                />
-              </div>
-            );
-          })
-        )}
+              )}
+              <Toggle
+                id={'token-' + coin.coinType}
+                defaultChecked={coin.active}
+                onChange={() => {
+                  handleToggle(coin.active, coin.coinType);
+                }}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

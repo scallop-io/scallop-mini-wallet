@@ -61,6 +61,9 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
             coinMetadata.symbol = coinMetadata.symbol.toUpperCase();
             store.localCoinTypeState.coinTypes[network].push({ ...coinMetadata, active: true });
           }
+          store.localCoinTypeState.coinTypes[network] = [
+            ...store.localCoinTypeState.coinTypes[network],
+          ];
           return store;
         });
       },
@@ -73,6 +76,9 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
           if (index >= 0) {
             store.localCoinTypeState.coinTypes[network].splice(index, 1);
           }
+          store.localCoinTypeState.coinTypes[network] = [
+            ...store.localCoinTypeState.coinTypes[network],
+          ];
           return store;
         });
       },
@@ -85,6 +91,9 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
             );
             if (s) s.active = true;
           }
+          store.localCoinTypeState.coinTypes[network] = [
+            ...store.localCoinTypeState.coinTypes[network],
+          ];
           return store;
         });
       },
@@ -97,6 +106,9 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
             );
             if (s) s.active = false;
           }
+          store.localCoinTypeState.coinTypes[network] = [
+            ...store.localCoinTypeState.coinTypes[network],
+          ];
           return store;
         });
       },

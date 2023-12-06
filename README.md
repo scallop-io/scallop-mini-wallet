@@ -1,6 +1,6 @@
 # Scallop Mini Wallet
 
-Scallop Mini-Wallet is a library designed to integrate with web3 using zkLogin, supported by SUI. This tool is particularly useful in addressing issues where your cryptocurrency does not appear in your wallet.
+Scallop Mini-Wallet is a react component library designed to integrate with Sui blockchain using zkLogin. This tool is particularly useful in addressing issues where your cryptocurrency does not appear in your wallet.
 
 ## Instalation
 

@@ -1,4 +1,5 @@
 import React, {
+  useState,
   forwardRef,
   type ChangeEvent,
   type DetailedHTMLProps,
@@ -10,7 +11,7 @@ import './toggle.scss';
 import { useEvent } from '@/hooks';
 
 type BasicToggleProps = {
-  checked: boolean;
+  defaultChecked?: boolean;
   disabled?: boolean;
 };
 
@@ -22,20 +23,24 @@ export const Toggle = forwardRef(
       id,
       className,
       children,
-      checked = false,
+      defaultChecked = false,
       disabled,
       onChange,
       ...rest
     }: ToggleProps<HTMLInputElement>,
     ref?: ForwardedRef<HTMLInputElement>
   ): JSX.Element => {
+    const [checked, setChecked] = useState(defaultChecked);
+
     const handleClick = useEvent((event: ChangeEvent<HTMLInputElement>) => {
       if (disabled) {
         event.preventDefault();
         return;
       }
+      setChecked(event.target.checked);
       if (onChange) onChange(event);
     });
+
     return (
       <div className="toggle-container">
         <label htmlFor={id}>
@@ -43,6 +48,7 @@ export const Toggle = forwardRef(
             <input
               id={id}
               type="checkbox"
+              checked={checked}
               className={classNames(
                 className,
                 'toggle-checkbox',

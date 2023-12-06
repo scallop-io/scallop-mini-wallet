@@ -1,6 +1,6 @@
 import './portfolio.scss';
 import React, { useEffect, type FC, useState, useMemo, useCallback, type ChangeEvent } from 'react';
-import { normalizeStructTag } from '@mysten/sui.js/utils';
+// import { normalizeStructTag } from '@mysten/sui.js/utils';
 import logo from '@/assets/images/basic/logo.png';
 import { CoinItem } from '@/components/CoinItem';
 import useGetAllBalances from '@/hooks/sui/useGetAllBalances';
@@ -14,7 +14,7 @@ import { ManageToken } from '@/components/ManageToken';
 import { useZkAccounts } from '@/contexts/accounts';
 import { useLocalCoinType } from '@/contexts/coinType';
 import { Dropdown } from '@/components/Dropdown';
-import { networks, type NetworkType } from '@/stores';
+import { type LocalCoinType, networks, type NetworkType } from '@/stores';
 import type { CoinBalance } from '@mysten/sui.js/client';
 
 type PortfolioProps = {};
@@ -27,51 +27,37 @@ const Portfolio: FC<PortfolioProps> = () => {
   const { showDialog } = useModal();
   const getAccountBalanceQuery = useGetAllBalances(address, 30 * 1000);
   const [isManageToken, setIsManageToken] = useState(false);
-  const [localTypeSymbol, setLocalTypeSymbol] = useState<any>({});
+
+  const localCoinTypeMap = useMemo(
+    () =>
+      coinTypes.reduce(
+        (acc, coin) => {
+          acc[coin.coinType] = coin;
+          return acc;
+        },
+        {} as Record<string, LocalCoinType>
+      ),
+    [coinTypes]
+  );
+
+  const localCoinBalance = useMemo(
+    () =>
+      coinTypes
+        .filter(({ active }) => active)
+        .map(({ coinType }) => {
+          return {
+            coinType,
+            coinObjectCount: 0,
+            totalBalance: '0',
+            lockedBalance: {},
+          } as CoinBalance;
+        }),
+    [coinTypes]
+  );
 
   const accountBalance = useMemo(() => {
-    if (!isLoggedIn) return [];
-
-    let coinBalances = getAccountBalanceQuery.data ?? [];
-    const typeSymbol: any = {};
-
-    const coinTypesMap = coinTypes.reduce((acc: any = {}, coin) => {
-      acc[coin.coinType] = coin.active;
-      typeSymbol[coin.coinType] = coin.symbol;
-      return acc;
-    }, {});
-
-    setLocalTypeSymbol(typeSymbol);
-
-    if (coinBalances.length === 0) {
-      coinBalances = coinTypes.map((item) => ({
-        coinType: item.coinType,
-        totalBalance: '0',
-        coinObjectCount: 0,
-        lockedBalance: {},
-      }));
-    } else {
-      const balanceCoinTypes = new Set(
-        coinBalances.map((coinBalance) => normalizeStructTag(coinBalance.coinType))
-      );
-
-      const newCoins = Object.keys(coinTypesMap)
-        .filter((coinType) => coinTypesMap[coinType] && !balanceCoinTypes.has(coinType))
-        .map((coinType) => ({
-          coinType,
-          totalBalance: '0',
-          coinObjectCount: 0,
-          lockedBalance: {},
-        }));
-
-      return coinBalances.concat(newCoins);
-    }
-
-    coinBalances.sort((a: CoinBalance, b: CoinBalance) => {
-      return +a.totalBalance - +b.totalBalance;
-    });
-    return coinBalances;
-  }, [getAccountBalanceQuery.isFetching, isLoggedIn, isManageToken]);
+    return getAccountBalanceQuery.data ?? [];
+  }, [localCoinTypeMap, getAccountBalanceQuery.isFetching]);
 
   const handleNetworkChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
     const network = e.target.value as NetworkType;
@@ -91,7 +77,7 @@ const Portfolio: FC<PortfolioProps> = () => {
 
   useEffect(() => {
     getAccountBalanceQuery.refetch();
-  }, [coinTypes]);
+  }, [currentNetwork]);
 
   return (
     <div className="portfolio-container">
@@ -161,7 +147,17 @@ const Portfolio: FC<PortfolioProps> = () => {
                   <CoinItem
                     key={index}
                     coinType={item.coinType}
-                    coinSymbol={localTypeSymbol[item.coinType]}
+                    coinSymbol={localCoinTypeMap[item.coinType]?.symbol}
+                    totalBalance={item.totalBalance}
+                  />
+                );
+              })}
+              {localCoinBalance.map((item, index) => {
+                return (
+                  <CoinItem
+                    key={index}
+                    coinType={item.coinType}
+                    coinSymbol={localCoinTypeMap[item.coinType]?.symbol}
                     totalBalance={item.totalBalance}
                   />
                 );
