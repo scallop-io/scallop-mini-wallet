@@ -9,8 +9,10 @@ import nodePolyfills from 'rollup-plugin-polyfill-node';
 import postcss from 'rollup-plugin-postcss';
 import terser from '@rollup/plugin-terser';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import gzipPlugin from 'rollup-plugin-gzip';
 import packageJson from './package.json' assert { type: 'json' };
 import tsConfig from './tsconfig.json' assert { type: 'json' };
+
 export default [
   {
     input: 'src/index.ts',
@@ -39,6 +41,7 @@ export default [
       postcss(),
       image(),
       terser(),
+      gzipPlugin()
     ],
   },
   {

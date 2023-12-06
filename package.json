@@ -75,6 +75,7 @@
     "react-dom": "^18.2.0",
     "rollup": "^4.6.1",
     "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-gzip": "^3.1.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-polyfill": "^4.2.0",
     "rollup-plugin-polyfill-node": "^0.13.0",
