@@ -22,7 +22,7 @@ export enum Explorer {
 export enum Network {
   mainnet = 'mainnet',
   testnet = 'testnet',
-  // devnet = 'devnet',
+  devnet = 'devnet',
 }
 
 export const nodes = Object.keys(Node) as Array<NodeType>;

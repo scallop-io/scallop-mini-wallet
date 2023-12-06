@@ -102,7 +102,6 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
       async (account: ZkLoginAccountSerialized, jwt?: string) => {
         // await doLogin(newAccount as ZkLoginAccountSerialized, networkEnv);
         await doLogin(account, networkEnv, jwt);
-
         setIsLoggedIn(true);
       },
       [() => setIsLoggedIn(false)],

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useConnectionClient } from '@/contexts';
+import { useConnectionClient, useNetwork } from '@/contexts';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { CoinMetadata } from '@mysten/sui.js/client';
 
@@ -8,10 +8,11 @@ const useGetCoinMetadata = (
   refetchInterval?: number
 ): UseQueryResult<CoinMetadata | null, unknown> => {
   const rpc = useConnectionClient();
+  const { currentNetwork: network } = useNetwork();
   return useQuery({
     queryKey: refetchInterval
-      ? ['get-coin-metadata', coinType, refetchInterval]
-      : ['get-coin-metadata', coinType],
+      ? ['get-coin-metadata', network, coinType, refetchInterval]
+      : ['get-coin-metadata', network, coinType],
     queryFn: async () => (coinType ? await rpc.getCoinMetadata({ coinType }) : null),
     retry: false,
     staleTime: Infinity,

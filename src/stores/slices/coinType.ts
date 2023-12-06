@@ -1,8 +1,10 @@
 import { DEFAULT_COINS } from '@/constants/coins';
+import { getCoinNameFromType } from '@/utils';
 import type {
   CoinTypeLocalStorageState,
   CreateCoinTypeLocalStorageSlice,
   LocalCoinType,
+  PartialCoinMetadata,
 } from '@/stores';
 
 export const intialCoinTypeLocalStorageState = {
@@ -13,19 +15,34 @@ export const intialCoinTypeLocalStorageState = {
           if (x) return { ...x, active: true };
           return null;
         })
-        .filter((x) => x),
+        .filter((x) => !!x)
+        .sort((a, b) => {
+          const aCoinName = getCoinNameFromType(a!.coinType);
+          const bCoinName = getCoinNameFromType(b!.coinType);
+          return aCoinName.localeCompare(bCoinName);
+        }),
       testnet: DEFAULT_COINS.testnet
         .map((x) => {
           if (x) return { ...x, active: true };
           return null;
         })
-        .filter((x) => x),
+        .filter((x) => x)
+        .sort((a, b) => {
+          const aCoinName = getCoinNameFromType(a!.coinType);
+          const bCoinName = getCoinNameFromType(b!.coinType);
+          return aCoinName.localeCompare(bCoinName);
+        }),
       devnet: DEFAULT_COINS.devnet
         .map((x) => {
           if (x) return { ...x, active: true };
           return null;
         })
-        .filter((x) => x),
+        .filter((x) => x)
+        .sort((a, b) => {
+          const aCoinName = getCoinNameFromType(a!.coinType);
+          const bCoinName = getCoinNameFromType(b!.coinType);
+          return aCoinName.localeCompare(bCoinName);
+        }),
     },
   } as CoinTypeLocalStorageState,
 };
@@ -34,10 +51,17 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
   return {
     ...intialCoinTypeLocalStorageState,
     localCoinTypeActions: {
-      addType: (network: string, coinType: string) => {
+      addType: (network: string, coinMetadata: PartialCoinMetadata) => {
         setState((state: any) => {
           const store = { ...state };
-          store.localCoinTypeState.coinTypes[network].push({ coinType, active: true });
+          const duplicate = store.localCoinTypeState.coinTypes[network].some(
+            (item: any) => item.coinType === coinMetadata.coinType
+          );
+
+          if (!duplicate) {
+            coinMetadata.symbol = coinMetadata.symbol.toUpperCase();
+            store.localCoinTypeState.coinTypes[network].push({ ...coinMetadata, active: true });
+          }
           return store;
         });
       },

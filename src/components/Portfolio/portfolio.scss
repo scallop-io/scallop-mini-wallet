@@ -19,7 +19,7 @@
     padding-top: 1rem;
     border-bottom: 1px solid #e0e0e0;
 
-    & > div:first-child {
+    &>div:first-child {
       width: 100%;
       display: flex;
       justify-content: space-between;
@@ -105,13 +105,15 @@
     position: relative;
     top: 53.6px;
     max-height: calc(100% - 53.6px);
+    min-height: calc(100% - 53.6px);
     overflow-y: auto;
 
-    & .coin-list-manage {
+    & .setting-list {
       width: 100%;
       display: flex;
       justify-content: center;
-      align-self: center;
+      align-items: center;
+      gap: 4px;
       padding: 10px 14px 10px 10px;
 
       & button {
@@ -143,6 +145,54 @@
           color: black;
         }
       }
+
+      & .setting-dropdown-container {
+        & .setting-content {
+          border: 1px solid white;
+          position: absolute;
+          right: 8px;
+          top: 52px;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          width: 9.2rem;
+          border-radius: 0.25rem;
+          /* Adjust based on your design */
+          padding: 0.25rem;
+          background: #262f3f;
+
+          & .setting-content-grid {
+            display: grid;
+            /* grid */
+            grid-template-columns: repeat(1, 1fr);
+            /* grid-cols-1 */
+            // border-top: 1px solid #D1D5DB;
+            /* divide-y divide-panel-light/75 */
+            border-bottom: 1px solid #D1D5DB;
+            /* divide-y divide-panel-light/75 */
+
+            & .setting-content-network {
+              padding: 0.25rem 0.5rem; /* px-2 py-1 */
+            
+              & .setting-network-title {
+                font-size: 0.875rem; /* text-sm */
+                color: #ffffff; /* text-white */
+              }
+            
+              & .setting-network-select {
+                margin-top: 0.25rem; /* mt-1 */
+                width: 100%; /* w-full */
+                border-radius: 0.25rem; /* rounded */
+                background-color: #c6c8cc; /* bg-white */
+                padding: 0.25rem; /* p-1 */
+                font-size: 0.75rem; /* text-xs */
+                border: none; /* border-none */
+              }
+            }
+          }
+        }
+      }
+
     }
 
     & .coin-list {
