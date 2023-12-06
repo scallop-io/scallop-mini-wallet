@@ -19,6 +19,7 @@ export interface CoinTypeLocalStorageState {
 
 export interface LocalCoinTypeStorageActions {
   addType: (network: string, coinMetadata: PartialCoinMetadata) => void;
+  addBulk: (network: string, coinMetadata: PartialCoinMetadata[]) => void;
   setActive: (network: string, coinType: string) => void;
   setInactive: (network: string, coinType: string) => void;
 }

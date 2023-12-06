@@ -33,7 +33,7 @@ export const CoinItem: React.FC<CoinItemProps> = ({
   }, [coinMetadata.data?.decimals, totalBalance]);
 
   const coinName = useMemo(() => {
-    return coinSymbol ?? getCoinNameFromType(coinType);
+    return coinSymbol && coinSymbol !== '' ? coinSymbol : getCoinNameFromType(coinType);
   }, [coinType]);
 
   useEffect(() => {

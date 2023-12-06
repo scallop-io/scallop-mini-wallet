@@ -65,6 +65,21 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
           return store;
         });
       },
+      addBulk: (network, coinMetadatas) => {
+        setState((state: any) => {
+          const store = { ...state };
+          coinMetadatas.forEach((item) => {
+            const duplicate = store.localCoinTypeState.coinTypes[network].some(
+              (x: any) => x.coinType === item.coinType
+            );
+            if (!duplicate) {
+              item.symbol = item.symbol.toUpperCase();
+              store.localCoinTypeState.coinTypes[network].push({ ...item, active: true });
+            }
+          });
+          return store;
+        });
+      },
       setActive: (network: string, coinType: string) => {
         setState((state: any) => {
           const store = { ...state };

@@ -20,22 +20,23 @@ import type { CoinBalance } from '@mysten/sui.js/client';
 type PortfolioProps = {};
 
 const Portfolio: FC<PortfolioProps> = () => {
-  const { currentNetwork: network, setCurrentNetwork } = useNetwork();
+  const { currentNetwork, setCurrentNetwork } = useNetwork();
   const { address, email } = useZkAccounts();
   const { isLoggedIn, logout } = useZkLogin();
-  const { coinTypes } = useLocalCoinType();
+  const { coinTypes, addBulkCoinType } = useLocalCoinType();
   const { showDialog } = useModal();
-  const getAccountBalanceQuery = useGetAllBalances(address, 10 * 1000);
+  const getAccountBalanceQuery = useGetAllBalances(address, 30 * 1000);
   const [isCopied, setIsCopied] = useState(false);
   const [isManageToken, setIsManageToken] = useState(false);
   const [localTypeSymbol, setLocalTypeSymbol] = useState<any>({});
+  const [newCoinTypes, setNewCoinTypes] = useState<any>([]);
   const copyAddress = useCopyToClipboard(address ?? '', setIsCopied);
 
   const accountBalance = useMemo(() => {
     if (!isLoggedIn) return [];
-
     let coinBalances = getAccountBalanceQuery.data ?? [];
     const typeSymbol: any = {};
+
     const coinTypesMap = coinTypes.reduce((acc: any = {}, coin) => {
       acc[coin.coinType] = coin.active;
       typeSymbol[coin.coinType] = coin.symbol;
@@ -45,18 +46,23 @@ const Portfolio: FC<PortfolioProps> = () => {
     setLocalTypeSymbol(typeSymbol);
 
     if (coinBalances.length === 0) {
-      coinBalances = Object.keys(coinTypesMap)
-        .filter((coinType) => coinTypesMap[coinType])
-        .map((coinType) => ({
-          coinType,
-          totalBalance: '0',
-          coinObjectCount: 0,
-          lockedBalance: {},
-        }));
+      coinBalances = coinTypes.map((item) => ({
+        coinType: item.coinType,
+        totalBalance: '0',
+        coinObjectCount: 0,
+        lockedBalance: {},
+      }));
     } else {
+      const newTypes: any = [];
       const balanceCoinTypes = new Set(
-        coinBalances.map((coinBalance) => normalizeStructTag(coinBalance.coinType))
+        coinBalances.map((coinBalance) => {
+          if (!coinTypesMap[coinBalance.coinType]) {
+            newTypes.push({ coinType: coinBalance.coinType, symbol: '' });
+          }
+          return normalizeStructTag(coinBalance.coinType);
+        })
       );
+      setNewCoinTypes(newTypes);
 
       const newCoins = Object.keys(coinTypesMap)
         .filter((coinType) => coinTypesMap[coinType] && !balanceCoinTypes.has(coinType))
@@ -67,19 +73,14 @@ const Portfolio: FC<PortfolioProps> = () => {
           lockedBalance: {},
         }));
 
-      return coinBalances
-        .filter((coin) => coinTypesMap[normalizeStructTag(coin.coinType)])
-        .concat(newCoins);
+      return coinBalances.concat(newCoins);
     }
 
     coinBalances.sort((a: CoinBalance, b: CoinBalance) => {
-      const aCoinName = getCoinNameFromType(a.coinType);
-      const bCoinName = getCoinNameFromType(b.coinType);
-      return aCoinName.localeCompare(bCoinName);
+      return +a.totalBalance - +b.totalBalance;
     });
-
     return coinBalances;
-  }, [getAccountBalanceQuery.isFetching, isLoggedIn, isManageToken, coinTypes]);
+  }, [getAccountBalanceQuery.isFetching, isLoggedIn, isManageToken]);
 
   const handleNetworkChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
     const network = e.target.value as NetworkType;
@@ -103,12 +104,19 @@ const Portfolio: FC<PortfolioProps> = () => {
       return () => clearTimeout(timer);
     }
 
-    return () => {};
+    return () => { };
   }, [isCopied]);
 
   useEffect(() => {
+    if (newCoinTypes.length > 0) {
+      addBulkCoinType(newCoinTypes);
+      setNewCoinTypes([]);
+    }
+  }, [accountBalance]);
+
+  useEffect(() => {
     getAccountBalanceQuery.refetch();
-  }, [network]);
+  }, [coinTypes]);
 
   return (
     <div className="portfolio-container">
@@ -156,7 +164,7 @@ const Portfolio: FC<PortfolioProps> = () => {
                               handleNetworkChange(e);
                               close();
                             }}
-                            value={network}
+                            value={currentNetwork}
                           >
                             {networks.map((name) => {
                               return (
@@ -192,7 +200,7 @@ const Portfolio: FC<PortfolioProps> = () => {
   );
 };
 
-const AddressDisplay: FC<{ address: string }> = ({ address }) => (
+const AddressDisplay: FC<{ address: string; }> = ({ address }) => (
   <div>
     {shortenAddress(address)}
     <ClipboardDocument />
