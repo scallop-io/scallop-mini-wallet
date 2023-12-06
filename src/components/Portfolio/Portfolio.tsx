@@ -31,7 +31,7 @@ const Portfolio: FC<PortfolioProps> = () => {
 
   const accountBalance = useMemo(() => {
     if (!isLoggedIn) return [];
-    if (getAccountBalanceQuery.isFetching) return [];
+
     let coinBalances = getAccountBalanceQuery.data ?? [];
     const typeSymbol: any = {};
 

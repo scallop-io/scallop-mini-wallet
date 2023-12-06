@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { Portfolio } from '@/components/Portfolio';
-import { ConnectionProvider, ZkLoginProvider, useZkLogin, useZkProvider } from '@/contexts';
+import { ConnectionProvider, ZkLoginProvider, useZkLogin } from '@/contexts';
 import { ModalProvider } from '@/contexts/modal';
 import { Modal } from '@/components/Modal';
 import { LoginButton } from '@/components/LoginButton';
@@ -11,6 +11,7 @@ import { ChevronRight } from '@/assets';
 import { DbProvider } from '@/contexts/db';
 import { ZkAccountProvider, useZkAccounts } from '@/contexts/accounts';
 import { LocalCoinTypeProvider } from '@/contexts/coinType';
+import { ZkLoginProviderDataProvider, useZkLoginProviderData } from '@/contexts/zkprovider';
 import type { FC } from 'react';
 import '@/style.css';
 import type { ZkLoginAccountSerialized } from '@/types';
@@ -33,17 +34,19 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = ({
   return (
     <QueryClientProvider client={queryClient}>
       <ConnectionProvider>
-        <DbProvider>
-          <LocalCoinTypeProvider>
-            <ZkLoginProvider>
+        <LocalCoinTypeProvider>
+          <DbProvider>
+            <ZkLoginProviderDataProvider>
               <ZkAccountProvider>
-                <ModalProvider>
-                  <MiniWallet googleClientID={googleClientID} />
-                </ModalProvider>
+                <ZkLoginProvider>
+                  <ModalProvider>
+                    <MiniWallet googleClientID={googleClientID} />
+                  </ModalProvider>
+                </ZkLoginProvider>
               </ZkAccountProvider>
-            </ZkLoginProvider>
-          </LocalCoinTypeProvider>
-        </DbProvider>
+            </ZkLoginProviderDataProvider>
+          </DbProvider>
+        </LocalCoinTypeProvider>
       </ConnectionProvider>
     </QueryClientProvider>
   );
@@ -54,7 +57,7 @@ type MiniWalletProps = {
 };
 const MiniWallet: FC<MiniWalletProps> = ({ googleClientID }) => {
   const { accounts, currentAccount, switchAccount, createNewAccount } = useZkAccounts();
-  const { setGoogleClientID } = useZkProvider();
+  const { setGoogleClientID } = useZkLoginProviderData();
   const { isLoggedIn, login } = useZkLogin();
   const [loading, setLoading] = useState(false);
   const [hide, setHide] = useState(false);

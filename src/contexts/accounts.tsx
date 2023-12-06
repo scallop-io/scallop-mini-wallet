@@ -1,8 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { createNew } from '@/accounts/zklogin/zklogin';
+import { useZkLoginProviderData } from './zkprovider';
 import { useAccountDB } from './db';
-import { useZkProvider } from './zklogin';
 import type { FC, PropsWithChildren } from 'react';
 import type { ZkLoginAccountSerialized } from '@/types';
 
@@ -13,7 +13,7 @@ export interface ZkAccountInterface {
   accounts: ZkLoginAccountSerialized[] | undefined;
   switchAccount: (id: string) => void;
   createNewAccount: () => Promise<[ZkLoginAccountSerialized, string] | []>;
-  removeAccount: () => Promise<void>;
+  removeCurrentAccount: () => Promise<void>;
 }
 
 export const ZkAccountContext = createContext<ZkAccountInterface>({
@@ -23,14 +23,14 @@ export const ZkAccountContext = createContext<ZkAccountInterface>({
   accounts: undefined,
   switchAccount: () => undefined,
   createNewAccount: async () => [],
-  removeAccount: async () => undefined,
+  removeCurrentAccount: async () => undefined,
 });
 
 type ZkAccountProviderProps = {};
 export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = ({ children }) => {
+  const { zkLoginProviderData } = useZkLoginProviderData();
   const { getAccounts, addAccount, removeAccount: removeDBAccount } = useAccountDB();
   const [accounts, setAccounts] = useState<ZkLoginAccountSerialized[]>([]);
-  const { zkProvider } = useZkProvider();
   const [currentAccount, setCurrentAccount] = useState<ZkLoginAccountSerialized | undefined>();
 
   const address = useMemo(() => currentAccount?.address, [currentAccount]);
@@ -48,7 +48,7 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
 
   const createNewAccount = useCallback(async () => {
     const [newAccount, jwt] = await createNew({
-      providerData: zkProvider,
+      providerData: zkLoginProviderData,
       provider: 'google',
     });
 
@@ -61,7 +61,7 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
     return [newAccount, jwt] as [ZkLoginAccountSerialized, string];
   }, []);
 
-  const removeAccount = useCallback(async () => {
+  const removeCurrentAccount = useCallback(async () => {
     if (!currentAccount) {
       return;
     }
@@ -69,6 +69,7 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
     await removeDBAccount(currentAccount.id);
     const newAccounts = await getAccounts();
     setAccounts(newAccounts);
+    setCurrentAccount(undefined);
   }, [currentAccount]);
 
   useEffect(() => {
@@ -87,7 +88,7 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
         accounts,
         switchAccount,
         createNewAccount,
-        removeAccount,
+        removeCurrentAccount,
       }}
     >
       {children}
@@ -103,7 +104,7 @@ export const useZkAccounts = () => {
     currentAccount,
     switchAccount,
     createNewAccount,
-    removeAccount,
+    removeCurrentAccount,
   } = useContext(ZkAccountContext);
   return {
     address,
@@ -112,6 +113,6 @@ export const useZkAccounts = () => {
     currentAccount,
     switchAccount,
     createNewAccount,
-    removeAccount,
+    removeCurrentAccount,
   };
 };
