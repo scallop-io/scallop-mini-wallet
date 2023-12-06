@@ -33,7 +33,7 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
 
   const coinTypes = useMemo(() => {
     return localCoinTypeState.coinTypes[currentNetwork];
-  }, [currentNetwork]);
+  }, [localCoinTypeState.coinTypes, currentNetwork]);
 
   const addCoinType = useCallback(
     (coinMetadata: LocalCoinType) => {
