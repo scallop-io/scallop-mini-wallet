@@ -41,7 +41,7 @@ export default [
       postcss(),
       image(),
       terser(),
-      gzipPlugin()
+      gzipPlugin(),
     ],
   },
   {
