@@ -7,6 +7,7 @@ import { useCopyToClipboard, useGetCoinMetadata } from '@/hooks';
 import { numberWithCommas } from '@/utils/number';
 import { CoinIcon } from '@/components/CoinIcon';
 import { getCoinAddressFromType, getCoinNameFromType } from '@/utils/coin';
+import { useCoinTypeDB } from '@/contexts/db';
 
 export type CoinItemProps = {
   coinType: string;
@@ -21,12 +22,13 @@ export const CoinItem: React.FC<CoinItemProps> = ({
   totalBalance,
   withPrice = true,
 }: CoinItemProps) => {
+  const { coinTypeImageCache } = useCoinTypeDB();
   const [isCopied, setIsCopied] = React.useState(false);
   const coinAddress = useMemo(() => {
     return getCoinAddressFromType(coinType);
   }, [coinType]);
   const copyAddress = useCopyToClipboard(coinAddress, setIsCopied);
-  const coinMetadata = useGetCoinMetadata(normalizeStructTag(coinType), 10000);
+  const coinMetadata = useGetCoinMetadata(normalizeStructTag(coinType));
 
   const coinBalance = useMemo(() => {
     return new BigNumber(totalBalance ?? 0).shiftedBy(-1 * (coinMetadata.data?.decimals ?? 0));
@@ -43,11 +45,18 @@ export const CoinItem: React.FC<CoinItemProps> = ({
       }, 500);
     }
   }, [isCopied]);
+
+  useEffect(() => {
+    console.log(coinType, coinTypeImageCache[coinType]);
+  }, []);
   return (
     <div className="coinitem-container" onClick={copyAddress}>
       <div className="token">
         <div className="icon">
-          <CoinIcon coinName={coinName} iconUrl={coinMetadata.data?.iconUrl ?? ''} />
+          <CoinIcon
+            coinName={coinName}
+            iconUrl={coinMetadata.data?.iconUrl ?? coinTypeImageCache[coinType] ?? ''}
+          />
         </div>
         <div className="info">
           <div>

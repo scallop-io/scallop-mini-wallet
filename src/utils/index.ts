@@ -9,3 +9,4 @@ export * from './coin';
 export * from './type';
 export * from './data';
 export * from './document';
+export * from './image';

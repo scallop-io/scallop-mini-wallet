@@ -1,6 +1,5 @@
 import './portfolio.scss';
 import React, { useEffect, type FC, useState, useMemo, useCallback, type ChangeEvent } from 'react';
-// import { normalizeStructTag } from '@mysten/sui.js/utils';
 import logo from '@/assets/images/basic/logo.png';
 import { CoinItem } from '@/components/CoinItem';
 import useGetAllBalances from '@/hooks/sui/useGetAllBalances';
@@ -145,16 +144,17 @@ const Portfolio: FC<PortfolioProps> = () => {
               </Dropdown>
             </div>
             <div className="coin-list">
-              {accountBalance.map((item, index) => {
-                return (
-                  <CoinItem
-                    key={index}
-                    coinType={item.coinType}
-                    coinSymbol={localCoinTypeMap[item.coinType]?.symbol}
-                    totalBalance={item.totalBalance}
-                  />
-                );
-              })}
+              {!getAccountBalanceQuery.isFetching &&
+                accountBalance.map((item, index) => {
+                  return (
+                    <CoinItem
+                      key={index}
+                      coinType={item.coinType}
+                      coinSymbol={localCoinTypeMap[item.coinType]?.symbol}
+                      totalBalance={item.totalBalance}
+                    />
+                  );
+                })}
               {localCoinBalance.map((item, index) => {
                 return (
                   <CoinItem
@@ -173,7 +173,7 @@ const Portfolio: FC<PortfolioProps> = () => {
   );
 };
 
-const AddressDisplay: FC<{ address: string; }> = ({ address }) => {
+const AddressDisplay: FC<{ address: string }> = ({ address }) => {
   const [isCopied, setIsCopied] = useState(false);
   const copyAddress = useCopyToClipboard(address ?? '', setIsCopied);
   useEffect(() => {
@@ -182,7 +182,7 @@ const AddressDisplay: FC<{ address: string; }> = ({ address }) => {
       return () => clearTimeout(timer);
     }
 
-    return () => { };
+    return () => {};
   }, [isCopied]);
 
   return (

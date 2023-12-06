@@ -4,6 +4,7 @@ export type LocalCoinType = {
   symbol: string;
   decimals: number;
   name: string;
+  iconUrl?: string
 };
 
 export interface CoinTypeLocalStorageState {

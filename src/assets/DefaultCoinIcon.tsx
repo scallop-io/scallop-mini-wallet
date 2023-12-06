@@ -5,8 +5,8 @@ const DefaultCoinIcon: FC<Props> = (props: Props) => {
   return (
     <div
       style={{
-        width: '36px',
-        height: '36px',
+        width: '30px',
+        height: '30px',
         backgroundColor: '#a0b6c4',
         borderRadius: '50%',
         display: 'flex',

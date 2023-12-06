@@ -52,14 +52,15 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
       provider: 'google',
     });
 
+    const id = uuid();
     await addAccount({
       ...newAccount,
-      id: uuid(),
+      id,
     });
 
     setCurrentAccount({
       ...newAccount,
-      id: uuid(),
+      id,
     } as ZkLoginAccountSerialized);
     const _accounts = await getAccounts();
     setAccounts(_accounts);

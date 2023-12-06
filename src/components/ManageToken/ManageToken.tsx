@@ -8,6 +8,8 @@ import { useGetCoinMetadata } from '@/hooks';
 import { Toggle } from '@/components/Toggle';
 import { Dropdown } from '@/components/Dropdown';
 import Plus from '@/assets/Plus';
+import { toBase64 } from '@/utils';
+import { useCoinTypeDB } from '@/contexts/db';
 import type { ChangeEvent } from 'react';
 
 type ManageTokenProps = {
@@ -15,12 +17,15 @@ type ManageTokenProps = {
 };
 
 const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
+  const { addCoinTypeImage } = useCoinTypeDB();
   const { coinTypes, setInactive, addCoinType, removeCoinType, setActive } = useLocalCoinType();
   const [searchInput, setSearchInput] = useState('');
   const [coinTypeInput, setCoinTypeInput] = useState('');
   const [symbolInput, setSymbolInput] = useState('');
   const [decimaInput, setDecimalInput] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [base64Image, setBase64Image] = useState<string | null>(null);
+  const inputFileRef = React.useRef<HTMLInputElement>(null);
   const coinMetaDataQuery = useGetCoinMetadata(searchInput);
 
   const matchedLocalCoinType = useMemo(
@@ -75,7 +80,7 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   }, []);
 
   const handleSymbolInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setSymbolInput(e.target.value);
+    setSymbolInput((e.target.value ?? '').toUpperCase());
   }, []);
 
   const handleDecimalInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -121,6 +126,19 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
     [newValidCoinType]
   );
 
+  const handleImageInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 70 * 1024) {
+        // Validate file size (70kb in this case)
+        alert('File size exceeds limit of 70kb');
+        e.target.value = ''; // Reset the file input field
+      } else {
+        toBase64(file).then(setBase64Image); // Convert image to base64
+      }
+    }
+  }, []);
+
   const handleDeleteCoinType = useCallback((coinType: string) => {
     removeCoinType(coinType);
   }, []);
@@ -128,19 +146,28 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   const handleImportCustomToken = () => {
     if (coinTypeInput === '' || symbolInput === '' || decimaInput === undefined) return;
     // console.log(coinTypeInput, symbolInput, decimaInput);
-    addCoinType({
+    const success = addCoinType({
       coinType: normalizeStructTag(coinTypeInput),
       symbol: symbolInput,
       decimals: +decimaInput,
       name: '',
       active: true,
     });
+
+    // add coin type image to db
+    if (success && base64Image) {
+      addCoinTypeImage(normalizeStructTag(coinTypeInput), base64Image);
+    }
+
+    resetInput();
   };
 
   const resetInput = () => {
     setCoinTypeInput('');
     setSymbolInput('');
     setDecimalInput('');
+    setBase64Image(null);
+    inputFileRef.current?.value && (inputFileRef.current.value = '');
   };
 
   useEffect(() => {
@@ -184,6 +211,9 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
                     <input value={symbolInput} onChange={handleSymbolInput} type="text" />
                     <div className="form-coin-type-title">Decimal</div>
                     <input value={decimaInput} onChange={handleDecimalInput} />
+                    <div className="form-coin-type-title">Image</div>
+                    <input ref={inputFileRef} type="file" accept="image/*" onChange={handleImageInput} />
+                    {base64Image && <img height="30" src={base64Image} alt="Selected" />}
                     <button
                       disabled={!isCoinTypeValid}
                       onClick={() => {

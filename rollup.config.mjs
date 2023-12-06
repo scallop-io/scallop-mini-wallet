@@ -5,7 +5,6 @@ import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
 import dts from 'rollup-plugin-dts';
 import image from '@rollup/plugin-image';
-import nodePolyfills from 'rollup-plugin-polyfill-node';
 import postcss from 'rollup-plugin-postcss';
 import terser from '@rollup/plugin-terser';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
@@ -29,12 +28,9 @@ export default [
       },
     ],
     plugins: [
+      peerDepsExternal(),
       json(),
       commonjs(),
-      nodePolyfills({
-        exclude: ['crypto'],
-      }),
-      peerDepsExternal(),
       typescript({ tsconfig: './tsconfig.json' }),
       tsConfigPaths(),
       nodeResolve({ browser: true, preferBuiltins: false, mainFields: ['browser'] }),

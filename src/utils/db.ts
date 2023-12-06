@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-ignore
-import { randomBytes } from 'crypto-browserify';
+// import { randomBytes } from 'crypto-browserify';
 import Dexie, { type Table } from 'dexie';
 import { exportDB, importDB } from 'dexie-export-import';
 import { getFromLocalStorage, setToLocalStorage } from '@/utils/storage';
@@ -13,17 +13,19 @@ const dbLocalStorageBackupKey = 'indexed-db-backup';
 
 export const settingsKeys = {
   isPopulated: 'isPopulated',
-  masterSeed: 'masterSeed',
+  // masterSeed: 'masterSeed',
 };
 export class DB extends Dexie {
   accounts!: Table<ZkLoginAccountSerialized, string>;
   settings!: Table<{ value: string | boolean | number | null; setting: string }, string>;
+  coinTypes!: Table<{ image: string; coinType: string }, string>;
 
   constructor() {
     super(dbName);
     this.version(1).stores({
       accounts: 'id, type, address',
       settings: 'setting',
+      coinTypes: 'coinType',
     });
   }
 }
@@ -48,11 +50,11 @@ async function init() {
     }
   }
 
-  const hasMasterSeed = !!(await db.settings.get(settingsKeys.masterSeed))?.value;
-  if (!hasMasterSeed) {
-    const masterSeed = randomBytes(32).toString('hex');
-    await db.settings.put({ setting: settingsKeys.masterSeed, value: masterSeed });
-  }
+  // const hasMasterSeed = !!(await db.settings.get(settingsKeys.masterSeed))?.value;
+  // if (!hasMasterSeed) {
+  //   const masterSeed = randomBytes(32).toString('hex');
+  //   await db.settings.put({ setting: settingsKeys.masterSeed, value: masterSeed });
+  // }
 
   if (!db.isOpen()) {
     await db.open();

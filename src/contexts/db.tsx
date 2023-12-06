@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { getDB } from '@/utils';
 import type { FC, PropsWithChildren } from 'react';
 import type { ZkLoginAccountSerialized } from '@/types';
@@ -9,6 +9,9 @@ export interface DbContextInterface {
   addAccount: (account: ZkLoginAccountSerialized) => Promise<void>;
   removeAccount: (id: string) => Promise<void>;
   updateAccount: (account: ZkLoginAccountSerialized) => Promise<void>;
+  coinTypeImageCache: { [coinType: string]: any; };
+  addCoinTypeImage: (coinType: string, image: string) => Promise<void>;
+  removeCoinTypeImage: (coinType: string) => Promise<void>;
 }
 
 export const DbContext = createContext<DbContextInterface>({
@@ -16,11 +19,15 @@ export const DbContext = createContext<DbContextInterface>({
   addAccount: async () => undefined,
   removeAccount: async () => undefined,
   updateAccount: async () => undefined,
+  coinTypeImageCache: {},
+  addCoinTypeImage: async () => undefined,
+  removeCoinTypeImage: async () => undefined,
 });
 
 type DbProviderProps = {};
 export const DbProvider: FC<PropsWithChildren<DbProviderProps>> = ({ children }) => {
   const [db, setDb] = useState<DB | undefined>();
+  const [coinTypeImageCache, setCoinTypeImageCache] = useState<{ [coinType: string]: any; }>({});
 
   const _getDB = useCallback(async () => {
     if (db) {
@@ -32,6 +39,7 @@ export const DbProvider: FC<PropsWithChildren<DbProviderProps>> = ({ children })
     return _db;
   }, [db]);
 
+  // -------------------------------------------------------------------- //
   const addAccount = useCallback(
     async (account: ZkLoginAccountSerialized) => {
       const _db = await _getDB();
@@ -62,6 +70,45 @@ export const DbProvider: FC<PropsWithChildren<DbProviderProps>> = ({ children })
     const accounts = await _db.accounts.toArray();
     return accounts;
   };
+  // -------------------------------------------------------------------- //
+
+  // -------------------------------------------------------------------- //
+  const addCoinTypeImage = useCallback(
+    async (coinType: string, image: string) => {
+      const _db = await _getDB();
+      _db?.coinTypes.put({ coinType, image });
+      setCoinTypeImageCache({ ...coinTypeImageCache, [coinType]: image });
+    },
+    [db]
+  );
+
+  const removeCoinTypeImage = useCallback(
+    async (coinType: string) => {
+      const _db = await _getDB();
+      delete coinTypeImageCache[coinType];
+      setCoinTypeImageCache({ ...coinTypeImageCache });
+      _db?.coinTypes.delete(coinType);
+    },
+    [db]
+  );
+
+  // -------------------------------------------------------------------- //
+
+  useEffect(() => {
+    const _getCoinTypeImages = async () => {
+      const _db = await _getDB();
+      const coinTypes = await _db?.coinTypes.toArray();
+      const coinTypeImageCache = coinTypes?.reduce(
+        (acc, curr) => {
+          acc[curr.coinType] = curr.image;
+          return acc;
+        },
+        {} as { [coinType: string]: any; }
+      );
+      setCoinTypeImageCache(coinTypeImageCache);
+    };
+    _getCoinTypeImages();
+  }, []);
 
   return (
     <DbContext.Provider
@@ -70,6 +117,9 @@ export const DbProvider: FC<PropsWithChildren<DbProviderProps>> = ({ children })
         addAccount,
         removeAccount,
         updateAccount,
+        coinTypeImageCache,
+        addCoinTypeImage,
+        removeCoinTypeImage,
       }}
     >
       {children}
@@ -85,5 +135,15 @@ export const useAccountDB = () => {
     addAccount,
     removeAccount,
     updateAccount,
+  };
+};
+
+export const useCoinTypeDB = () => {
+  const { coinTypeImageCache, addCoinTypeImage, removeCoinTypeImage } = useContext(DbContext);
+
+  return {
+    coinTypeImageCache,
+    addCoinTypeImage,
+    removeCoinTypeImage,
   };
 };
