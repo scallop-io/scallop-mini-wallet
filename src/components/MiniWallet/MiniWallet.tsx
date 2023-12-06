@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { Portfolio } from '@/components/Portfolio';
-import { ConnectionProvider, ZkLoginProvider, useZkLogin } from '@/contexts';
+import { ConnectionProvider, ZkLoginProvider, useZkLogin, useZkProvider } from '@/contexts';
 import { ModalProvider } from '@/contexts/modal';
 import { Modal } from '@/components/Modal';
 import { LoginButton } from '@/components/LoginButton';
@@ -15,7 +15,9 @@ import type { FC } from 'react';
 import '@/style.css';
 import type { ZkLoginAccountSerialized } from '@/types';
 
-type MiniWalletContainerProps = {};
+type MiniWalletContainerProps = {
+  googleClientID?: string;
+};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +27,9 @@ const queryClient = new QueryClient({
   },
 });
 
-export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
+export const MiniWalletContainer: FC<MiniWalletContainerProps> = ({
+  googleClientID = '993131426104-ah7qqbp8p73ina6uepib31jj8djf523n.apps.googleusercontent.com',
+}) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ConnectionProvider>
@@ -34,7 +38,7 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
             <ZkAccountProvider>
               <ZkLoginProvider>
                 <ModalProvider>
-                  <MiniWallet />
+                  <MiniWallet googleClientID={googleClientID} />
                 </ModalProvider>
               </ZkLoginProvider>
             </ZkAccountProvider>
@@ -45,9 +49,12 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = () => {
   );
 };
 
-type MiniWalletProps = {};
-const MiniWallet: FC<MiniWalletProps> = () => {
+type MiniWalletProps = {
+  googleClientID: string;
+};
+const MiniWallet: FC<MiniWalletProps> = ({ googleClientID }) => {
   const { accounts, currentAccount, switchAccount, createNewAccount } = useZkAccounts();
+  const { setGoogleClientID } = useZkProvider();
   const { isLoggedIn, login } = useZkLogin();
   const [loading, setLoading] = useState(false);
   const [hide, setHide] = useState(false);
@@ -75,6 +82,10 @@ const MiniWallet: FC<MiniWalletProps> = () => {
       switchAccount(accounts[0].id);
     }
   }, [accounts]);
+
+  useEffect(() => {
+    setGoogleClientID(googleClientID);
+  }, []);
 
   // const onCreateNewClick = useCallback(async () => {
   //   try {

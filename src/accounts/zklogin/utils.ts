@@ -12,8 +12,7 @@ import { fromB64 } from '@mysten/sui.js/utils';
 import { Secp256k1Keypair } from '@mysten/sui.js/keypairs/secp256k1';
 import { Secp256r1Keypair } from '@mysten/sui.js/keypairs/secp256r1';
 import { getDB, settingsKeys } from '@/utils/db';
-import { zkLoginProviderDataMap } from './provider';
-import type { ZkLoginProvider } from './provider';
+import type { ZkLoginProviderData } from './provider';
 import type { getZkLoginSignature } from '@mysten/zklogin';
 import type { ExportedKeypair, Keypair, PublicKey } from '@mysten/sui.js/cryptography';
 
@@ -71,7 +70,7 @@ export async function zkLoginAuthenticate({
   loginHint,
   prompt,
 }: {
-  provider: ZkLoginProvider;
+  provider: ZkLoginProviderData;
   nonce?: string;
   // This can be used for logins after the user has already connected an account
   // and we need to make sure that the user logged in with the correct account
@@ -82,7 +81,7 @@ export async function zkLoginAuthenticate({
   if (!nonce) {
     nonce = base64url.encode(randomBytes(20));
   }
-  const { clientID, url, extraParams, buildExtraParams } = zkLoginProviderDataMap[provider];
+  const { clientID, url, extraParams, buildExtraParams } = provider;
   const params = new URLSearchParams(extraParams);
   params.append('client_id', clientID);
   params.append('redirect_uri', window.location.origin); // replace with your redirect URL

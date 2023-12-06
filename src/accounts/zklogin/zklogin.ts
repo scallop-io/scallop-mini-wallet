@@ -12,7 +12,7 @@ import type { EphemeralCredentialValue } from '@/utils/session-ephemeral';
 import type { ZkLoginAccountSerialized } from '@/types/account';
 import type { CredentialData } from '@/types';
 // import { deobfuscate, obfuscate } from "@/utils/cryptography";
-import type { ZkLoginProvider } from './provider';
+import type { ZkLoginProvider, ZkLoginProviderData } from './provider';
 import type { NetworkType } from '@/stores';
 import type { SuiClient } from '@mysten/sui.js/client';
 import type { PublicKey } from '@mysten/sui.js/cryptography';
@@ -34,6 +34,7 @@ export type NetworkEnvType = {
 };
 
 export const doLogin = async (
+  providerData: Record<ZkLoginProvider, ZkLoginProviderData>,
   account: ZkLoginAccountSerialized,
   networkEnv: NetworkEnvType,
   jwt: string | void | undefined | null
@@ -45,7 +46,11 @@ export const doLogin = async (
   const epoch = await getCurrentEpoch(networkEnv);
   const { ephemeralKeyPair, nonce, randomness, maxEpoch } = prepareZkLogin(Number(epoch));
   if (!jwt) {
-    jwt = await zkLoginAuthenticate({ provider, nonce, loginHint: sub });
+    jwt = await zkLoginAuthenticate({
+      provider: providerData[provider] as ZkLoginProviderData,
+      nonce,
+      loginHint: sub,
+    });
   }
   if (!jwt) throw new Error('JWT is missing');
   const decodedJWT = decodeJwt(jwt);
@@ -74,11 +79,13 @@ export const doLogin = async (
 };
 
 export const createNew = async ({
-  provider,
+  providerData,
+  provider
 }: {
+  providerData: ZkLoginProviderData;
   provider: ZkLoginProvider;
 }): Promise<[Omit<ZkLoginAccountSerialized, 'id'>, string]> => {
-  const jwt = await zkLoginAuthenticate({ provider, prompt: true });
+  const jwt = await zkLoginAuthenticate({ provider: providerData, prompt: true });
   if (!jwt) throw new Error('JWT is missing');
 
   const decodedJWT = decodeJwt(jwt);

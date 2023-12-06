@@ -22,6 +22,7 @@ import {
 import { fromExportedKeypair, getCurrentEpoch } from '@/accounts/zklogin';
 import { useConnection, useConnectionClient } from './connection';
 import { useZkAccounts } from './accounts';
+import type { ZkLoginProviderData } from '@/accounts/zklogin';
 import type { BroadcastEventData } from '@/types/events';
 import type { ZkLoginAccountSerialized } from '@/types/account';
 import type { FC, PropsWithChildren } from 'react';
@@ -35,6 +36,8 @@ export interface ZkLoginContextInterface {
     account: ZkLoginAccountSerialized,
     txb: TransactionBlock
   ) => Promise<SuiTransactionBlockResponse | void>;
+  setGoogleClientID: (clientID: string) => void;
+  zkProvider: Record<string, ZkLoginProviderData>;
   isLoggedIn: boolean;
   error: string;
 }
@@ -43,6 +46,28 @@ export const ZkLoginContext = createContext<ZkLoginContextInterface>({
   logout: () => undefined,
   login: async () => undefined,
   signAndSend: async () => undefined,
+  setGoogleClientID: () => undefined,
+  zkProvider: {
+    google: {
+      clientID: '',
+      url: 'https://accounts.google.com/o/oauth2/v2/auth',
+      extraParams: {
+        response_type: 'id_token',
+        scope: 'openid email profile',
+      },
+      buildExtraParams: ({ prompt, loginHint, params }) => {
+        if (prompt) {
+          params.append('prompt', 'select_account');
+        }
+        if (loginHint) {
+          params.append('login_hint', loginHint);
+        }
+      },
+      enabled: true,
+      mfaLink: 'https://support.google.com/accounts/answer/185839',
+      order: 0,
+    },
+  },
   isLoggedIn: false,
   error: '',
 });
@@ -56,6 +81,28 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>();
   const channel = useRef(new BroadcastChannel('scallop-mini-wallet')).current;
+  const [zkProvider, setZkProvider] = useState<Record<string, ZkLoginProviderData>>({
+    google: {
+      clientID: '',
+      url: 'https://accounts.google.com/o/oauth2/v2/auth',
+      extraParams: {
+        response_type: 'id_token',
+        scope: 'openid email profile',
+      },
+      buildExtraParams: ({ prompt, loginHint, params }) => {
+        if (prompt) {
+          params.append('prompt', 'select_account');
+        }
+        if (loginHint) {
+          params.append('login_hint', loginHint);
+        }
+      },
+      enabled: true,
+      mfaLink: 'https://support.google.com/accounts/answer/185839',
+      order: 0,
+    },
+  });
+
   const id = useRef<string>(uuid()).current;
 
   const networkEnv = useMemo(() => {
@@ -101,7 +148,7 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
     runFunctionDecorator(
       async (account: ZkLoginAccountSerialized, jwt?: string) => {
         // await doLogin(newAccount as ZkLoginAccountSerialized, networkEnv);
-        await doLogin(account, networkEnv, jwt);
+        await doLogin(zkProvider, account, networkEnv, jwt);
         setIsLoggedIn(true);
       },
       [() => setIsLoggedIn(false)],
@@ -110,19 +157,16 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
     []
   );
 
-  const logout = useCallback(
-    (emit: boolean = true) => {
-      if (address) clearEphemeralValue(address);
-      setIsLoggedIn(false);
-      if (emit) {
-        channel.postMessage({
-          id,
-          event: BroadcastEvents.LOGOUT,
-        });
-      }
-    },
-    [address]
-  );
+  const logout = (emit: boolean = true) => {
+    if (address) clearEphemeralValue(address);
+    setIsLoggedIn(false);
+    if (emit) {
+      channel.postMessage({
+        id,
+        event: BroadcastEvents.LOGOUT,
+      });
+    }
+  };
 
   const signData = runFunctionDecorator(
     async (account: ZkLoginAccountSerialized, digest: Uint8Array) => {
@@ -145,7 +189,7 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
       }
 
       if (!areCredentialsValid(currentEpoch, networkEnv.network, credentialsData)) {
-        credentialsData = await doLogin(account, networkEnv, credentialsData.jwt);
+        credentialsData = await doLogin(zkProvider, account, networkEnv, credentialsData.jwt);
       }
 
       const { ephemeralKeyPair, proofs: storedProofs, maxEpoch, jwt, randomness } = credentialsData;
@@ -205,6 +249,14 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
     []
   );
 
+  const setGoogleClientID = useCallback(
+    (clientID: string) => {
+      const data = zkProvider;
+      data.google.clientID = clientID;
+      setZkProvider({ ...data });
+    },
+    [zkProvider]
+  );
   // subscribe to broadcast channel
   useEffect(() => {
     channel.onmessage = (event) => {
@@ -263,9 +315,11 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
       value={{
         isLoggedIn: isLoggedIn,
         error: error ?? '',
+        zkProvider,
         login,
         logout,
         signAndSend,
+        setGoogleClientID,
       }}
     >
       {children}
@@ -282,5 +336,15 @@ export const useZkLogin = () => {
     error,
     login,
     logout,
+  };
+};
+
+export const useZkProvider = () => {
+  const { zkProvider, setGoogleClientID } = useContext(ZkLoginContext);
+
+  // Return the context value directly without using useMemo
+  return {
+    zkProvider,
+    setGoogleClientID,
   };
 };

@@ -41,5 +41,6 @@ export const clearEphemeralValue = (address: string) => {
     return;
   }
   delete data[address];
-  return importEphemeralValues(data);
+  setToSessionStorage<EphemeralValue>(SESSION_KEY, data);
+  return;
 };
