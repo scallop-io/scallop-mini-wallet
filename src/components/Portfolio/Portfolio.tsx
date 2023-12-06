@@ -24,7 +24,7 @@ const Portfolio: FC<PortfolioProps> = () => {
   const { isLoggedIn, logout } = useZkLogin();
   const { coinTypes } = useLocalCoinType();
   const { showDialog } = useModal();
-  const getAccountBalanceQuery = useGetAllBalances(address, 30 * 1000);
+  const getAccountBalanceQuery = useGetAllBalances(address, 10000);
   const [isManageToken, setIsManageToken] = useState(false);
 
   const localCoinTypeMap = useMemo(

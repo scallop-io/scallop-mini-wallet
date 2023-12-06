@@ -46,9 +46,6 @@ export const CoinItem: React.FC<CoinItemProps> = ({
     }
   }, [isCopied]);
 
-  useEffect(() => {
-    console.log(coinType, coinTypeImageCache[coinType]);
-  }, []);
   return (
     <div className="coinitem-container" onClick={copyAddress}>
       <div className="token">
