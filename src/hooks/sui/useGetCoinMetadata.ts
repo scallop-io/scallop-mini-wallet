@@ -22,7 +22,8 @@ const useGetCoinMetadata = (
     // Keep this data in the cache for 24 hours.
     // We allow this to be GC'd after a very long time to avoid unbounded cache growth.
     gcTime: 24 * 60 * 60 * 1000,
-    placeholderData: (coinTypes.find((item) => item.coinType === coinType) ?? null) as CoinMetadata | null,
+    placeholderData: (coinTypes.find((item) => item.coinType === coinType) ??
+      null) as CoinMetadata | null,
   });
 };
 

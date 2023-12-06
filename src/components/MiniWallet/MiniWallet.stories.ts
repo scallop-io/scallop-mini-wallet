@@ -9,7 +9,7 @@ const meta = {
   },
   argTypes: {
     googleClientID: { control: 'text' },
-  }
+  },
 } satisfies Meta<typeof MiniWalletContainer>;
 
 export default meta;

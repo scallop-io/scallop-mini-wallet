@@ -1,7 +1,7 @@
 import { normalizeStructTag } from '@mysten/sui.js/utils';
 import type { LocalCoinType } from '@/stores';
 
-export const DEFAULT_COINS: { [key: string]: Omit<LocalCoinType, 'active'>[]; } = {
+export const DEFAULT_COINS: { [key: string]: Omit<LocalCoinType, 'active'>[] } = {
   testnet: [
     {
       symbol: 'SUI',
@@ -57,7 +57,7 @@ export const DEFAULT_COINS: { [key: string]: Omit<LocalCoinType, 'active'>[]; } 
       symbol: 'USDT',
       name: 'USDT',
       decimals: 6,
-      coinType: '0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN'
+      coinType: '0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN',
     },
   ],
   devnet: [],

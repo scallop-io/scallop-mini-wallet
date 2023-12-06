@@ -80,12 +80,12 @@ export const doLogin = async (
 
 export const createNew = async ({
   providerData,
-  provider
+  provider,
 }: {
-  providerData: ZkLoginProviderData;
+  providerData: Record<string, ZkLoginProviderData>;
   provider: ZkLoginProvider;
 }): Promise<[Omit<ZkLoginAccountSerialized, 'id'>, string]> => {
-  const jwt = await zkLoginAuthenticate({ provider: providerData, prompt: true });
+  const jwt = await zkLoginAuthenticate({ provider: providerData[provider], prompt: true });
   if (!jwt) throw new Error('JWT is missing');
 
   const decodedJWT = decodeJwt(jwt);

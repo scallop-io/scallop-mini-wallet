@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { v4 as uuid } from 'uuid';
 import { createNew } from '@/accounts/zklogin/zklogin';
 import { useAccountDB } from './db';
+import { useZkProvider } from './zklogin';
 import type { FC, PropsWithChildren } from 'react';
 import type { ZkLoginAccountSerialized } from '@/types';
 
@@ -29,6 +30,7 @@ type ZkAccountProviderProps = {};
 export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = ({ children }) => {
   const { getAccounts, addAccount, removeAccount: removeDBAccount } = useAccountDB();
   const [accounts, setAccounts] = useState<ZkLoginAccountSerialized[]>([]);
+  const { zkProvider } = useZkProvider();
   const [currentAccount, setCurrentAccount] = useState<ZkLoginAccountSerialized | undefined>();
 
   const address = useMemo(() => currentAccount?.address, [currentAccount]);
@@ -46,6 +48,7 @@ export const ZkAccountProvider: FC<PropsWithChildren<ZkAccountProviderProps>> = 
 
   const createNewAccount = useCallback(async () => {
     const [newAccount, jwt] = await createNew({
+      providerData: zkProvider,
       provider: 'google',
     });
 

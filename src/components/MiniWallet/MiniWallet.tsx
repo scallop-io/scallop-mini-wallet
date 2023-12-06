@@ -35,13 +35,13 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = ({
       <ConnectionProvider>
         <DbProvider>
           <LocalCoinTypeProvider>
-            <ZkAccountProvider>
-              <ZkLoginProvider>
+            <ZkLoginProvider>
+              <ZkAccountProvider>
                 <ModalProvider>
                   <MiniWallet googleClientID={googleClientID} />
                 </ModalProvider>
-              </ZkLoginProvider>
-            </ZkAccountProvider>
+              </ZkAccountProvider>
+            </ZkLoginProvider>
           </LocalCoinTypeProvider>
         </DbProvider>
       </ConnectionProvider>
@@ -85,7 +85,7 @@ const MiniWallet: FC<MiniWalletProps> = ({ googleClientID }) => {
 
   useEffect(() => {
     setGoogleClientID(googleClientID);
-  }, []);
+  }, [googleClientID]);
 
   // const onCreateNewClick = useCallback(async () => {
   //   try {

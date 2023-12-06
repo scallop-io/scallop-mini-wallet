@@ -18,7 +18,7 @@ const meta = {
         type: 'boolean',
       },
     },
-  }
+  },
 } satisfies Meta<typeof Toggle>;
 
 export default meta;
