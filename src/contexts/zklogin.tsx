@@ -162,6 +162,7 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
         });
       } catch (e) {
         console.error(e);
+        return undefined;
       }
     },
     [address, networkEnv]
