@@ -157,6 +157,12 @@ const Portfolio: FC<PortfolioProps> = () => {
                   );
                 })}
               {localCoinBalance.map((item, index) => {
+                if (
+                  accountBalance.find(
+                    (account) => normalizeStructTag(account.coinType) === item.coinType
+                  )
+                )
+                  return undefined;
                 return (
                   <CoinItem
                     key={index}
