@@ -6,6 +6,7 @@ import usdcAsset from '@/assets/images/coins/usdc.png';
 import usdtAsset from '@/assets/images/coins/usdt.png';
 import solAsset from '@/assets/images/coins/sol.png';
 import aptAsset from '@/assets/images/coins/apt.png';
+import { DefaulCoinIcon } from '@/assets';
 
 export type CoinIconProps = {
   coinName: string;
@@ -38,6 +39,9 @@ const CoinIcon: React.FC<CoinIconProps> = ({ iconUrl, coinName }) => {
         imageURL = aptAsset;
         break;
     }
+  }
+  if (imageURL === '') {
+    return <DefaulCoinIcon />;
   }
   return <img src={imageURL} alt={coinName} />;
 };
