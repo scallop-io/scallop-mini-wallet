@@ -34,7 +34,9 @@ export const ZkLoginProviderDataContext = createContext<ZkLoginProviderDataInter
 
 type ZkLoginProviderDataProviderProps = {};
 
-export const ZkLoginProviderDataProvider: FC<PropsWithChildren<ZkLoginProviderDataProviderProps>> = ({ children }) => {
+export const ZkLoginProviderDataProvider: FC<
+  PropsWithChildren<ZkLoginProviderDataProviderProps>
+> = ({ children }) => {
   const [zkLoginProviderData, setZkLoginProviderData] = useState<
     Record<string, ZkLoginProviderData>
   >({
