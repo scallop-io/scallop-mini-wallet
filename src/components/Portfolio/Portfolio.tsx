@@ -56,7 +56,10 @@ const Portfolio: FC<PortfolioProps> = () => {
   );
 
   const accountBalance = useMemo(() => {
-    return getAccountBalanceQuery.data ?? [];
+    return (getAccountBalanceQuery.data ?? []).filter(
+      ({ coinType }) =>
+        localCoinTypeMap[coinType].active || localCoinTypeMap[coinType] === undefined
+    );
   }, [localCoinTypeMap, getAccountBalanceQuery.isFetching]);
 
   const handleNetworkChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
@@ -170,7 +173,7 @@ const Portfolio: FC<PortfolioProps> = () => {
   );
 };
 
-const AddressDisplay: FC<{ address: string }> = ({ address }) => {
+const AddressDisplay: FC<{ address: string; }> = ({ address }) => {
   const [isCopied, setIsCopied] = useState(false);
   const copyAddress = useCopyToClipboard(address ?? '', setIsCopied);
   useEffect(() => {
@@ -179,7 +182,7 @@ const AddressDisplay: FC<{ address: string }> = ({ address }) => {
       return () => clearTimeout(timer);
     }
 
-    return () => {};
+    return () => { };
   }, [isCopied]);
 
   return (
