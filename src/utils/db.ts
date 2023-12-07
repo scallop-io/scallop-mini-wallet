@@ -83,8 +83,9 @@ export const serializeCoinTypeWithNetwork = (coinType: string, network: string) 
   // for cases like sCoin;
   const parse1 = parseStructTag(coinType);
   let address = parse1.address;
-  if (parse1.name === 'MarketCoin') {
+  if (parse1.typeParams.length > 0) {
     address = (parse1.typeParams as unknown as StructTag[])[0].address;
+    return `${network}_${parse1.name}_${shortenAddress(address, 8, 8)}`;
   }
   return `${network}_${shortenAddress(address, 8, 8)}`;
 };
