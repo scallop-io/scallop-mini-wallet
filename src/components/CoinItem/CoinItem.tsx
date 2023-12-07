@@ -74,13 +74,13 @@ export const CoinItem: React.FC<CoinItemProps> = ({
         <div className="info">
           <div>
             <span>{coinName}</span>
-            {totalBalance && <span>{numberWithCommas(coinBalance.toFixed(3).toString())}</span>}
+            {totalBalance && <span>{numberWithCommas(coinBalance.toString())}</span>}
           </div>
           {withPrice && (
             <>
               <div>
                 <span>≈ ${numberWithCommas(coinPrice)}</span>
-                <span>${numberWithCommas(coinBalance.times(coinPrice).toFixed(3).toString())}</span>
+                <span>${numberWithCommas(coinBalance.times(coinPrice).toString())}</span>
               </div>
               <div>
                 <span>{isCopied ? 'Address copied' : 'Click to copy address'}</span>
