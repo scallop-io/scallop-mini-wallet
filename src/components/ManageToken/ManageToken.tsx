@@ -22,7 +22,7 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   const [searchInput, setSearchInput] = useState('');
   const [coinTypeInput, setCoinTypeInput] = useState('');
   const [symbolInput, setSymbolInput] = useState('');
-  const [decimaInput, setDecimalInput] = useState<string>('');
+  const [decimalInput, setDecimalInput] = useState<string>('9');
   const [searchQuery, setSearchQuery] = useState('');
   const [base64Image, setBase64Image] = useState<string | null>(null);
   const inputFileRef = React.useRef<HTMLInputElement>(null);
@@ -144,11 +144,11 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   }, []);
 
   const handleImportCustomToken = () => {
-    if (coinTypeInput === '' || symbolInput === '' || decimaInput === undefined) return;
+    if (coinTypeInput === '' || symbolInput === '' || decimalInput === undefined) return;
     const success = addCoinType({
       coinType: normalizeStructTag(coinTypeInput),
       symbol: symbolInput,
-      decimals: +decimaInput,
+      decimals: +decimalInput,
       name: '',
       active: true,
     });
@@ -164,7 +164,7 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   const resetInput = () => {
     setCoinTypeInput('');
     setSymbolInput('');
-    setDecimalInput('');
+    setDecimalInput('9');
     setBase64Image(null);
     inputFileRef.current?.value && (inputFileRef.current.value = '');
   };
@@ -202,14 +202,24 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
                   <span className="form-title">Add Custom Token</span>
                   <section className="form-content-coin-type">
                     <div className="form-coin-type-title">Coin Type</div>
-                    <input value={coinTypeInput} onChange={handleCoinTypeInput} type="text" />
+                    <input
+                      value={coinTypeInput}
+                      onChange={handleCoinTypeInput}
+                      type="text"
+                      placeholder="0x2::sui::SUI"
+                    />
                     {!isCoinTypeValid && (
                       <div className="coin-type-error">Coin type struct invalid</div>
                     )}
                     <div className="form-coin-type-title">Symbol</div>
-                    <input value={symbolInput} onChange={handleSymbolInput} type="text" />
+                    <input
+                      value={symbolInput}
+                      onChange={handleSymbolInput}
+                      type="text"
+                      placeholder="SUI"
+                    />
                     <div className="form-coin-type-title">Decimal</div>
-                    <input value={decimaInput} onChange={handleDecimalInput} />
+                    <input value={decimalInput} onChange={handleDecimalInput} type="text" />
                     <div className="form-coin-type-title">Image</div>
                     <input
                       ref={inputFileRef}
@@ -222,7 +232,6 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
                       disabled={!isCoinTypeValid}
                       onClick={() => {
                         handleImportCustomToken();
-                        resetInput();
                         close();
                       }}
                     >

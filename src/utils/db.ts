@@ -27,6 +27,10 @@ export class DB extends Dexie {
       settings: 'setting',
       coinTypes: 'coinType',
     });
+
+    this.version(2).stores({
+      coinTypes: 'coinType',
+    });
   }
 }
 

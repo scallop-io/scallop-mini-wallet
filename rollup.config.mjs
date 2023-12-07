@@ -29,11 +29,11 @@ export default [
     ],
     plugins: [
       peerDepsExternal(),
-      json(),
+      nodeResolve({ browser: true, preferBuiltins: false, mainFields: ['browser'] }),
       commonjs(),
+      json(),
       typescript({ tsconfig: './tsconfig.json' }),
       tsConfigPaths(),
-      nodeResolve({ browser: true, preferBuiltins: false, mainFields: ['browser'] }),
       postcss(),
       image(),
       terser(),

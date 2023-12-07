@@ -79,7 +79,7 @@ export const CoinItem: React.FC<CoinItemProps> = ({
           {withPrice && (
             <>
               <div>
-                <span>≈ ${coinPrice}</span>
+                <span>≈ ${numberWithCommas(coinPrice)}</span>
                 <span>${numberWithCommas(coinBalance.times(coinPrice).toFixed(3).toString())}</span>
               </div>
               <div>
