@@ -1,11 +1,10 @@
 {
   "name": "@scallop-io/scallop-mini-wallet",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
     "access": "public"
   },
-  "version": "0.1.9",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Scallop Mini-Wallet is a react component library designed to integrate with Sui blockchain using zkLogin. This tool is particularly useful in addressing issues where your cryptocurrency does not appear in your wallet.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "files": [
@@ -14,12 +13,12 @@
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scallop-io/scallop-mini-wallet.git"
+    "url": "git+https://github.com/scallop-io/scallop-mini-wallet.git"
   },
   "keywords": [
     "scallop labs",
     "mini wallet",
-    "wallet",
+    "sui",
     "react",
     "typescript"
   ],
@@ -124,5 +123,9 @@
   },
   "peerDependencies": {
     "react": ">=16"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/scallop-io/scallop-mini-wallet/issues"
+  },
+  "homepage": "https://github.com/scallop-io/scallop-mini-wallet#readme"
 }
