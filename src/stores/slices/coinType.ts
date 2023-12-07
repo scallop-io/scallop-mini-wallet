@@ -1,3 +1,4 @@
+import { DEFAULT_COINS } from '@/constants/coins';
 import {
   networks,
   type CoinTypeLocalStorageState,
@@ -7,11 +8,7 @@ import {
 
 export const intialCoinTypeLocalStorageState = {
   customCoinTypeState: {
-    coinTypes: {
-      mainnet: [] as CustomCoinType[],
-      testnet: [] as CustomCoinType[],
-      devnet: [] as CustomCoinType[],
-    },
+    coinTypes: DEFAULT_COINS,
   } as CoinTypeLocalStorageState,
 };
 
