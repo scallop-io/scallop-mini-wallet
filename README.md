@@ -47,4 +47,5 @@ import { MiniWalletContainer } from '@scallop-io/scallop-mini-wallet';
 ## Salt Management
 
 Scallop uses a master seed value to derive the user salt with key derivation, in conjunction with the JWT token.
+
 Note: If you're using your own `googleClientId`, it's essential to have your `googleClientId` whitelisted by the Scallop team. Only registered and approved client IDs can utilize this service. Please contact the Scallop team for assistance in getting your client ID whitelisted. Be aware that change in client ID (i.e., `aud`) will result in a different user address being derived, which could lead to a loss of funds.
