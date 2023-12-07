@@ -12,7 +12,7 @@ export const settingsKeys = {
 export class DB extends Dexie {
   accounts!: Table<ZkLoginAccountSerialized, string>;
   settings!: Table<{ value: string | boolean | number | null; setting: string }, string>;
-  coinTypes!: Table<{ image: string; coinType: string }, string>;
+  coinTypes!: Table<{ image: string; coinType: string; network: string }, string>;
 
   constructor() {
     super(dbName);
@@ -24,6 +24,10 @@ export class DB extends Dexie {
 
     this.version(2).stores({
       coinTypes: 'coinType',
+    });
+
+    this.version(3).stores({
+      coinTypes: 'coinType, network',
     });
   }
 }

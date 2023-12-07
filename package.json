@@ -35,7 +35,7 @@
     "test": "jest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "publish-package": "npm publish --access public --registry https://registry.npmjs.org && npm publish --no-git-checks --access public --registry https://npm.pkg.github.com"
+    "publish-package": "npm publish --access public --registry https://registry.npmjs.org"
   },
   "devDependencies": {
     "@babel/core": "^7.23.5",

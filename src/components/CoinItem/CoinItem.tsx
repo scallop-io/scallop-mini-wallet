@@ -30,14 +30,13 @@ export const CoinItem: React.FC<CoinItemProps> = ({
 }: CoinItemProps) => {
   const { coinTypeImageCache } = useCoinTypeDB();
   const [isCopied, setIsCopied] = React.useState(false);
-  const coinAddress = useMemo(() => {
-    return getCoinAddressFromType(coinType);
-  }, [coinType]);
   const client = useConnectionClient();
-  const copyAddress = useCopyToClipboard(coinAddress, setIsCopied);
+  const copyAddress = useCopyToClipboard(coinType, setIsCopied);
   const coinMetadata = useGetCoinMetadata(normalizeStructTag(coinType));
   const localCoinMetadata = useGetLocalMetadata(coinType);
   const getCoinPrice = useGetCoinPrice(client, coinType, 10000);
+
+  const coinAddress = useMemo(() => getCoinAddressFromType(coinType), [coinType]);
 
   const coinBalance = useMemo(() => {
     return new BigNumber(totalBalance ?? 0).shiftedBy(
@@ -56,6 +55,7 @@ export const CoinItem: React.FC<CoinItemProps> = ({
 
   useEffect(() => {
     if (isCopied) {
+      console.log(coinTypeImageCache[coinType]);
       setTimeout(() => {
         setIsCopied(false);
       }, 500);
@@ -80,7 +80,7 @@ export const CoinItem: React.FC<CoinItemProps> = ({
             <>
               <div>
                 <span>≈ ${numberWithCommas(coinPrice)}</span>
-                <span>${numberWithCommas(coinBalance.times(coinPrice).toString())}</span>
+                <span>${numberWithCommas(coinBalance.toString())}</span>
               </div>
               <div>
                 <span>{isCopied ? 'Address copied' : 'Click to copy address'}</span>

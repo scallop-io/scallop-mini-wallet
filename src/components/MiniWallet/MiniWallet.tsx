@@ -15,9 +15,11 @@ import { ZkLoginProviderDataProvider, useZkLoginProviderData } from '@/contexts/
 import type { FC } from 'react';
 import '@/style.css';
 import type { ZkLoginAccountSerialized } from '@/types';
+import type { CoinTypeLocalStorageState } from '@/stores';
 
 type MiniWalletContainerProps = {
   googleClientID?: string;
+  initialCoinTypeState?: CoinTypeLocalStorageState;
 };
 
 const queryClient = new QueryClient({
@@ -30,12 +32,13 @@ const queryClient = new QueryClient({
 
 export const MiniWalletContainer: FC<MiniWalletContainerProps> = ({
   googleClientID = '993131426104-ah7qqbp8p73ina6uepib31jj8djf523n.apps.googleusercontent.com',
+  initialCoinTypeState,
 }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ConnectionProvider>
-        <LocalCoinTypeProvider>
-          <DbProvider>
+        <DbProvider>
+          <LocalCoinTypeProvider initialCoinTypeState={initialCoinTypeState}>
             <ZkLoginProviderDataProvider>
               <ZkAccountProvider>
                 <ZkLoginProvider>
@@ -45,8 +48,8 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = ({
                 </ZkLoginProvider>
               </ZkAccountProvider>
             </ZkLoginProviderDataProvider>
-          </DbProvider>
-        </LocalCoinTypeProvider>
+          </LocalCoinTypeProvider>
+        </DbProvider>
       </ConnectionProvider>
     </QueryClientProvider>
   );

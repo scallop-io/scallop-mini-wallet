@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { getDB } from '@/utils';
+import { useNetwork } from './connection';
 import type { FC, PropsWithChildren } from 'react';
 import type { ZkLoginAccountSerialized } from '@/types';
 import type { DB } from '@/utils';
@@ -26,6 +27,7 @@ export const DbContext = createContext<DbContextInterface>({
 
 type DbProviderProps = {};
 export const DbProvider: FC<PropsWithChildren<DbProviderProps>> = ({ children }) => {
+  const { currentNetwork } = useNetwork();
   const [db, setDb] = useState<DB | undefined>();
   const [coinTypeImageCache, setCoinTypeImageCache] = useState<{ [coinType: string]: any }>({});
 
@@ -76,10 +78,10 @@ export const DbProvider: FC<PropsWithChildren<DbProviderProps>> = ({ children })
   const addCoinTypeImage = useCallback(
     async (coinType: string, image: string) => {
       const _db = await _getDB();
-      _db?.coinTypes.put({ coinType, image });
+      _db?.coinTypes.put({ coinType, image, network: currentNetwork });
       setCoinTypeImageCache({ ...coinTypeImageCache, [coinType]: image });
     },
-    [db]
+    [db, currentNetwork]
   );
 
   const removeCoinTypeImage = useCallback(

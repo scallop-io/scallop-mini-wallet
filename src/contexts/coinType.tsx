@@ -5,8 +5,14 @@ import React, {
   type FC,
   useContext,
   useMemo,
+  useEffect,
 } from 'react';
-import { useLocalStorage, type LocalCoinType } from '@/stores';
+import {
+  type CoinTypeLocalStorageState,
+  useLocalStorage,
+  type LocalCoinType,
+  networks,
+} from '@/stores';
 import { useNetwork } from './connection';
 import { useCoinTypeDB } from './db';
 
@@ -26,12 +32,15 @@ export const LocalCoinTypeContext = createContext<LocalCoinTypeContextInterface>
   setInactive: () => undefined,
 });
 
-type LocalCoinTypeProviderProps = {};
+type LocalCoinTypeProviderProps = {
+  initialCoinTypeState?: CoinTypeLocalStorageState;
+};
 
 export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderProps>> = ({
   children,
+  initialCoinTypeState,
 }) => {
-  const { removeCoinTypeImage } = useCoinTypeDB();
+  const { addCoinTypeImage, removeCoinTypeImage } = useCoinTypeDB();
   const { localCoinTypeState, localCoinTypeActions } = useLocalStorage();
   const { currentNetwork } = useNetwork();
 
@@ -73,6 +82,18 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
     },
     [currentNetwork]
   );
+
+  useEffect(() => {
+    for (const network of networks) {
+      for (const coinType of initialCoinTypeState?.coinTypes[network] || []) {
+        if (coinType.iconUrl) {
+          addCoinTypeImage(coinType.coinType, coinType.iconUrl);
+          delete coinType.iconUrl;
+        }
+      }
+    }
+    if (initialCoinTypeState) localCoinTypeActions.initialImport(initialCoinTypeState);
+  }, []);
 
   return (
     <LocalCoinTypeContext.Provider

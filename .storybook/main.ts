@@ -39,7 +39,6 @@ const config: StorybookConfig = {
       config.resolve.plugins = [new TsconfigPathsPlugin()];
       config.resolve.alias = {
         ...config.resolve.alias,
-        crypto: require.resolve('crypto-browserify'),
       };
     }
     return config;

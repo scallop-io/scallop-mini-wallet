@@ -31,7 +31,7 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   const matchedLocalCoinType = useMemo(
     () =>
       coinTypes.filter(
-        (coin) => coin.coinType === searchInput || coin.symbol.includes(searchInput.toUpperCase())
+        (coin) => coin.coinType === searchInput || coin.symbol.toLowerCase().includes(searchInput.toLowerCase())
       ),
     [coinTypes, searchInput]
   );
@@ -80,7 +80,7 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   }, []);
 
   const handleSymbolInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setSymbolInput((e.target.value ?? '').toUpperCase());
+    setSymbolInput(e.target.value);
   }, []);
 
   const handleDecimalInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -115,7 +115,6 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
             coinType,
             symbol: coinMetaDataQuery.data?.symbol ?? '',
             decimals: coinMetaDataQuery.data?.decimals ?? 0,
-            name: coinMetaDataQuery.data?.name ?? '',
             active: true,
           });
         } else {
@@ -149,7 +148,6 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
       coinType: normalizeStructTag(coinTypeInput),
       symbol: symbolInput,
       decimals: +decimalInput,
-      name: '',
       active: true,
     });
 
