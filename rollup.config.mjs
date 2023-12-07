@@ -9,6 +9,7 @@ import postcss from 'rollup-plugin-postcss';
 import terser from '@rollup/plugin-terser';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import gzipPlugin from 'rollup-plugin-gzip';
+import cssnano from 'cssnano';
 import packageJson from './package.json' assert { type: 'json' };
 import tsConfig from './tsconfig.json' assert { type: 'json' };
 
@@ -29,6 +30,9 @@ export default [
     ],
     plugins: [
       peerDepsExternal(),
+      cssnano({
+        preset: 'default',
+      }),
       nodeResolve({ browser: true, preferBuiltins: false, mainFields: ['browser'] }),
       commonjs(),
       json(),

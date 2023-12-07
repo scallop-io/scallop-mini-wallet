@@ -1,7 +1,10 @@
+import { parseStructTag } from '@mysten/sui.js/utils';
 import Dexie, { type Table } from 'dexie';
 import { exportDB, importDB } from 'dexie-export-import';
 import { getFromLocalStorage, setToLocalStorage } from '@/utils/storage';
+import { shortenAddress } from './address';
 import type { ZkLoginAccountSerialized } from '@/types/account';
+import type { StructTag } from '@mysten/sui.js/bcs';
 
 const dbName = 'ScallopMiniWallet DB';
 const dbLocalStorageBackupKey = 'indexed-db-backup';
@@ -12,7 +15,7 @@ export const settingsKeys = {
 export class DB extends Dexie {
   accounts!: Table<ZkLoginAccountSerialized, string>;
   settings!: Table<{ value: string | boolean | number | null; setting: string }, string>;
-  coinTypes!: Table<{ image: string; coinType: string; network: string }, string>;
+  coinTypes!: Table<{ id: string; image: string; coinType: string; network: string }, string>;
 
   constructor() {
     super(dbName);
@@ -27,7 +30,7 @@ export class DB extends Dexie {
     });
 
     this.version(3).stores({
-      coinTypes: 'coinType, network',
+      coinTypes: 'id, network',
     });
   }
 }
@@ -75,3 +78,13 @@ export async function backupDB() {
     console.error(e);
   }
 }
+
+export const serializeCoinTypeWithNetwork = (coinType: string, network: string) => {
+  // for cases like sCoin;
+  const parse1 = parseStructTag(coinType);
+  let address = parse1.address;
+  if (parse1.name === 'MarketCoin') {
+    address = (parse1.typeParams as unknown as StructTag[])[0].address;
+  }
+  return `${network}_${shortenAddress(address, 8, 8)}`;
+};

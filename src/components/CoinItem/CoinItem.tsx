@@ -28,7 +28,7 @@ export const CoinItem: React.FC<CoinItemProps> = ({
   totalBalance,
   withPrice = true,
 }: CoinItemProps) => {
-  const { coinTypeImageCache } = useCoinTypeDB();
+  const { coinIconImageCache } = useCoinTypeDB();
   const [isCopied, setIsCopied] = React.useState(false);
   const client = useConnectionClient();
   const copyAddress = useCopyToClipboard(coinType, setIsCopied);
@@ -55,7 +55,6 @@ export const CoinItem: React.FC<CoinItemProps> = ({
 
   useEffect(() => {
     if (isCopied) {
-      console.log(coinTypeImageCache[coinType]);
       setTimeout(() => {
         setIsCopied(false);
       }, 500);
@@ -68,7 +67,7 @@ export const CoinItem: React.FC<CoinItemProps> = ({
         <div className="icon">
           <CoinIcon
             coinName={coinName}
-            iconUrl={coinMetadata.data?.iconUrl ?? coinTypeImageCache[coinType] ?? ''}
+            iconUrl={coinMetadata.data?.iconUrl ?? coinIconImageCache[coinType] ?? ''}
           />
         </div>
         <div className="info">

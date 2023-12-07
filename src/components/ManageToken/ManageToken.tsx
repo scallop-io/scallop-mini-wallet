@@ -17,7 +17,7 @@ type ManageTokenProps = {
 };
 
 const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
-  const { addCoinTypeImage } = useCoinTypeDB();
+  const { addCoinIcon } = useCoinTypeDB();
   const { coinTypes, setInactive, addCoinType, removeCoinType, setActive } = useLocalCoinType();
   const [searchInput, setSearchInput] = useState('');
   const [coinTypeInput, setCoinTypeInput] = useState('');
@@ -31,7 +31,9 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
   const matchedLocalCoinType = useMemo(
     () =>
       coinTypes.filter(
-        (coin) => coin.coinType === searchInput || coin.symbol.toLowerCase().includes(searchInput.toLowerCase())
+        (coin) =>
+          coin.coinType === searchInput ||
+          coin.symbol.toLowerCase().includes(searchInput.toLowerCase())
       ),
     [coinTypes, searchInput]
   );
@@ -153,7 +155,7 @@ const ManageToken: React.FC<ManageTokenProps> = ({ handleBack }) => {
 
     // add coin type image to db
     if (success && base64Image) {
-      addCoinTypeImage(normalizeStructTag(coinTypeInput), base64Image);
+      addCoinIcon(normalizeStructTag(coinTypeInput), base64Image);
     }
 
     resetInput();

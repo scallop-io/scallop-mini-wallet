@@ -20,6 +20,7 @@ import type { CoinTypeLocalStorageState } from '@/stores';
 type MiniWalletContainerProps = {
   googleClientID?: string;
   initialCoinTypeState?: CoinTypeLocalStorageState;
+  walletIcon?: string;
 };
 
 const queryClient = new QueryClient({
@@ -33,6 +34,7 @@ const queryClient = new QueryClient({
 export const MiniWalletContainer: FC<MiniWalletContainerProps> = ({
   googleClientID = '993131426104-ah7qqbp8p73ina6uepib31jj8djf523n.apps.googleusercontent.com',
   initialCoinTypeState,
+  walletIcon,
 }) => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -43,7 +45,7 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = ({
               <ZkAccountProvider>
                 <ZkLoginProvider>
                   <ModalProvider>
-                    <MiniWallet googleClientID={googleClientID} />
+                    <MiniWallet googleClientID={googleClientID} walletIcon={walletIcon} />
                   </ModalProvider>
                 </ZkLoginProvider>
               </ZkAccountProvider>
@@ -57,8 +59,9 @@ export const MiniWalletContainer: FC<MiniWalletContainerProps> = ({
 
 type MiniWalletProps = {
   googleClientID: string;
+  walletIcon?: string;
 };
-const MiniWallet: FC<MiniWalletProps> = ({ googleClientID }) => {
+const MiniWallet: FC<MiniWalletProps> = ({ googleClientID, walletIcon }) => {
   const { accounts, currentAccount, switchAccount, createNewAccount } = useZkAccounts();
   const { setGoogleClientID } = useZkLoginProviderData();
   const { isLoggedIn, login } = useZkLogin();
@@ -101,7 +104,7 @@ const MiniWallet: FC<MiniWalletProps> = ({ googleClientID }) => {
         )}
       >
         {isLoggedIn ? (
-          <Portfolio />
+          <Portfolio walletIcon={walletIcon} />
         ) : (
           <div>
             <LoginButton

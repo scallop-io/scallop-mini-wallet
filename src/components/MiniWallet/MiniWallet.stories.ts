@@ -12,6 +12,7 @@ const meta = {
   argTypes: {
     // googleClientID: { control: 'text' },
     initialCoinTypeState: { control: 'object' },
+    walletIcon: { control: 'text' },
   },
 } satisfies Meta<typeof MiniWalletContainer>;
 
@@ -24,5 +25,6 @@ export const Normal: Story = {
     initialCoinTypeState: {
       coinTypes: DEFAULT_COINS as CoinTypeLocalStorageState['coinTypes'],
     },
+    walletIcon: 'https://app.scallop.io/assets/sSUI-df1cc6de.png',
   },
 };

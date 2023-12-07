@@ -17,9 +17,11 @@ import { Dropdown } from '@/components/Dropdown';
 import { type CustomCoinType, networks, type NetworkType } from '@/stores';
 import type { CoinBalance } from '@mysten/sui.js/client';
 
-type PortfolioProps = {};
+type PortfolioProps = {
+  walletIcon?: string;
+};
 
-const Portfolio: FC<PortfolioProps> = () => {
+const Portfolio: FC<PortfolioProps> = ({ walletIcon }) => {
   const { currentNetwork, setCurrentNetwork } = useNetwork();
   const { address, email } = useZkAccounts();
   const { isLoggedIn, logout } = useZkLogin();
@@ -86,8 +88,8 @@ const Portfolio: FC<PortfolioProps> = () => {
     <div className="portfolio-container">
       <div className="header">
         <div>
-          <div className="scallop-icon">
-            <img src={logo} alt="scallop logo" />
+          <div className="wallet-icon">
+            <img src={walletIcon ?? logo} alt="wallet logo" />
             {/* <span>Scallop</span> */}
           </div>
           <div className="logout-container">

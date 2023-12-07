@@ -37,7 +37,7 @@ export const Toggle = forwardRef(
         event.preventDefault();
         return;
       }
-      setChecked(event.target.checked);
+      setChecked(!checked);
       if (onChange) onChange(event);
     });
 
