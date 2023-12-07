@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Scallop Mini-Wallet is a react component library designed to integrate with Sui blockchain using zkLogin. This tool is particularly useful in addressing issues where your cryptocurrency does not appear in your wallet.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -102,9 +102,7 @@
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "tslib": "^2.6.2",
     "typescript": "^5.3.2",
-    "crypto-browserify": "^3.12.0",
-    "node-polyfill-webpack-plugin": "^2.0.1",
-    "stream-browserify": "^3.0.0"
+    "node-polyfill-webpack-plugin": "^2.0.1"
   },
   "dependencies": {
     "@metamask/browser-passworder": "^4.3.0",
