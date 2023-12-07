@@ -13,6 +13,7 @@ import {
   type CustomCoinType,
   networks,
 } from '@/stores';
+import { DEFAULT_COINS } from '@/constants/coins';
 import { useNetwork } from './connection';
 import { useCoinTypeDB } from './db';
 
@@ -84,6 +85,10 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
   );
 
   useEffect(() => {
+    // for hackathon purpose, manually merge
+    if (initialCoinTypeState) {
+      initialCoinTypeState.coinTypes = { ...initialCoinTypeState.coinTypes, ...DEFAULT_COINS };
+    }
     for (const network of networks) {
       for (const coinType of initialCoinTypeState?.coinTypes[network] || []) {
         if (coinType.iconUrl) {
