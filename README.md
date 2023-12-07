@@ -31,7 +31,7 @@ To integrate using your Google OpenID provider, implement the following code:
 ```ts
 import { MiniWalletContainer } from '@scallop-io/scallop-mini-wallet';
 
-<MiniWalletContainer googleAccountId={googleClientID} />
+<MiniWalletContainer googleClientID={googleClientID} />
 ```
 
 **2. Using Scallop's OpenID Provider:**
