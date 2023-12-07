@@ -6,7 +6,7 @@ import { shortenAddress } from './address';
 import type { ZkLoginAccountSerialized } from '@/types/account';
 import type { StructTag } from '@mysten/sui.js/bcs';
 
-const dbName = 'ScallopMiniWallet DB';
+const dbName = 'scallop-mini-wallet-db';
 const dbLocalStorageBackupKey = 'indexed-db-backup';
 
 export const settingsKeys = {
@@ -22,14 +22,6 @@ export class DB extends Dexie {
     this.version(1).stores({
       accounts: 'id, type, address',
       settings: 'setting',
-      coinTypes: 'coinType',
-    });
-
-    this.version(2).stores({
-      coinTypes: 'coinType',
-    });
-
-    this.version(3).stores({
       coinTypes: 'id, network',
     });
   }
