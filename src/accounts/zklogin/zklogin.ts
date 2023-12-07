@@ -11,7 +11,6 @@ import {
 import type { EphemeralCredentialValue } from '@/utils/session-ephemeral';
 import type { ZkLoginAccountSerialized } from '@/types/account';
 import type { CredentialData } from '@/types';
-// import { deobfuscate, obfuscate } from "@/utils/cryptography";
 import type { ZkLoginProvider, ZkLoginProviderData } from './provider';
 import type { NetworkType } from '@/stores';
 import type { SuiClient } from '@mysten/sui.js/client';
@@ -151,8 +150,6 @@ export const generateProofs = async (
   maxEpoch: number,
   ephemeralPublicKey: PublicKey
 ) => {
-  // const { salt: obfuscatedSalt, claimName } = account;
-  // const salt = await deobfuscate<string>(obfuscatedSalt);
   const { salt, claimName } = account;
   return await createPartialZkLoginSignature({
     jwt,

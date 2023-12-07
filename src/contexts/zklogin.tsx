@@ -68,7 +68,6 @@ export const ZkLoginProvider: FC<PropsWithChildren<ZkLoginProviderProps>> = ({ c
   const login = useCallback(
     async (account: ZkLoginAccountSerialized, jwt?: string) => {
       try {
-        // await doLogin(newAccount as ZkLoginAccountSerialized, networkEnv);
         await doLogin(zkLoginProviderData, account, networkEnv, jwt);
         setIsLoggedIn(true);
       } catch (e) {

@@ -1,18 +1,11 @@
-// Copyright (c) Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import { generateNonce, generateRandomness, getExtendedEphemeralPublicKey } from '@mysten/zklogin';
 import { randomBytes } from '@noble/hashes/utils';
-// @ts-ignore
-// import { createHmac } from 'crypto-browserify';
-// import { base64url, decodeJwt } from 'jose';
 import { base64url } from 'jose';
 import { v4 as uuidV4 } from 'uuid';
 import { fromB64 } from '@mysten/sui.js/utils';
 import { Secp256k1Keypair } from '@mysten/sui.js/keypairs/secp256k1';
 import { Secp256r1Keypair } from '@mysten/sui.js/keypairs/secp256r1';
-// import { getDB, settingsKeys } from '@/utils/db';
 import type { ZkLoginProviderData } from './provider';
 import type { getZkLoginSignature } from '@mysten/zklogin';
 import type { ExportedKeypair, Keypair, PublicKey } from '@mysten/sui.js/cryptography';
@@ -30,8 +23,6 @@ export function prepareZkLogin(currentEpoch: number) {
   };
 }
 
-// const forceSilentGetProviders: ZkLoginProvider[] = ['twitch'];
-
 /**
  * This method does a get request to the authorize url and is used as a workarround
  * for `forceSilentGetProviders` that they do the silent login/token refresh using
@@ -41,9 +32,6 @@ export function prepareZkLogin(currentEpoch: number) {
  * @param authUrl
  */
 async function tryGetRedirectURLSilently(authUrl: string) {
-  // if (!forceSilentGetProviders.includes(provider)) {
-  // 	return null;
-  // }
   try {
     const responseText = await (await fetch(authUrl, { mode: 'no-cors' })).text();
     const redirectURLMatch =
@@ -52,10 +40,7 @@ async function tryGetRedirectURLSilently(authUrl: string) {
       );
     if (redirectURLMatch) {
       const redirectURL = redirectURLMatch[2];
-      if (
-        // redirectURL.startsWith(`https://${Browser.runtime.id}.chromiumapp.org`) &&
-        redirectURL.includes('id_token=')
-      ) {
+      if (redirectURL.includes('id_token=')) {
         return new URL(redirectURL.replaceAll('&amp;', '&'));
       }
     }
@@ -142,33 +127,6 @@ export async function fetchJwt(url?: string) {
   return jwt;
 }
 
-// export async function fetchSalt(jwtToken: string): Promise<string> {
-//   const db = await getDB();
-
-//   // Get the master seed from the database
-//   const masterSeed = (await db.settings.get(settingsKeys.masterSeed))?.value as string;
-//   const hasSeed = !!masterSeed;
-//   if (!hasSeed) throw new Error('Master seed is missing');
-
-//   // TODO: Validate JWT
-//   const decoded = decodeJwt(jwtToken);
-
-//   // Extract the iss, aud, and sub claims
-//   const { iss, aud, sub } = decoded;
-
-//   // Use the iss and aud claims as the salt for the HKDF
-//   const salt = `${iss || ''}${aud || ''}`;
-
-//   // Use the sub claim as the info for the HKDF
-//   const info = sub || '';
-
-//   // Derive the user salt using HKDF
-//   const userSalt = createHmac('sha256', salt)
-//     .update(masterSeed + info)
-//     .digest('hex');
-
-//   return `0x${userSalt}`;
-// }
 export async function fetchSalt(jwtToken: string): Promise<string> {
   const response = await fetch('https://saltmanagement.xyz/salt', {
     method: 'POST',

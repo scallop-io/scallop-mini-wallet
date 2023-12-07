@@ -80,7 +80,7 @@ const MiniWallet: FC<MiniWalletProps> = ({ googleClientID }) => {
   }, [currentAccount]);
 
   useEffect(() => {
-    // TODO: Allow user to select account
+    // TODO: Allow user to setup multi account
     if (accounts && accounts?.length > 0) {
       switchAccount(accounts[0].id);
     }
@@ -89,16 +89,6 @@ const MiniWallet: FC<MiniWalletProps> = ({ googleClientID }) => {
   useEffect(() => {
     setGoogleClientID(googleClientID);
   }, [googleClientID]);
-
-  // const onCreateNewClick = useCallback(async () => {
-  //   try {
-  //     setLoading(true);
-  //     const [newAcccount, jwt] = await createNewAccount();
-  //     await login(newAcccount as ZkLoginAccountSerialized, jwt);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, []);
 
   return (
     <div className="main" style={{ transform: hide ? 'translate(-100%)' : '' }}>

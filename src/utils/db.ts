@@ -1,8 +1,3 @@
-// Copyright (c) Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
-// @ts-ignore
-// import { randomBytes } from 'crypto-browserify';
 import Dexie, { type Table } from 'dexie';
 import { exportDB, importDB } from 'dexie-export-import';
 import { getFromLocalStorage, setToLocalStorage } from '@/utils/storage';
@@ -13,7 +8,6 @@ const dbLocalStorageBackupKey = 'indexed-db-backup';
 
 export const settingsKeys = {
   isPopulated: 'isPopulated',
-  // masterSeed: 'masterSeed',
 };
 export class DB extends Dexie {
   accounts!: Table<ZkLoginAccountSerialized, string>;
@@ -54,12 +48,6 @@ async function init() {
     }
   }
 
-  // const hasMasterSeed = !!(await db.settings.get(settingsKeys.masterSeed))?.value;
-  // if (!hasMasterSeed) {
-  //   const masterSeed = randomBytes(32).toString('hex');
-  //   await db.settings.put({ setting: settingsKeys.masterSeed, value: masterSeed });
-  // }
-
   if (!db.isOpen()) {
     await db.open();
   }
@@ -83,5 +71,3 @@ export async function backupDB() {
     console.error(e);
   }
 }
-
-// TODO: allow app to send master key to user in case user or change device but still using scallop-mini-wallet and same account
