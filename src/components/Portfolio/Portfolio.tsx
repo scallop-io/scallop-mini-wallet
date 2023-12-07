@@ -14,7 +14,7 @@ import { ManageToken } from '@/components/ManageToken';
 import { useZkAccounts } from '@/contexts/accounts';
 import { useLocalCoinType } from '@/contexts/coinType';
 import { Dropdown } from '@/components/Dropdown';
-import { type LocalCoinType, networks, type NetworkType } from '@/stores';
+import { type CustomCoinType, networks, type NetworkType } from '@/stores';
 import type { CoinBalance } from '@mysten/sui.js/client';
 
 type PortfolioProps = {};
@@ -28,14 +28,14 @@ const Portfolio: FC<PortfolioProps> = () => {
   const getAccountBalanceQuery = useGetAllBalances(address, 10000);
   const [isManageToken, setIsManageToken] = useState(false);
 
-  const localCoinTypeMap = useMemo(
+  const customCoinTypeMap = useMemo(
     () =>
       coinTypes.reduce(
         (acc, coin) => {
           acc[coin.coinType] = coin;
           return acc;
         },
-        {} as Record<string, LocalCoinType>
+        {} as Record<string, CustomCoinType>
       ),
     [coinTypes]
   );
@@ -58,9 +58,9 @@ const Portfolio: FC<PortfolioProps> = () => {
   const accountBalance = useMemo(() => {
     return (getAccountBalanceQuery.data ?? []).filter(
       ({ coinType }) =>
-        localCoinTypeMap[coinType]?.active || localCoinTypeMap[coinType] === undefined
+        customCoinTypeMap[coinType]?.active || customCoinTypeMap[coinType] === undefined
     );
-  }, [localCoinTypeMap, getAccountBalanceQuery.isFetching]);
+  }, [customCoinTypeMap, getAccountBalanceQuery.isFetching]);
 
   const handleNetworkChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
     const network = e.target.value as NetworkType;
@@ -151,7 +151,7 @@ const Portfolio: FC<PortfolioProps> = () => {
                     <CoinItem
                       key={index}
                       coinType={normalizeStructTag(item.coinType)}
-                      coinSymbol={localCoinTypeMap[normalizeStructTag(item.coinType)]?.symbol}
+                      coinSymbol={customCoinTypeMap[normalizeStructTag(item.coinType)]?.symbol}
                       totalBalance={item.totalBalance}
                     />
                   );
@@ -167,7 +167,7 @@ const Portfolio: FC<PortfolioProps> = () => {
                   <CoinItem
                     key={index}
                     coinType={item.coinType}
-                    coinSymbol={localCoinTypeMap[item.coinType]?.symbol}
+                    coinSymbol={customCoinTypeMap[item.coinType]?.symbol}
                     totalBalance={item.totalBalance}
                   />
                 );

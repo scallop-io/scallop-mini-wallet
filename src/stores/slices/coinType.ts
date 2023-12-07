@@ -2,15 +2,15 @@ import {
   networks,
   type CoinTypeLocalStorageState,
   type CreateCoinTypeLocalStorageSlice,
-  type LocalCoinType,
+  type CustomCoinType,
 } from '@/stores';
 
 export const intialCoinTypeLocalStorageState = {
-  localCoinTypeState: {
+  customCoinTypeState: {
     coinTypes: {
-      mainnet: [] as LocalCoinType[],
-      testnet: [] as LocalCoinType[],
-      devnet: [] as LocalCoinType[],
+      mainnet: [] as CustomCoinType[],
+      testnet: [] as CustomCoinType[],
+      devnet: [] as CustomCoinType[],
     },
   } as CoinTypeLocalStorageState,
 };
@@ -18,21 +18,21 @@ export const intialCoinTypeLocalStorageState = {
 export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setState) => {
   return {
     ...intialCoinTypeLocalStorageState,
-    localCoinTypeActions: {
+    customCoinTypeActions: {
       initialImport: (initialState) => {
         setState((state: any) => {
           const store = { ...state };
 
           // Use a Map to optimize the duplication check process
           const coinTypesMap = {
-            mainnet: new Map<string, LocalCoinType>(),
-            testnet: new Map<string, LocalCoinType>(),
-            devnet: new Map<string, LocalCoinType>(),
+            mainnet: new Map<string, CustomCoinType>(),
+            testnet: new Map<string, CustomCoinType>(),
+            devnet: new Map<string, CustomCoinType>(),
           };
 
           // Use the addType logic to add coin types
           for (const network of networks) {
-            for (const coinType of store.localCoinTypeState.coinTypes[network]) {
+            for (const coinType of store.customCoinTypeState.coinTypes[network]) {
               coinTypesMap[network].set(coinType.coinType, coinType);
             }
 
@@ -43,7 +43,7 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
             }
 
             // Convert Map values to array
-            store.localCoinTypeState.coinTypes[network] = Array.from(
+            store.customCoinTypeState.coinTypes[network] = Array.from(
               coinTypesMap[network].values()
             );
           }
@@ -51,10 +51,10 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
           return store;
         });
       },
-      addType: (network: string, coinMetadata: LocalCoinType) => {
+      addType: (network: string, coinMetadata: CustomCoinType) => {
         setState((state: any) => {
           const store = { ...state };
-          const coinTypes = store.localCoinTypeState.coinTypes[network];
+          const coinTypes = store.customCoinTypeState.coinTypes[network];
           const duplicateIndex = coinTypes.findIndex(
             (item: any) => item.coinType === coinMetadata.coinType
           );
@@ -67,21 +67,21 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
             coinTypes.push({ ...coinMetadata, active: true });
           }
 
-          store.localCoinTypeState.coinTypes[network] = [...coinTypes];
+          store.customCoinTypeState.coinTypes[network] = [...coinTypes];
           return store;
         });
       },
       removeType: (network: string, coinType: string) => {
         setState((state: any) => {
           const store = { ...state };
-          const index = store.localCoinTypeState.coinTypes[network].findIndex(
+          const index = store.customCoinTypeState.coinTypes[network].findIndex(
             (item: any) => item.coinType === coinType
           );
           if (index >= 0) {
-            store.localCoinTypeState.coinTypes[network].splice(index, 1);
+            store.customCoinTypeState.coinTypes[network].splice(index, 1);
           }
-          store.localCoinTypeState.coinTypes[network] = [
-            ...store.localCoinTypeState.coinTypes[network],
+          store.customCoinTypeState.coinTypes[network] = [
+            ...store.customCoinTypeState.coinTypes[network],
           ];
           return store;
         });
@@ -89,14 +89,14 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
       setActive: (network: string, coinType: string) => {
         setState((state: any) => {
           const store = { ...state };
-          if (store && store.localCoinTypeState.coinTypes[network]) {
-            const s = (store.localCoinTypeState.coinTypes[network] as LocalCoinType[]).find(
+          if (store && store.customCoinTypeState.coinTypes[network]) {
+            const s = (store.customCoinTypeState.coinTypes[network] as CustomCoinType[]).find(
               (x) => x.coinType === coinType
             );
             if (s) s.active = true;
           }
-          store.localCoinTypeState.coinTypes[network] = [
-            ...store.localCoinTypeState.coinTypes[network],
+          store.customCoinTypeState.coinTypes[network] = [
+            ...store.customCoinTypeState.coinTypes[network],
           ];
           return store;
         });
@@ -104,14 +104,14 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
       setInactive: (network: string, coinType: string) => {
         setState((state: any) => {
           const store = { ...state };
-          if (store && store.localCoinTypeState.coinTypes[network]) {
-            const s = (store.localCoinTypeState.coinTypes[network] as LocalCoinType[]).find(
+          if (store && store.customCoinTypeState.coinTypes[network]) {
+            const s = (store.customCoinTypeState.coinTypes[network] as CustomCoinType[]).find(
               (x) => x.coinType === coinType
             );
             if (s) s.active = false;
           }
-          store.localCoinTypeState.coinTypes[network] = [
-            ...store.localCoinTypeState.coinTypes[network],
+          store.customCoinTypeState.coinTypes[network] = [
+            ...store.customCoinTypeState.coinTypes[network],
           ];
           return store;
         });

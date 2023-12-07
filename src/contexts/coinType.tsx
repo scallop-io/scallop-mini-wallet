@@ -10,15 +10,15 @@ import React, {
 import {
   type CoinTypeLocalStorageState,
   useLocalStorage,
-  type LocalCoinType,
+  type CustomCoinType,
   networks,
 } from '@/stores';
 import { useNetwork } from './connection';
 import { useCoinTypeDB } from './db';
 
 export interface LocalCoinTypeContextInterface {
-  coinTypes: LocalCoinType[];
-  addCoinType: (coinMetadata: LocalCoinType) => boolean;
+  coinTypes: CustomCoinType[];
+  addCoinType: (coinMetadata: CustomCoinType) => boolean;
   removeCoinType: (coinType: string) => void;
   setActive: (coinType: string) => void;
   setInactive: (coinType: string) => void;
@@ -41,18 +41,18 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
   initialCoinTypeState,
 }) => {
   const { addCoinTypeImage, removeCoinTypeImage } = useCoinTypeDB();
-  const { localCoinTypeState, localCoinTypeActions } = useLocalStorage();
+  const { customCoinTypeState, customCoinTypeActions } = useLocalStorage();
   const { currentNetwork } = useNetwork();
 
   const coinTypes = useMemo(
-    () => localCoinTypeState.coinTypes[currentNetwork],
-    [localCoinTypeState.coinTypes[currentNetwork], currentNetwork]
+    () => customCoinTypeState.coinTypes[currentNetwork],
+    [customCoinTypeState.coinTypes[currentNetwork], currentNetwork]
   );
 
   const addCoinType = useCallback(
-    (coinMetadata: LocalCoinType) => {
+    (coinMetadata: CustomCoinType) => {
       const exist = coinTypes.some((coin) => coin.coinType === coinMetadata.coinType);
-      localCoinTypeActions.addType(currentNetwork, coinMetadata);
+      customCoinTypeActions.addType(currentNetwork, coinMetadata);
       return !exist;
     },
     [currentNetwork]
@@ -60,7 +60,7 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
 
   const removeCoinType = useCallback(
     (coinType: string) => {
-      localCoinTypeActions.removeType(currentNetwork, coinType);
+      customCoinTypeActions.removeType(currentNetwork, coinType);
       removeCoinTypeImage(coinType);
       return;
     },
@@ -69,7 +69,7 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
 
   const setActive = useCallback(
     (coinType: string) => {
-      localCoinTypeActions.setActive(currentNetwork, coinType);
+      customCoinTypeActions.setActive(currentNetwork, coinType);
       return;
     },
     [currentNetwork]
@@ -77,7 +77,7 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
 
   const setInactive = useCallback(
     (coinType: string) => {
-      localCoinTypeActions.setInactive(currentNetwork, coinType);
+      customCoinTypeActions.setInactive(currentNetwork, coinType);
       return;
     },
     [currentNetwork]
@@ -92,7 +92,7 @@ export const LocalCoinTypeProvider: FC<PropsWithChildren<LocalCoinTypeProviderPr
         }
       }
     }
-    if (initialCoinTypeState) localCoinTypeActions.initialImport(initialCoinTypeState);
+    if (initialCoinTypeState) customCoinTypeActions.initialImport(initialCoinTypeState);
   }, []);
 
   return (

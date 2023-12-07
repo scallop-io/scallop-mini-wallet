@@ -1,7 +1,7 @@
 import { normalizeStructTag } from '@mysten/sui.js/utils';
-import type { LocalCoinType } from '@/stores';
+import type { CustomCoinType } from '@/stores';
 
-export const DEFAULT_COINS: { [key: string]: Omit<LocalCoinType, 'active'>[]; } = {
+export const DEFAULT_COINS: { [key: string]: Omit<CustomCoinType, 'active'>[]; } = {
   testnet: [
     {
       symbol: 'SUI',
@@ -62,8 +62,8 @@ export const DEFAULT_COINS: { [key: string]: Omit<LocalCoinType, 'active'>[]; } 
       decimals: 6,
       coinType:
         '0xefe8b36d5b2e43728cc323298626b83177803521d195cfb11e15b910e892fddf::reserve::MarketCoin<0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN>',
-        iconUrl: 'https://app.scallop.io/assets/sUSDC-8cd2f058.png',
-    }
+      iconUrl: 'https://app.scallop.io/assets/sUSDC-8cd2f058.png',
+    },
   ],
   devnet: [],
 };

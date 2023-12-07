@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useLocalCoinType } from '@/contexts/coinType';
-import type { LocalCoinType } from '@/stores';
+import type { CustomCoinType } from '@/stores';
 
-const useGetLocalMetadata = (coinType: string): LocalCoinType | null => {
+const useGetLocalMetadata = (coinType: string): CustomCoinType | null => {
   const { coinTypes } = useLocalCoinType();
 
   return useMemo(() => {

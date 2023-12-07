@@ -1,6 +1,6 @@
 import type { NetworkType } from './connection';
 
-export type LocalCoinType = {
+export type CustomCoinType = {
   coinType: string;
   active: boolean;
   symbol: string;
@@ -10,12 +10,12 @@ export type LocalCoinType = {
 
 export interface CoinTypeLocalStorageState {
   coinTypes: {
-    [k in NetworkType]: LocalCoinType[];
+    [k in NetworkType]: CustomCoinType[];
   };
 }
 
 export interface LocalCoinTypeStorageActions {
-  addType: (network: string, coinMetadata: LocalCoinType) => void;
+  addType: (network: string, coinMetadata: CustomCoinType) => void;
   initialImport: (initialState: CoinTypeLocalStorageState) => void;
   removeType: (network: string, coinType: string) => void;
   setActive: (network: string, coinType: string) => void;
@@ -23,6 +23,6 @@ export interface LocalCoinTypeStorageActions {
 }
 
 export interface CoinTypeLocalStorageSlice {
-  localCoinTypeState: CoinTypeLocalStorageState;
-  localCoinTypeActions: LocalCoinTypeStorageActions;
+  customCoinTypeState: CoinTypeLocalStorageState;
+  customCoinTypeActions: LocalCoinTypeStorageActions;
 }
