@@ -1,11 +1,20 @@
 {
   "name": "@scallop-io/scallop-mini-wallet",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/fum-is-chum",
     "access": "public"
   },
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scallop-io/sui-kit.git"
+  },
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
@@ -19,11 +28,13 @@
     "build-storybook": "storybook build"
   },
   "keywords": [
+    "scallop labs",
+    "wallet",
     "react",
     "typescript"
   ],
   "author": "team@scallop.io",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@babel/core": "^7.23.5",
     "@babel/preset-env": "^7.23.5",
@@ -110,11 +121,5 @@
   },
   "peerDependencies": {
     "react": ">=16"
-  },
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "files": [
-    "dist"
-  ],
-  "types": "dist/index.d.ts"
+  }
 }
