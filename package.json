@@ -16,6 +16,15 @@
     "type": "git",
     "url": "https://github.com/scallop-io/scallop-mini-wallet.git"
   },
+  "keywords": [
+    "scallop labs",
+    "mini wallet",
+    "wallet",
+    "react",
+    "typescript"
+  ],
+  "author": "team@scallop.io",
+  "license": "Apache-2.0",
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
@@ -29,14 +38,6 @@
     "build-storybook": "storybook build",
     "publish-package": "npm publish --access public --registry https://registry.npmjs.org && npm publish --no-git-checks --access public --registry https://npm.pkg.github.com"
   },
-  "keywords": [
-    "scallop labs",
-    "wallet",
-    "react",
-    "typescript"
-  ],
-  "author": "team@scallop.io",
-  "license": "Apache-2.0",
   "devDependencies": {
     "@babel/core": "^7.23.5",
     "@babel/preset-env": "^7.23.5",
