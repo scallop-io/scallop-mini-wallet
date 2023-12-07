@@ -2,7 +2,7 @@ import type { NetworkType } from './connection';
 
 export type CustomCoinType = {
   coinType: string;
-  active: boolean;
+  active?: boolean;
   symbol: string;
   decimals: number;
   iconUrl?: string;
