@@ -35,8 +35,9 @@ export const coinTypeLocalStorageSlice: CreateCoinTypeLocalStorageSlice = (setSt
 
             for (const coinType of initialState.coinTypes[network]) {
               // If duplicate, replace. If not duplicate, add
-              coinTypesMap[network].set(coinType.coinType, { ...coinType, active: true });
-
+              const existingCoinType = coinTypesMap[network].get(coinType.coinType);
+              const isActive = existingCoinType ? existingCoinType.active : true;
+              coinTypesMap[network].set(coinType.coinType, { ...coinType, active: isActive });
             }
 
             // Convert Map values to array
